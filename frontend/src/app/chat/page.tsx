@@ -588,32 +588,12 @@ function ChatPage() {
       setLoading(true);
       setIsUploading(true);
       setUploadedFile(null); // Clear previous file
-
-      // Add initial upload message
-      const uploadStartMessage: Message = {
-        role: "assistant",
-        content: `🔄 Starting upload of **${filename}**...`,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, uploadStartMessage]);
     };
 
     const handleFileUploaded = (event: CustomEvent) => {
       const { result } = event.detail;
       console.log("Chat page received file upload event:", result);
-
-      // Replace the last message with upload complete message
-      const uploadMessage: Message = {
-        role: "assistant",
-        content: `📄 Document uploaded: **${result.filename}** (${
-          result.pages
-        } pages, ${result.content_length.toLocaleString()} characters)\n\n${
-          result.confirmation
-        }`,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev.slice(0, -1), uploadMessage]);
+      
       setUploadedFile(null); // Clear file after upload
 
       // Update the response ID for this endpoint
