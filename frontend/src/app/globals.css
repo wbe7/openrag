@@ -122,7 +122,7 @@
       --filters-width: 320px;
     }
     &.banner-visible {
-      --top-banner-height: 52px;
+      --top-banner-height: auto;
     }
     display: grid;
     height: 100%;

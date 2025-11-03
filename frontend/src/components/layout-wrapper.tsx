@@ -1,9 +1,9 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
 import { DoclingHealthBanner } from "@/components/docling-health-banner";
+import { ProviderHealthBanner } from "@/components/provider-health-banner";
 import { KnowledgeFilterPanel } from "@/components/knowledge-filter-panel";
 import { TaskNotificationMenu } from "@/components/task-notification-menu";
 import { useAuth } from "@/contexts/auth-context";
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { useDoclingHealthQuery } from "@/src/app/api/queries/useDoclingHealthQuery";
 import { ChatRenderer } from "./chat-renderer";
 import AnimatedProcessingIcon from "./ui/animated-processing-icon";
+import { useProviderHealthQuery } from "@/app/api/queries/useProviderHealthQuery";
 
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -30,10 +31,18 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
     enabled: !isAuthPage && (isAuthenticated || isNoAuthMode),
   });
   const {
-    data: health,
-    isLoading: isHealthLoading,
-    isError,
+    data: doclingHealth,
+    isLoading: isDoclingHealthLoading,
+    isError: isDoclingHealthError,
   } = useDoclingHealthQuery({
+    enabled: !isAuthPage,
+  });
+
+  const {
+    data: providerHealth,
+    isLoading: isProviderHealthLoading,
+    isError: isProviderHealthError,
+  } = useProviderHealthQuery(undefined, {
     enabled: !isAuthPage,
   });
 
@@ -45,12 +54,21 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
   const isOnKnowledgePage = pathname.startsWith("/knowledge");
 
-  const isUnhealthy = health?.status === "unhealthy" || isError;
-  const isBannerVisible = !isHealthLoading && isUnhealthy;
+  const isDoclingUnhealthy =
+    doclingHealth?.status === "unhealthy" || isDoclingHealthError;
+  const isProviderUnhealthy =
+    providerHealth?.status === "unhealthy" || isProviderHealthError;
+  const isBannerVisible =
+    !isDoclingHealthLoading &&
+    !isProviderHealthLoading &&
+    (isDoclingUnhealthy || isProviderUnhealthy);
   const isSettingsLoadingOrError = isSettingsLoading || !settings;
 
   // Show loading state when backend isn't ready
-  if (isLoading || (isSettingsLoadingOrError && (isNoAuthMode || isAuthenticated))) {
+  if (
+    isLoading ||
+    (isSettingsLoadingOrError && (isNoAuthMode || isAuthenticated))
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
@@ -69,11 +87,12 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
           "app-grid-arrangement bg-black relative",
           isBannerVisible && "banner-visible",
           isPanelOpen && isOnKnowledgePage && !isMenuOpen && "filters-open",
-          isMenuOpen && "notifications-open",
+          isMenuOpen && "notifications-open"
         )}
       >
         <div className={`w-full z-10 bg-background [grid-area:banner]`}>
           <DoclingHealthBanner className="w-full" />
+          <ProviderHealthBanner className="w-full" />
         </div>
 
         <ChatRenderer settings={settings}>{children}</ChatRenderer>

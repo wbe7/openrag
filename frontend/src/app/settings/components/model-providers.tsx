@@ -13,6 +13,7 @@ import OllamaSettingsDialog from "./ollama-settings-dialog";
 import WatsonxSettingsDialog from "./watsonx-settings-dialog";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useProviderHealth } from "@/components/provider-health-banner";
 
 export const ModelProviders = () => {
   const { isAuthenticated, isNoAuthMode } = useAuth();
@@ -20,6 +21,8 @@ export const ModelProviders = () => {
   const { data: settings = {} } = useGetSettingsQuery({
     enabled: isAuthenticated || isNoAuthMode,
   });
+
+  const { isUnhealthy } = useProviderHealth();
 
   const [dialogOpen, setDialogOpen] = useState<ModelProvider | undefined>();
 
@@ -79,7 +82,8 @@ export const ModelProviders = () => {
               key={providerKey}
               className={cn(
                 "relative flex flex-col",
-                !isCurrentProvider && "text-muted-foreground"
+                !isCurrentProvider && "text-muted-foreground",
+                isCurrentProvider && isUnhealthy && "border-destructive"
               )}
             >
               <CardHeader>
@@ -109,7 +113,7 @@ export const ModelProviders = () => {
                         <div
                           className={cn(
                             "h-2 w-2 rounded-full",
-                            "bg-accent-emerald-foreground"
+                            isUnhealthy ? "bg-destructive" : "bg-accent-emerald-foreground"
                           )}
                         />
                       )}
@@ -120,10 +124,10 @@ export const ModelProviders = () => {
               <CardContent className="flex-1 flex flex-col justify-end space-y-4">
                 {isCurrentProvider ? (
                   <Button
-                    variant="outline"
+                    variant={isUnhealthy ? "default" : "outline"}
                     onClick={() => setDialogOpen(providerKey)}
                   >
-                    Edit Setup
+                    {isUnhealthy ? "Fix Setup" : "Edit Setup"}
                   </Button>
                 ) : (
                   <p>
