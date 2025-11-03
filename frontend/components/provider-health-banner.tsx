@@ -1,11 +1,7 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
-import {
-  Banner,
-  BannerIcon,
-  BannerTitle,
-} from "@/components/ui/banner";
+import { Banner, BannerIcon, BannerTitle } from "@/components/ui/banner";
 import { cn } from "@/lib/utils";
 import { useProviderHealthQuery } from "@/src/app/api/queries/useProviderHealthQuery";
 import { Button } from "./ui/button";
