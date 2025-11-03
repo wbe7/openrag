@@ -593,7 +593,7 @@ function ChatPage() {
     const handleFileUploaded = (event: CustomEvent) => {
       const { result } = event.detail;
       console.log("Chat page received file upload event:", result);
-      
+
       setUploadedFile(null); // Clear file after upload
 
       // Update the response ID for this endpoint
@@ -717,7 +717,7 @@ function ChatPage() {
     {
       chatId: previousResponseIds[endpoint],
       filters: processedFiltersForNudges,
-      limit: parsedFilterData?.limit ?? 10,
+      limit: parsedFilterData?.limit ?? 3,
       scoreThreshold: parsedFilterData?.scoreThreshold ?? 0,
     },
     {

@@ -176,8 +176,10 @@ class ChatService:
 
         # Build the complete filter expression like the chat service does
         filter_expression = {}
+        has_user_filters = False
+        filter_clauses = []
+
         if filters:
-            filter_clauses = []
             # Map frontend filter names to backend field names
             field_mapping = {
                 "data_sources": "filename",
@@ -198,7 +200,23 @@ class ChatService:
                         filter_clauses.append({"terms": {field_name: values}})
 
             if filter_clauses:
-                filter_expression["filter"] = filter_clauses
+                has_user_filters = True
+
+        # If no user filters are active, exclude sample data from nudges
+        if not has_user_filters:
+            # Add a bool query with must_not to exclude sample data
+            filter_clauses.append({
+                "bool": {
+                    "must_not": [
+                        {"term": {"is_sample_data": "true"}}
+                    ]
+                }
+            })
+            logger.info("Excluding sample data from nudges (no user filters active)")
+
+        # Set the filter clauses if we have any
+        if filter_clauses:
+            filter_expression["filter"] = filter_clauses
 
         # Add limit and score threshold to the filter expression (only if different from defaults)
         if limit and limit != 10:  # 10 is the default limit

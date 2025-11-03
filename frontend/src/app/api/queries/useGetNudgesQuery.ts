@@ -22,10 +22,10 @@ export interface NudgeQueryParams {
 }
 
 export const useGetNudgesQuery = (
-	params: NudgeQueryParams,
+	params: NudgeQueryParams | null = {},
 	options?: Omit<UseQueryOptions, "queryKey" | "queryFn">,
 ) => {
-	const { chatId, filters, limit, scoreThreshold } = params;
+	const { chatId, filters, limit, scoreThreshold } = params ?? {};
 	const queryClient = useQueryClient();
 
 	function cancel() {

@@ -369,6 +369,7 @@ async def _ingest_default_documents_langflow(services, file_paths):
                 {"key": "owner_name", "value": anonymous_user.name},
                 {"key": "owner_email", "value": anonymous_user.email},
                 {"key": "connector_type", "value": "system_default"},
+                {"key": "is_sample_data", "value": "true"},
             ]
         }
     }
@@ -412,6 +413,7 @@ async def _ingest_default_documents_openrag(services, file_paths):
         jwt_token=None,
         owner_name=None,
         owner_email=None,
+        is_sample_data=True,  # Mark as sample data
     )
 
     task_id = await services["task_service"].create_custom_task(
