@@ -1048,7 +1048,7 @@ async def create_app():
                     session_manager=services["session_manager"],
                 )
             ),
-            methods=["GET"],
+            methods=["POST"],
         ),
         Route(
             "/nudges/{chat_id}",
@@ -1059,7 +1059,7 @@ async def create_app():
                     session_manager=services["session_manager"],
                 )
             ),
-            methods=["GET"],
+            methods=["POST"],
         ),
         Route(
             "/reset-flow/{flow_type}",
