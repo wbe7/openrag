@@ -72,14 +72,14 @@ export const ModelProviders = () => {
             logoColor,
             logoBgColor,
           } = modelProvidersMap[providerKey];
-          const isActive = providerKey === currentProviderKey;
+          const isCurrentProvider = providerKey === currentProviderKey;
 
           return (
             <Card
               key={providerKey}
               className={cn(
                 "relative flex flex-col",
-                !isActive && "text-muted-foreground"
+                !isCurrentProvider && "text-muted-foreground"
               )}
             >
               <CardHeader>
@@ -89,13 +89,15 @@ export const ModelProviders = () => {
                       <div
                         className={cn(
                           "w-8 h-8 rounded flex items-center justify-center border",
-                          isActive ? logoBgColor : "bg-muted"
+                          isCurrentProvider ? logoBgColor : "bg-muted"
                         )}
                       >
                         {
                           <Logo
                             className={
-                              isActive ? logoColor : "text-muted-foreground"
+                              isCurrentProvider
+                                ? logoColor
+                                : "text-muted-foreground"
                             }
                           />
                         }
@@ -103,15 +105,20 @@ export const ModelProviders = () => {
                     </div>
                     <CardTitle className="flex flex-row items-center gap-2">
                       {name}
-                      {isActive && (
-                        <div className="h-2 w-2 bg-accent-emerald-foreground rounded-full" />
+                      {isCurrentProvider && (
+                        <div
+                          className={cn(
+                            "h-2 w-2 rounded-full",
+                            "bg-accent-emerald-foreground"
+                          )}
+                        />
                       )}
                     </CardTitle>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-end space-y-4">
-                {isActive ? (
+                {isCurrentProvider ? (
                   <Button
                     variant="outline"
                     onClick={() => setDialogOpen(providerKey)}

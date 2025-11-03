@@ -36,7 +36,7 @@ export function OpenAIOnboarding({
 			: debouncedApiKey
 				? { apiKey: debouncedApiKey }
 				: undefined,
-		{ enabled: debouncedApiKey !== "" || getFromEnv },
+		{ enabled: debouncedApiKey !== "" || getFromEnv, staleTime: 0, gcTime: 0 },
 	);
 	// Use custom hook for model selection logic
 	const {

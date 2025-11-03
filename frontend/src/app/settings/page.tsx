@@ -4,11 +4,7 @@ import { ArrowUpRight, Loader2, Minus, PlugZap, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
-import {
-  useGetIBMModelsQuery,
-  useGetOllamaModelsQuery,
-  useGetOpenAIModelsQuery,
-} from "@/app/api/queries/useGetModelsQuery";
+import { useGetCurrentProviderModelsQuery } from "@/app/api/queries/useGetModelsQuery";
 import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
 import { ConfirmationDialog } from "@/components/confirmation-dialog";
 import { LabelWrapper } from "@/components/label-wrapper";
@@ -121,6 +117,7 @@ function KnowledgeSourcesPage() {
 
   // Only keep systemPrompt state since it needs manual save button
   const [systemPrompt, setSystemPrompt] = useState<string>("");
+  const [selectedLlmModel, setSelectedLlmModel] = useState<string>("");
   const [chunkSize, setChunkSize] = useState<number>(1024);
   const [chunkOverlap, setChunkOverlap] = useState<number>(50);
   const [tableStructure, setTableStructure] = useState<boolean>(true);
@@ -137,48 +134,8 @@ function KnowledgeSourcesPage() {
   const currentProvider = (settings.provider?.model_provider ||
     "openai") as ModelProvider;
 
-  // Fetch available models based on provider
-  const { data: openaiModelsData } = useGetOpenAIModelsQuery(
-    {
-      apiKey: ""
-    },
-    {
-      enabled:
-        (isAuthenticated || isNoAuthMode) && currentProvider === "openai",
-    }
-  );
-
-  const { data: ollamaModelsData } = useGetOllamaModelsQuery(
-    {
-      endpoint: settings.provider?.endpoint,
-    },
-    {
-      enabled:
-        (isAuthenticated || isNoAuthMode) && currentProvider === "ollama",
-    }
-  );
-
-  const { data: ibmModelsData } = useGetIBMModelsQuery(
-    {
-      endpoint: settings.provider?.endpoint,
-      apiKey: "",
-      projectId: settings.provider?.project_id,
-    },
-    {
-      enabled:
-        (isAuthenticated || isNoAuthMode) && currentProvider === "watsonx",
-    }
-  );
-
-  // Select the appropriate models data based on provider
-  const modelsData =
-    currentProvider === "openai"
-      ? openaiModelsData
-      : currentProvider === "ollama"
-      ? ollamaModelsData
-      : currentProvider === "watsonx"
-      ? ibmModelsData
-      : openaiModelsData; // fallback to openai
+  const { data: modelsData, isLoading: modelsLoading } =
+    useGetCurrentProviderModelsQuery();
 
   // Mutations
   const updateSettingsMutation = useUpdateSettingsMutation({
@@ -204,6 +161,13 @@ function KnowledgeSourcesPage() {
       setSystemPrompt(settings.agent.system_prompt);
     }
   }, [settings.agent?.system_prompt]);
+
+  // Sync selected LLM model with settings data (only when not pending)
+  useEffect(() => {
+    if (settings.agent?.llm_model && !updateSettingsMutation.isPending) {
+      setSelectedLlmModel(settings.agent.llm_model);
+    }
+  }, [settings.agent?.llm_model, updateSettingsMutation.isPending]);
 
   // Sync chunk size and overlap state with settings data
   useEffect(() => {
@@ -239,6 +203,7 @@ function KnowledgeSourcesPage() {
 
   // Update model selection immediately
   const handleModelChange = (newModel: string) => {
+    setSelectedLlmModel(newModel); // Update local state immediately
     updateSettingsMutation.mutate({ llm_model: newModel });
   };
 
@@ -465,11 +430,17 @@ function KnowledgeSourcesPage() {
   const getStatusBadge = (status: Connector["status"]) => {
     switch (status) {
       case "connected":
-        return <div className="h-2 w-2 bg-green-500 rounded-full" />;
+        return (
+          <div className="h-2 w-2 bg-accent-emerald-foreground rounded-full" />
+        );
       case "connecting":
-        return <div className="h-2 w-2 bg-yellow-500 rounded-full" />;
+        return (
+          <div className="h-2 w-2 bg-accent-amber-foreground rounded-full" />
+        );
       case "error":
-        return <div className="h-2 w-2 bg-red-500 rounded-full" />;
+        return (
+          <div className="h-2 w-2 bg-accent-red-foreground rounded-full" />
+        );
       default:
         return <div className="h-2 w-2 bg-muted rounded-full" />;
     }
@@ -909,12 +880,12 @@ function KnowledgeSourcesPage() {
                 <ModelSelector
                   options={modelsData?.language_models || []}
                   noOptionsPlaceholder={
-                    modelsData
-                      ? "No language models detected."
-                      : "Loading models..."
+                    modelsLoading
+                      ? "Loading models..."
+                      : "No language models detected."
                   }
                   icon={<OpenAILogo className="w-4 h-4" />}
-                  value={modelsData ? settings.agent?.llm_model || "" : ""}
+                  value={selectedLlmModel}
                   onValueChange={handleModelChange}
                 />
               </LabelWrapper>

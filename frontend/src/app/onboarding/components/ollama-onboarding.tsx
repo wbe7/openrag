@@ -31,6 +31,10 @@ export function OllamaOnboarding({
 		error: modelsError,
 	} = useGetOllamaModelsQuery(
 		debouncedEndpoint ? { endpoint: debouncedEndpoint } : undefined,
+		{ 
+		  staleTime: 0, // Always fetch fresh data
+		  gcTime: 0, // Don't cache results
+		}
 	);
 
 	// Use custom hook for model selection logic

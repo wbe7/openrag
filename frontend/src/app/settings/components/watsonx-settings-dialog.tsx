@@ -98,7 +98,7 @@ const WatsonxSettingsDialog = ({
                 </div>
                 IBM watsonx.ai Setup
               </DialogTitle>
-            </DialogHeader> 
+            </DialogHeader>
 
             <WatsonxSettingsForm isCurrentProvider={isWatsonxConfigured} />
 
