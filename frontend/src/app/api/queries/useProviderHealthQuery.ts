@@ -1,3 +1,4 @@
+import { ModelProvider } from "@/app/settings/helpers/model-helpers";
 import {
   type UseQueryOptions,
   useQuery,
@@ -20,6 +21,12 @@ export interface ProviderHealthResponse {
 export interface ProviderHealthParams {
   provider?: "openai" | "ollama" | "watsonx";
 }
+
+const providerTitleMap: Record<ModelProvider, string> = {
+  openai: "OpenAI",
+  ollama: "Ollama",
+  watsonx: "IBM watsonx.ai",
+};
 
 export const useProviderHealthQuery = (
   params?: ProviderHealthParams,
@@ -45,7 +52,7 @@ export const useProviderHealthQuery = (
     } else {
       // For 400 and 503 errors, still parse JSON for error details
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || "Failed to check provider health");
+      throw new Error(`${providerTitleMap[errorData.provider as ModelProvider] || "Provider"} error: ${errorData.message || "Failed to check provider health"}`);
     }
   }
 

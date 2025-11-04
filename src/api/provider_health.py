@@ -91,7 +91,7 @@ async def check_provider_health(request):
         return JSONResponse(
             {
                 "status": "healthy",
-                "message": f"Provider {provider} is properly configured and validated",
+                "message": "Properly configured and validated",
                 "provider": provider,
                 "details": {
                     "llm_model": llm_model,
@@ -109,8 +109,8 @@ async def check_provider_health(request):
         return JSONResponse(
             {
                 "status": "unhealthy",
-                "message": f"Provider validation failed: {error_message}",
-                "provider": provider if "provider" in locals() else "unknown",
+                "message": error_message,
+                "provider": provider,
             },
             status_code=503,
         )

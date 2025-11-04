@@ -13,7 +13,7 @@ interface ProviderHealthBannerProps {
 
 // Custom hook to check provider health status
 export function useProviderHealth() {
-  const { data: health, isLoading, isError } = useProviderHealthQuery();
+  const { data: health, isLoading, error, isError } = useProviderHealthQuery();
 
   const isHealthy = health?.status === "healthy" && !isError;
   const isUnhealthy =
@@ -22,14 +22,17 @@ export function useProviderHealth() {
   return {
     health,
     isLoading,
+    error,
     isError,
     isHealthy,
     isUnhealthy,
+    provider: health?.provider,
   };
 }
 
 export function ProviderHealthBanner({ className }: ProviderHealthBannerProps) {
-  const { health, isLoading, isHealthy, isUnhealthy } = useProviderHealth();
+  const { isLoading, isHealthy, isUnhealthy, error, provider } =
+    useProviderHealth();
   const router = useRouter();
 
   // Only show banner when provider is unhealthy
@@ -38,13 +41,13 @@ export function ProviderHealthBanner({ className }: ProviderHealthBannerProps) {
   }
 
   if (isUnhealthy) {
-    const providerName = health?.provider || "Model provider";
-    const message = health?.message || "Provider validation failed";
+    const errorMessage = error?.message || "Provider validation failed";
+    const settingsUrl = provider ? `/settings?setup=${provider}` : "/settings";
 
     return (
       <Banner
         className={cn(
-          "bg-red-50 text-foreground dark:bg-red-950 border-accent-red border-b",
+          "bg-red-50 dark:bg-red-950 text-foreground border-accent-red border-b w-full",
           className
         )}
       >
@@ -52,10 +55,10 @@ export function ProviderHealthBanner({ className }: ProviderHealthBannerProps) {
           className="text-accent-red-foreground"
           icon={AlertTriangle}
         />
-        <BannerTitle className="font-medium">
-          {providerName} configuration issue: {message}
-        </BannerTitle>
-        <Button onClick={() => router.push("/settings")}>Fix Setup</Button>
+        <BannerTitle className="font-medium">{errorMessage}</BannerTitle>
+        <Button size="sm" onClick={() => router.push(settingsUrl)}>
+          Fix Setup
+        </Button>
       </Banner>
     );
   }

@@ -42,7 +42,11 @@ import {
 } from "@/lib/constants";
 import { useDebounce } from "@/lib/debounce";
 import { ModelSelector } from "../onboarding/components/model-selector";
-import { getFallbackModels, type ModelProvider } from "./helpers/model-helpers";
+import {
+  getFallbackModels,
+  getModelLogo,
+  type ModelProvider,
+} from "./helpers/model-helpers";
 import { ModelSelectItems } from "./helpers/model-select-item";
 
 import GoogleDriveIcon from "./icons/google-drive-icon";
@@ -203,8 +207,7 @@ function KnowledgeSourcesPage() {
 
   // Update model selection immediately
   const handleModelChange = (newModel: string) => {
-    setSelectedLlmModel(newModel); // Update local state immediately
-    updateSettingsMutation.mutate({ llm_model: newModel });
+    if (newModel) updateSettingsMutation.mutate({ llm_model: newModel });
   };
 
   // Update system prompt with save button
@@ -214,7 +217,7 @@ function KnowledgeSourcesPage() {
 
   // Update embedding model selection immediately
   const handleEmbeddingModelChange = (newModel: string) => {
-    updateSettingsMutation.mutate({ embedding_model: newModel });
+    if (newModel) updateSettingsMutation.mutate({ embedding_model: newModel });
   };
 
   const isEmbeddingModelSelectDisabled = updateSettingsMutation.isPending;
@@ -884,8 +887,8 @@ function KnowledgeSourcesPage() {
                       ? "Loading models..."
                       : "No language models detected."
                   }
-                  icon={<OpenAILogo className="w-4 h-4" />}
-                  value={selectedLlmModel}
+                  icon={getModelLogo("", currentProvider)}
+                  value={settings.agent?.llm_model || ""}
                   onValueChange={handleModelChange}
                 />
               </LabelWrapper>
@@ -1022,41 +1025,17 @@ function KnowledgeSourcesPage() {
                 id="embedding-model-select"
                 label="Embedding model"
               >
-                <Select
-                  disabled={isEmbeddingModelSelectDisabled}
-                  value={
-                    settings.knowledge?.embedding_model ||
-                    modelsData?.embedding_models?.find((m) => m.default)
-                      ?.value ||
-                    "text-embedding-ada-002"
+                <ModelSelector
+                  options={modelsData?.embedding_models || []}
+                  noOptionsPlaceholder={
+                    modelsLoading
+                      ? "Loading models..."
+                      : "No embedding models detected."
                   }
+                  icon={getModelLogo("", currentProvider)}
+                  value={settings.knowledge?.embedding_model || ""}
                   onValueChange={handleEmbeddingModelChange}
-                >
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <SelectTrigger
-                        disabled={isEmbeddingModelSelectDisabled}
-                        id="embedding-model-select"
-                      >
-                        <SelectValue placeholder="Select an embedding model" />
-                      </SelectTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {isEmbeddingModelSelectDisabled
-                        ? "Please wait while we update your settings"
-                        : "Choose the embedding model used for new ingests"}
-                    </TooltipContent>
-                  </Tooltip>
-                  <SelectContent>
-                    <ModelSelectItems
-                      models={modelsData?.embedding_models}
-                      fallbackModels={
-                        getFallbackModels(currentProvider).embedding
-                      }
-                      provider={currentProvider}
-                    />
-                  </SelectContent>
-                </Select>
+                />
               </LabelWrapper>
             </div>
             <div className="grid grid-cols-2 gap-4">

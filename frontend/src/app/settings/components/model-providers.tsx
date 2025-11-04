@@ -6,7 +6,8 @@ import OpenAILogo from "@/components/logo/openai-logo";
 import IBMLogo from "@/components/logo/ibm-logo";
 import OllamaLogo from "@/components/logo/ollama-logo";
 import { useAuth } from "@/contexts/auth-context";
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import OpenAISettingsDialog from "./openai-settings-dialog";
 import OllamaSettingsDialog from "./ollama-settings-dialog";
@@ -14,17 +15,46 @@ import WatsonxSettingsDialog from "./watsonx-settings-dialog";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useProviderHealth } from "@/components/provider-health-banner";
+import AnimatedProcessingIcon from "@/components/ui/animated-processing-icon";
 
 export const ModelProviders = () => {
   const { isAuthenticated, isNoAuthMode } = useAuth();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const { data: settings = {} } = useGetSettingsQuery({
     enabled: isAuthenticated || isNoAuthMode,
   });
 
-  const { isUnhealthy } = useProviderHealth();
+  const { isUnhealthy, isLoading: isProviderHealthLoading } =
+    useProviderHealth();
 
   const [dialogOpen, setDialogOpen] = useState<ModelProvider | undefined>();
+
+  // Handle URL search param to open dialogs
+  useEffect(() => {
+    const searchParam = searchParams.get("setup");
+    if (
+      searchParam &&
+      (searchParam === "openai" ||
+        searchParam === "ollama" ||
+        searchParam === "watsonx")
+    ) {
+      setDialogOpen(searchParam as ModelProvider);
+    }
+  }, [searchParams]);
+
+  // Function to close dialog and remove search param
+  const handleCloseDialog = () => {
+    setDialogOpen(undefined);
+    // Remove search param from URL
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("setup");
+    const newUrl = params.toString()
+      ? `${window.location.pathname}?${params.toString()}`
+      : window.location.pathname;
+    router.replace(newUrl);
+  };
 
   const modelProvidersMap: Record<
     ModelProvider,
@@ -109,13 +139,18 @@ export const ModelProviders = () => {
                     </div>
                     <CardTitle className="flex flex-row items-center gap-2">
                       {name}
-                      {isCurrentProvider && (
+                      {isCurrentProvider && !isProviderHealthLoading && (
                         <div
                           className={cn(
                             "h-2 w-2 rounded-full",
-                            isUnhealthy ? "bg-destructive" : "bg-accent-emerald-foreground"
+                            isUnhealthy
+                              ? "bg-destructive"
+                              : "bg-accent-emerald-foreground"
                           )}
                         />
+                      )}
+                      {isCurrentProvider && isProviderHealthLoading && (
+                        <AnimatedProcessingIcon className="text-current shrink-0 h-4 w-4" />
                       )}
                     </CardTitle>
                   </div>
@@ -150,15 +185,15 @@ export const ModelProviders = () => {
       </div>
       <OpenAISettingsDialog
         open={dialogOpen === "openai"}
-        setOpen={() => setDialogOpen(undefined)}
+        setOpen={handleCloseDialog}
       />
       <OllamaSettingsDialog
         open={dialogOpen === "ollama"}
-        setOpen={() => setDialogOpen(undefined)}
+        setOpen={handleCloseDialog}
       />
       <WatsonxSettingsDialog
         open={dialogOpen === "watsonx"}
-        setOpen={() => setDialogOpen(undefined)}
+        setOpen={handleCloseDialog}
       />
     </>
   );
