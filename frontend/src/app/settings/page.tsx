@@ -8,7 +8,6 @@ import { useGetCurrentProviderModelsQuery } from "@/app/api/queries/useGetModels
 import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
 import { ConfirmationDialog } from "@/components/confirmation-dialog";
 import { LabelWrapper } from "@/components/label-wrapper";
-import OpenAILogo from "@/components/logo/openai-logo";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,17 +19,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Select,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/auth-context";
@@ -43,12 +31,9 @@ import {
 import { useDebounce } from "@/lib/debounce";
 import { ModelSelector } from "../onboarding/components/model-selector";
 import {
-  getFallbackModels,
   getModelLogo,
   type ModelProvider,
 } from "./helpers/model-helpers";
-import { ModelSelectItems } from "./helpers/model-select-item";
-
 import GoogleDriveIcon from "./icons/google-drive-icon";
 import OneDriveIcon from "./icons/one-drive-icon";
 import SharePointIcon from "./icons/share-point-icon";
@@ -121,7 +106,6 @@ function KnowledgeSourcesPage() {
 
   // Only keep systemPrompt state since it needs manual save button
   const [systemPrompt, setSystemPrompt] = useState<string>("");
-  const [selectedLlmModel, setSelectedLlmModel] = useState<string>("");
   const [chunkSize, setChunkSize] = useState<number>(1024);
   const [chunkOverlap, setChunkOverlap] = useState<number>(50);
   const [tableStructure, setTableStructure] = useState<boolean>(true);
@@ -165,13 +149,6 @@ function KnowledgeSourcesPage() {
       setSystemPrompt(settings.agent.system_prompt);
     }
   }, [settings.agent?.system_prompt]);
-
-  // Sync selected LLM model with settings data (only when not pending)
-  useEffect(() => {
-    if (settings.agent?.llm_model && !updateSettingsMutation.isPending) {
-      setSelectedLlmModel(settings.agent.llm_model);
-    }
-  }, [settings.agent?.llm_model, updateSettingsMutation.isPending]);
 
   // Sync chunk size and overlap state with settings data
   useEffect(() => {

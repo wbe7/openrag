@@ -94,20 +94,21 @@ function DoclingSetupDialog({
 export function useDoclingHealth() {
   const { data: health, isLoading, isError } = useDoclingHealthQuery();
 
-	const isHealthy = health?.status === "healthy" && !isError;
-	// Only consider unhealthy if backend is up but docling is down
-	// Don't show banner if backend is unavailable
-	const isUnhealthy = health?.status === "unhealthy";
-	const isBackendUnavailable = health?.status === "backend-unavailable" || isError;
+  const isHealthy = health?.status === "healthy" && !isError;
+  // Only consider unhealthy if backend is up but docling is down
+  // Don't show banner if backend is unavailable
+  const isUnhealthy = health?.status === "unhealthy";
+  const isBackendUnavailable =
+    health?.status === "backend-unavailable" || isError;
 
-	return {
-		health,
-		isLoading,
-		isError,
-		isHealthy,
-		isUnhealthy,
-		isBackendUnavailable,
-	};
+  return {
+    health,
+    isLoading,
+    isError,
+    isHealthy,
+    isUnhealthy,
+    isBackendUnavailable,
+  };
 }
 
 export function DoclingHealthBanner({ className }: DoclingHealthBannerProps) {
