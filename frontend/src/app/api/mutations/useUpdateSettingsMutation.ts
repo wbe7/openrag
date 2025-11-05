@@ -63,9 +63,6 @@ export const useUpdateSettingsMutation = (
       queryClient.invalidateQueries({ 
         queryKey: ["settings"], 
       });
-      queryClient.invalidateQueries({ 
-        queryKey: ["provider", "health"], 
-      });
       options?.onSuccess?.(...args);
     },
     onError: options?.onError,

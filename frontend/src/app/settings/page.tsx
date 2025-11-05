@@ -30,15 +30,13 @@ import {
 } from "@/lib/constants";
 import { useDebounce } from "@/lib/debounce";
 import { ModelSelector } from "../onboarding/components/model-selector";
-import {
-  getModelLogo,
-  type ModelProvider,
-} from "./helpers/model-helpers";
+import { getModelLogo, type ModelProvider } from "./helpers/model-helpers";
 import GoogleDriveIcon from "./icons/google-drive-icon";
 import OneDriveIcon from "./icons/one-drive-icon";
 import SharePointIcon from "./icons/share-point-icon";
 import ModelProviders from "./components/model-providers";
 import { useUpdateSettingsMutation } from "../api/mutations/useUpdateSettingsMutation";
+import { toast } from "sonner";
 
 const { MAX_SYSTEM_PROMPT_CHARS } = UI_CONSTANTS;
 
@@ -128,10 +126,12 @@ function KnowledgeSourcesPage() {
   // Mutations
   const updateSettingsMutation = useUpdateSettingsMutation({
     onSuccess: () => {
-      console.log("Setting updated successfully");
+      toast.success("Settings updated successfully");
     },
     onError: (error) => {
-      console.error("Failed to update setting:", error.message);
+      toast.error("Failed to update settings", {
+        description: error.message,
+      });
     },
   });
 

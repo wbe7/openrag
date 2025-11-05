@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useProviderHealthQuery } from "@/src/app/api/queries/useProviderHealthQuery";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import AnimatedProcessingIcon from "@/components/ui/animated-processing-icon";
+import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
 
 interface ProviderHealthBannerProps {
   className?: string;
@@ -34,18 +34,20 @@ export function useProviderHealth() {
     isError,
     isHealthy,
     isUnhealthy,
-    provider: health?.provider,
   };
 }
 
 export function ProviderHealthBanner({ className }: ProviderHealthBannerProps) {
-  const { isFetching, isLoading, isHealthy, error, provider } =
-    useProviderHealth();
+  const { isLoading, isHealthy, error } = useProviderHealth();
   const router = useRouter();
+
+  const { data: settings = {} } = useGetSettingsQuery();
 
   if (!isHealthy && !isLoading) {
     const errorMessage = error?.message || "Provider validation failed";
-    const settingsUrl = provider ? `/settings?setup=${provider}` : "/settings";
+    const settingsUrl = settings.provider?.model_provider
+      ? `/settings?setup=${settings.provider?.model_provider}`
+      : "/settings";
 
     return (
       <Banner
@@ -60,12 +62,6 @@ export function ProviderHealthBanner({ className }: ProviderHealthBannerProps) {
         />
         <BannerTitle className="font-medium flex items-center gap-2">
           {errorMessage}
-          {isFetching && (
-            <>
-              <AnimatedProcessingIcon className="text-current shrink-0 h-4 w-4" />
-              <span className="text-muted-foreground">Revalidating...</span>
-            </>
-          )}
         </BannerTitle>
         <Button size="sm" onClick={() => router.push(settingsUrl)}>
           Fix Setup
