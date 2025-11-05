@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useProviderHealthQuery } from "@/src/app/api/queries/useProviderHealthQuery";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import AnimatedProcessingIcon from "@/components/ui/animated-processing-icon";
 
 interface ProviderHealthBannerProps {
   className?: string;
@@ -13,7 +14,13 @@ interface ProviderHealthBannerProps {
 
 // Custom hook to check provider health status
 export function useProviderHealth() {
-  const { data: health, isLoading, error, isError } = useProviderHealthQuery();
+  const {
+    data: health,
+    isLoading,
+    isFetching,
+    error,
+    isError,
+  } = useProviderHealthQuery();
 
   const isHealthy = health?.status === "healthy" && !isError;
   const isUnhealthy =
@@ -22,6 +29,7 @@ export function useProviderHealth() {
   return {
     health,
     isLoading,
+    isFetching,
     error,
     isError,
     isHealthy,
@@ -31,16 +39,11 @@ export function useProviderHealth() {
 }
 
 export function ProviderHealthBanner({ className }: ProviderHealthBannerProps) {
-  const { isLoading, isHealthy, isUnhealthy, error, provider } =
+  const { isFetching, isLoading, isHealthy, error, provider } =
     useProviderHealth();
   const router = useRouter();
 
-  // Only show banner when provider is unhealthy
-  if (isLoading || isHealthy) {
-    return null;
-  }
-
-  if (isUnhealthy) {
+  if (!isHealthy && !isLoading) {
     const errorMessage = error?.message || "Provider validation failed";
     const settingsUrl = provider ? `/settings?setup=${provider}` : "/settings";
 
@@ -55,7 +58,12 @@ export function ProviderHealthBanner({ className }: ProviderHealthBannerProps) {
           className="text-accent-red-foreground"
           icon={AlertTriangle}
         />
-        <BannerTitle className="font-medium">{errorMessage}</BannerTitle>
+        <BannerTitle className="font-medium flex items-center gap-2">
+          {errorMessage}
+          {isFetching && (
+            <AnimatedProcessingIcon className="text-current shrink-0 h-4 w-4" />
+          )}
+        </BannerTitle>
         <Button size="sm" onClick={() => router.push(settingsUrl)}>
           Fix Setup
         </Button>

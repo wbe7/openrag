@@ -26,20 +26,17 @@ export const ModelProviders = () => {
     enabled: isAuthenticated || isNoAuthMode,
   });
 
-  const { isUnhealthy, isLoading: isProviderHealthLoading } =
+  const { isUnhealthy, isFetching: isProviderHealthFetching } =
     useProviderHealth();
 
   const [dialogOpen, setDialogOpen] = useState<ModelProvider | undefined>();
 
+  const allProviderKeys: ModelProvider[] = ["openai", "ollama", "watsonx"];
+
   // Handle URL search param to open dialogs
   useEffect(() => {
     const searchParam = searchParams.get("setup");
-    if (
-      searchParam &&
-      (searchParam === "openai" ||
-        searchParam === "ollama" ||
-        searchParam === "watsonx")
-    ) {
+    if (searchParam && allProviderKeys.includes(searchParam as ModelProvider)) {
       setDialogOpen(searchParam as ModelProvider);
     }
   }, [searchParams]);
@@ -89,7 +86,6 @@ export const ModelProviders = () => {
     (settings.provider?.model_provider as ModelProvider) || "openai";
 
   // Get all provider keys with active provider first
-  const allProviderKeys: ModelProvider[] = ["openai", "ollama", "watsonx"];
   const sortedProviderKeys = [
     currentProviderKey,
     ...allProviderKeys.filter((key) => key !== currentProviderKey),
@@ -139,7 +135,7 @@ export const ModelProviders = () => {
                     </div>
                     <CardTitle className="flex flex-row items-center gap-2">
                       {name}
-                      {isCurrentProvider && !isProviderHealthLoading && (
+                      {isCurrentProvider && !isProviderHealthFetching && (
                         <div
                           className={cn(
                             "h-2 w-2 rounded-full",
@@ -149,7 +145,7 @@ export const ModelProviders = () => {
                           )}
                         />
                       )}
-                      {isCurrentProvider && isProviderHealthLoading && (
+                      {isCurrentProvider && isProviderHealthFetching && (
                         <AnimatedProcessingIcon className="text-current shrink-0 h-4 w-4" />
                       )}
                     </CardTitle>
