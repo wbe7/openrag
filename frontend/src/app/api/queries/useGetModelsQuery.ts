@@ -54,6 +54,8 @@ export const useGetOpenAIModelsQuery = (
     {
       queryKey: ["models", "openai", params],
       queryFn: getOpenAIModels,
+      staleTime: 0, // Always fetch fresh data
+      gcTime: 0, // Don't cache results
       ...options,
     },
     queryClient,
@@ -86,6 +88,8 @@ export const useGetOllamaModelsQuery = (
     {
       queryKey: ["models", "ollama", params],
       queryFn: getOllamaModels,
+      staleTime: 0, // Always fetch fresh data
+      gcTime: 0, // Don't cache results
       ...options,
     },
     queryClient,
@@ -124,6 +128,8 @@ export const useGetIBMModelsQuery = (
     {
       queryKey: ["models", "ibm", params],
       queryFn: getIBMModels,
+      staleTime: 0, // Always fetch fresh data
+      gcTime: 0, // Don't cache results
       ...options,
     },
     queryClient,

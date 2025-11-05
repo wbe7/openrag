@@ -74,8 +74,6 @@ export function IBMOnboarding({
     },
     {
       enabled: !!debouncedEndpoint && !!debouncedApiKey && !!debouncedProjectId,
-      staleTime: 0, // Always fetch fresh data
-      gcTime: 0, // Don't cache results
     }
   );
 

@@ -32,8 +32,6 @@ export function OllamaSettingsForm() {
     },
     {
       enabled: isDirty && !!debouncedEndpoint,
-      staleTime: 0, // Always fetch fresh data
-      gcTime: 0, // Don't cache results
     }
   );
 
