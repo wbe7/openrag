@@ -66,7 +66,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
   // For all other pages, render with Langflow-styled navigation and task menu
   return (
-    <div className=" h-screen w-screen flex items-center justify-center">
+    <div className="h-screen w-screen flex items-center justify-center">
       <div
         className={cn(
           "app-grid-arrangement bg-black relative",
