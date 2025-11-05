@@ -15,7 +15,6 @@ import WatsonxSettingsDialog from "./watsonx-settings-dialog";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useProviderHealth } from "@/components/provider-health-banner";
-import AnimatedProcessingIcon from "@/components/ui/animated-processing-icon";
 
 export const ModelProviders = () => {
   const { isAuthenticated, isNoAuthMode } = useAuth();
@@ -26,8 +25,7 @@ export const ModelProviders = () => {
     enabled: isAuthenticated || isNoAuthMode,
   });
 
-  const { isUnhealthy, isFetching: isProviderHealthFetching } =
-    useProviderHealth();
+  const { isUnhealthy } = useProviderHealth();
 
   const [dialogOpen, setDialogOpen] = useState<ModelProvider | undefined>();
 
@@ -135,7 +133,7 @@ export const ModelProviders = () => {
                     </div>
                     <CardTitle className="flex flex-row items-center gap-2">
                       {name}
-                      {isCurrentProvider && !isProviderHealthFetching && (
+                      {isCurrentProvider && (
                         <div
                           className={cn(
                             "h-2 w-2 rounded-full",
@@ -144,9 +142,6 @@ export const ModelProviders = () => {
                               : "bg-accent-emerald-foreground"
                           )}
                         />
-                      )}
-                      {isCurrentProvider && isProviderHealthFetching && (
-                        <AnimatedProcessingIcon className="text-current shrink-0 h-4 w-4" />
                       )}
                     </CardTitle>
                   </div>

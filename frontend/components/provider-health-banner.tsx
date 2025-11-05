@@ -61,7 +61,10 @@ export function ProviderHealthBanner({ className }: ProviderHealthBannerProps) {
         <BannerTitle className="font-medium flex items-center gap-2">
           {errorMessage}
           {isFetching && (
-            <AnimatedProcessingIcon className="text-current shrink-0 h-4 w-4" />
+            <>
+              <AnimatedProcessingIcon className="text-current shrink-0 h-4 w-4" />
+              <span className="text-muted-foreground">Revalidating...</span>
+            </>
           )}
         </BannerTitle>
         <Button size="sm" onClick={() => router.push(settingsUrl)}>
