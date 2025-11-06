@@ -19,6 +19,15 @@ class ProviderConfig:
     endpoint: str = ""  # For providers like Watson/IBM that need custom endpoints
     project_id: str = ""  # For providers like Watson/IBM that need project IDs
 
+@dataclass
+class EmbeddingProviderConfig:
+    """Embedding provider configuration."""
+
+    model_provider: str = "openai"  # openai, ollama, etc.
+    api_key: str = ""
+    endpoint: str = ""  # For providers like Watson/IBM that need custom endpoints
+    project_id: str = ""  # For providers like Watson/IBM that need project IDs
+
 
 @dataclass
 class KnowledgeConfig:
@@ -45,6 +54,7 @@ class OpenRAGConfig:
     """Complete OpenRAG configuration."""
 
     provider: ProviderConfig
+    embedding_provider: EmbeddingProviderConfig
     knowledge: KnowledgeConfig
     agent: AgentConfig
     edited: bool = False  # Track if manually edited
@@ -54,6 +64,7 @@ class OpenRAGConfig:
         """Create config from dictionary."""
         return cls(
             provider=ProviderConfig(**data.get("provider", {})),
+            embedding_provider=EmbeddingProviderConfig(**data.get("embedding_provider", {})),
             knowledge=KnowledgeConfig(**data.get("knowledge", {})),
             agent=AgentConfig(**data.get("agent", {})),
             edited=data.get("edited", False),
@@ -88,7 +99,7 @@ class ConfigManager:
             return self._config
 
         # Start with defaults
-        config_data = {"provider": {}, "knowledge": {}, "agent": {}}
+        config_data = {"provider": {}, "embedding_provider": {}, "knowledge": {}, "agent": {}}
 
         # Load from config file if it exists
         if self.config_file.exists():
@@ -97,7 +108,7 @@ class ConfigManager:
                     file_config = yaml.safe_load(f) or {}
 
                 # Merge file config
-                for section in ["provider", "knowledge", "agent"]:
+                for section in ["provider", "embedding_provider", "knowledge", "agent"]:
                     if section in file_config:
                         config_data[section].update(file_config[section])
                 config_data["edited"] = file_config.get("edited", False)
@@ -142,6 +153,21 @@ class ConfigManager:
             config_data["provider"]["api_key"] = os.getenv("OPENAI_API_KEY")
             if not config_data["provider"].get("model_provider"):
                 config_data["provider"]["model_provider"] = "openai"
+
+        # Embedding provider settings
+        if os.getenv("EMBEDDING_MODEL_PROVIDER"):
+            config_data["embedding_provider"]["model_provider"] = os.getenv("EMBEDDING_MODEL_PROVIDER")
+        if os.getenv("EMBEDDING_API_KEY"):
+            config_data["embedding_provider"]["api_key"] = os.getenv("EMBEDDING_API_KEY")
+        if os.getenv("EMBEDDING_ENDPOINT"):
+            config_data["embedding_provider"]["endpoint"] = os.getenv("EMBEDDING_ENDPOINT")
+        if os.getenv("EMBEDDING_PROJECT_ID"):
+            config_data["embedding_provider"]["project_id"] = os.getenv("EMBEDDING_PROJECT_ID")
+        # Backward compatibility for OpenAI
+        if os.getenv("OPENAI_API_KEY"):
+            config_data["embedding_provider"]["api_key"] = os.getenv("OPENAI_API_KEY")
+            if not config_data["embedding_provider"].get("model_provider"):
+                config_data["embedding_provider"]["model_provider"] = "openai"
 
         # Knowledge settings
         if os.getenv("EMBEDDING_MODEL"):
