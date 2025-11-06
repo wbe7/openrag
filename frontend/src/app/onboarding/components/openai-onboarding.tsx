@@ -15,11 +15,13 @@ export function OpenAIOnboarding({
 	sampleDataset,
 	setSampleDataset,
 	setIsLoadingModels,
+	isEmbedding = false,
 }: {
 	setSettings: (settings: OnboardingVariables) => void;
 	sampleDataset: boolean;
 	setSampleDataset: (dataset: boolean) => void;
 	setIsLoadingModels?: (isLoading: boolean) => void;
+	isEmbedding?: boolean;
 }) {
 	const [apiKey, setApiKey] = useState("");
 	const [getFromEnv, setGetFromEnv] = useState(true);
@@ -46,7 +48,7 @@ export function OpenAIOnboarding({
 		setEmbeddingModel,
 		languageModels,
 		embeddingModels,
-	} = useModelSelection(modelsData);
+	} = useModelSelection(modelsData, isEmbedding);
 	const handleSampleDatasetChange = (dataset: boolean) => {
 		setSampleDataset(dataset);
 	};
@@ -56,8 +58,8 @@ export function OpenAIOnboarding({
 		if (fromEnv) {
 			setApiKey("");
 		}
-		setLanguageModel("");
-		setEmbeddingModel("");
+		setEmbeddingModel?.("");
+		setLanguageModel?.("");
 	};
 
 	useEffect(() => {

@@ -14,11 +14,13 @@ export function OllamaOnboarding({
 	sampleDataset,
 	setSampleDataset,
 	setIsLoadingModels,
+	isEmbedding = false,
 }: {
 	setSettings: (settings: OnboardingVariables) => void;
 	sampleDataset: boolean;
 	setSampleDataset: (dataset: boolean) => void;
 	setIsLoadingModels?: (isLoading: boolean) => void;
+	isEmbedding?: boolean;
 }) {
 	const [endpoint, setEndpoint] = useState(`http://localhost:11434`);
 	const [showConnecting, setShowConnecting] = useState(false);
@@ -30,7 +32,7 @@ export function OllamaOnboarding({
 		isLoading: isLoadingModels,
 		error: modelsError,
 	} = useGetOllamaModelsQuery(
-		debouncedEndpoint ? { endpoint: debouncedEndpoint } : undefined
+		debouncedEndpoint ? { endpoint: debouncedEndpoint } : undefined,
 	);
 
 	// Use custom hook for model selection logic
@@ -41,7 +43,7 @@ export function OllamaOnboarding({
 		setEmbeddingModel,
 		languageModels,
 		embeddingModels,
-	} = useModelSelection(modelsData);
+	} = useModelSelection(modelsData, isEmbedding);
 
 	// Handle delayed display of connecting state
 	useEffect(() => {
@@ -74,7 +76,7 @@ export function OllamaOnboarding({
 		},
 		setSettings,
 	);
-	
+
 	// Check validation state based on models query
 	const hasConnectionError = debouncedEndpoint && modelsError;
 	const hasNoModels =
@@ -112,42 +114,46 @@ export function OllamaOnboarding({
 					</p>
 				)}
 			</div>
-			<LabelWrapper
-				label="Embedding model"
-				helperText="Model used for knowledge ingest and retrieval"
-				id="embedding-model"
-				required={true}
-			>
-				<ModelSelector
-					options={embeddingModels}
-					icon={<OllamaLogo className="w-4 h-4" />}
-					noOptionsPlaceholder={
-						isLoadingModels
-							? "Loading models..."
-							: "No embedding models detected. Install an embedding model to continue."
-					}
-					value={embeddingModel}
-					onValueChange={setEmbeddingModel}
-				/>
-			</LabelWrapper>
-			<LabelWrapper
-				label="Language model"
-				helperText="Model used for chat"
-				id="embedding-model"
-				required={true}
-			>
-				<ModelSelector
-					options={languageModels}
-					icon={<OllamaLogo className="w-4 h-4" />}
-					noOptionsPlaceholder={
-						isLoadingModels
-							? "Loading models..."
-							: "No language models detected. Install a language model to continue."
-					}
-					value={languageModel}
-					onValueChange={setLanguageModel}
-				/>
-			</LabelWrapper>
+			{isEmbedding && setEmbeddingModel && (
+				<LabelWrapper
+					label="Embedding model"
+					helperText="Model used for knowledge ingest and retrieval"
+					id="embedding-model"
+					required={true}
+				>
+					<ModelSelector
+						options={embeddingModels}
+						icon={<OllamaLogo className="w-4 h-4" />}
+						noOptionsPlaceholder={
+							isLoadingModels
+								? "Loading models..."
+								: "No embedding models detected. Install an embedding model to continue."
+						}
+						value={embeddingModel}
+						onValueChange={setEmbeddingModel}
+					/>
+				</LabelWrapper>
+			)}
+			{!isEmbedding && setLanguageModel && (
+				<LabelWrapper
+					label="Language model"
+					helperText="Model used for chat"
+					id="embedding-model"
+					required={true}
+				>
+					<ModelSelector
+						options={languageModels}
+						icon={<OllamaLogo className="w-4 h-4" />}
+						noOptionsPlaceholder={
+							isLoadingModels
+								? "Loading models..."
+								: "No language models detected. Install a language model to continue."
+						}
+						value={languageModel}
+						onValueChange={setLanguageModel}
+					/>
+				</LabelWrapper>
+			)}
 		</div>
 	);
 }

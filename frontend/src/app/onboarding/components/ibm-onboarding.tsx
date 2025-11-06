@@ -11,11 +11,13 @@ import { AdvancedOnboarding } from "./advanced";
 import { ModelSelector } from "./model-selector";
 
 export function IBMOnboarding({
+  isEmbedding = false,
   setSettings,
   sampleDataset,
   setSampleDataset,
   setIsLoadingModels,
 }: {
+  isEmbedding?: boolean;
   setSettings: (settings: OnboardingVariables) => void;
   sampleDataset: boolean;
   setSampleDataset: (dataset: boolean) => void;
@@ -85,7 +87,7 @@ export function IBMOnboarding({
     setEmbeddingModel,
     languageModels,
     embeddingModels,
-  } = useModelSelection(modelsData);
+  } = useModelSelection(modelsData, isEmbedding);
   const handleSampleDatasetChange = (dataset: boolean) => {
     setSampleDataset(dataset);
   };
