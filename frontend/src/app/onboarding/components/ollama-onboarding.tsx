@@ -49,10 +49,12 @@ export function OllamaOnboarding({
 
 		if (debouncedEndpoint && isLoadingModels) {
 			timeoutId = setTimeout(() => {
+				setIsLoadingModels?.(true);
 				setShowConnecting(true);
 			}, 500);
 		} else {
 			setShowConnecting(false);
+			setIsLoadingModels?.(false);
 		}
 
 		return () => {
@@ -60,7 +62,7 @@ export function OllamaOnboarding({
 				clearTimeout(timeoutId);
 			}
 		};
-	}, [debouncedEndpoint, isLoadingModels]);
+	}, [debouncedEndpoint, isLoadingModels, setIsLoadingModels]);
 
 	// Update settings when values change
 	useUpdateSettings(

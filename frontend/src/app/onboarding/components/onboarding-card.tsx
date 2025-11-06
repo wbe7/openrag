@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -9,6 +10,7 @@ import {
 	useOnboardingMutation,
 } from "@/app/api/mutations/useOnboardingMutation";
 import { useGetTasksQuery } from "@/app/api/queries/useGetTasksQuery";
+import type { ProviderHealthResponse } from "@/app/api/queries/useProviderHealthQuery";
 import { useDoclingHealth } from "@/components/docling-health-banner";
 import IBMLogo from "@/components/logo/ibm-logo";
 import OllamaLogo from "@/components/logo/ollama-logo";
@@ -26,8 +28,6 @@ import { IBMOnboarding } from "./ibm-onboarding";
 import { OllamaOnboarding } from "./ollama-onboarding";
 import { OpenAIOnboarding } from "./openai-onboarding";
 import { TabTrigger } from "./tab-trigger";
-import { ProviderHealthResponse } from "@/app/api/queries/useProviderHealthQuery";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface OnboardingCardProps {
 	onComplete: () => void;
@@ -57,18 +57,10 @@ const OnboardingCard = ({
 
 	const [isLoadingModels, setIsLoadingModels] = useState<boolean>(false);
 
-	const [loadingStep, setLoadingStep] = useState<number>(0);
-
 	const queryClient = useQueryClient();
 
-	// Reset loading step when models start loading
-	useEffect(() => {
-		if (isLoadingModels) {
-			setLoadingStep(0);
-		}
-	}, [isLoadingModels]);
-
 	const handleSetModelProvider = (provider: string) => {
+		setIsLoadingModels(false);
 		setModelProvider(provider);
 		setSettings({
 			model_provider: provider,
@@ -138,7 +130,7 @@ const OnboardingCard = ({
 				status: "healthy",
 				message: "Provider is configured and working correctly",
 				provider: settings.model_provider,
-			  };
+			};
 			queryClient.setQueryData(["provider", "health"], healthData);
 			setCurrentStep(0);
 			setError(null);
