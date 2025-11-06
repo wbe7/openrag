@@ -55,16 +55,8 @@ const OnboardingCard = ({
 
 	const [isLoadingModels, setIsLoadingModels] = useState<boolean>(false);
 
-	const [loadingStep, setLoadingStep] = useState<number>(0);
-
-	// Reset loading step when models start loading
-	useEffect(() => {
-		if (isLoadingModels) {
-			setLoadingStep(0);
-		}
-	}, [isLoadingModels]);
-
 	const handleSetModelProvider = (provider: string) => {
+		setIsLoadingModels(false);
 		setModelProvider(provider);
 		setSettings({
 			model_provider: provider,
