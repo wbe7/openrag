@@ -52,6 +52,7 @@ async def get_settings(request, session_manager):
         openrag_config = get_openrag_config()
 
         provider_config = openrag_config.provider
+        embedding_provider_config = openrag_config.embedding_provider
         knowledge_config = openrag_config.knowledge
         agent_config = openrag_config.agent
         # Return public settings that are safe to expose to frontend
@@ -66,6 +67,12 @@ async def get_settings(request, session_manager):
                 "model_provider": provider_config.model_provider,
                 "endpoint": provider_config.endpoint if provider_config.endpoint else None,
                 "project_id": provider_config.project_id if provider_config.project_id else None,
+                # Note: API key is not exposed for security
+            },
+            "embedding_provider": {
+                "model_provider": embedding_provider_config.model_provider,
+                "endpoint": embedding_provider_config.endpoint if embedding_provider_config.endpoint else None,
+                "project_id": embedding_provider_config.project_id if embedding_provider_config.project_id else None,
                 # Note: API key is not exposed for security
             },
             "knowledge": {
@@ -189,7 +196,7 @@ async def update_settings(request, session_manager):
             "model_provider",
             "api_key",
             "endpoint",
-            "project_id",
+            "project_id", # TODO: Add embedding provider configuration
         }
 
         # Check for invalid fields
@@ -616,6 +623,8 @@ async def onboarding(request, flows_service):
         # Update configuration
         config_updated = False
 
+        is_embedding = False
+
         # Update provider settings
         if "model_provider" in body:
             if (
@@ -647,6 +656,7 @@ async def onboarding(request, flows_service):
                     {"error": "embedding_model must be a non-empty string"},
                     status_code=400,
                 )
+            is_embedding = True
             current_config.knowledge.embedding_model = body["embedding_model"].strip()
             config_updated = True
 
@@ -714,6 +724,14 @@ async def onboarding(request, flows_service):
                 {"error": str(e)},
                 status_code=400,
             )
+
+        if not is_embedding:
+            return JSONResponse(
+            {
+                "message": "Onboarding LLM provider configuration updated successfully",
+                "edited": True,
+            }
+        )
 
         # Initialize the OpenSearch index now that we have the embedding model configured
         try:
