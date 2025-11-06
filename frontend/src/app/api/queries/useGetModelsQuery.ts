@@ -56,6 +56,7 @@ export const useGetOpenAIModelsQuery = (
       queryFn: getOpenAIModels,
       staleTime: 0, // Always fetch fresh data
       gcTime: 0, // Don't cache results
+      retry: false,
       ...options,
     },
     queryClient,
@@ -90,6 +91,7 @@ export const useGetOllamaModelsQuery = (
       queryFn: getOllamaModels,
       staleTime: 0, // Always fetch fresh data
       gcTime: 0, // Don't cache results
+      retry: false,
       ...options,
     },
     queryClient,
@@ -130,6 +132,7 @@ export const useGetIBMModelsQuery = (
       queryFn: getIBMModels,
       staleTime: 0, // Always fetch fresh data
       gcTime: 0, // Don't cache results
+      retry: false,
       ...options,
     },
     queryClient,
