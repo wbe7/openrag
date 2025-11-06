@@ -9,8 +9,8 @@ export interface OnboardingVariables {
   api_key?: string;
   endpoint?: string;
   project_id?: string;
-  embedding_model: string;
-  llm_model: string;
+  embedding_model?: string;
+  llm_model?: string;
   sample_data?: boolean;
 }
 
