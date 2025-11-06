@@ -30,6 +30,7 @@ import { TabTrigger } from "./tab-trigger";
 interface OnboardingCardProps {
 	onComplete: () => void;
 	isCompleted?: boolean;
+	isEmbedding?: boolean;
 	setIsLoadingModels?: (isLoading: boolean) => void;
 	setLoadingStatus?: (status: string[]) => void;
 }
@@ -45,6 +46,7 @@ const TOTAL_PROVIDER_STEPS = STEP_LIST.length;
 
 const OnboardingCard = ({
 	onComplete,
+	isEmbedding = false,
 	isCompleted = false,
 }: OnboardingCardProps) => {
 	const { isHealthy: isDoclingHealthy } = useDoclingHealth();
@@ -137,8 +139,8 @@ const OnboardingCard = ({
 	const handleComplete = () => {
 		if (
 			!settings.model_provider ||
-			!settings.llm_model ||
-			!settings.embedding_model
+			(isEmbedding && !settings.embedding_model) ||
+			(!isEmbedding && !settings.llm_model)
 		) {
 			toast.error("Please complete all required fields");
 			return;
@@ -150,8 +152,6 @@ const OnboardingCard = ({
 		// Prepare onboarding data
 		const onboardingData: OnboardingVariables = {
 			model_provider: settings.model_provider,
-			llm_model: settings.llm_model,
-			embedding_model: settings.embedding_model,
 			sample_data: sampleDataset,
 		};
 
@@ -170,6 +170,12 @@ const OnboardingCard = ({
 			onboardingData.project_id = settings.project_id;
 		}
 
+		if (isEmbedding) {
+			onboardingData.embedding_model = settings.embedding_model;
+		} else {
+			onboardingData.llm_model = settings.llm_model;
+		}
+
 		// Record the start time when user clicks Complete
 		setProcessingStartTime(Date.now());
 		onboardingMutation.mutate(onboardingData);
@@ -177,7 +183,8 @@ const OnboardingCard = ({
 	};
 
 	const isComplete =
-		!!settings.llm_model && !!settings.embedding_model && isDoclingHealthy;
+		(isEmbedding && !!settings.embedding_model) ||
+		(!isEmbedding && !!settings.llm_model) && isDoclingHealthy;
 
 	return (
 		<AnimatePresence mode="wait">
@@ -311,6 +318,7 @@ const OnboardingCard = ({
 										sampleDataset={sampleDataset}
 										setSampleDataset={setSampleDataset}
 										setIsLoadingModels={setIsLoadingModels}
+										isEmbedding={isEmbedding}
 									/>
 								</TabsContent>
 								<TabsContent value="watsonx">
@@ -319,6 +327,7 @@ const OnboardingCard = ({
 										sampleDataset={sampleDataset}
 										setSampleDataset={setSampleDataset}
 										setIsLoadingModels={setIsLoadingModels}
+										isEmbedding={isEmbedding}
 									/>
 								</TabsContent>
 								<TabsContent value="ollama">
@@ -327,6 +336,7 @@ const OnboardingCard = ({
 										sampleDataset={sampleDataset}
 										setSampleDataset={setSampleDataset}
 										setIsLoadingModels={setIsLoadingModels}
+										isEmbedding={isEmbedding}
 									/>
 								</TabsContent>
 							</Tabs>
