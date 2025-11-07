@@ -243,7 +243,7 @@ class FlowsService:
             logger.error(f"Error while resetting {flow_type} flow", error=str(e))
             return {"success": False, "error": f"Error: {str(e)}"}
 
-    async def assign_model_provider(self, provider: str):
+    async def assign_model_provider(self, provider: str, is_embedding: bool = False):
         """
         Replace OpenAI components with the specified provider components in all flows
 
@@ -309,7 +309,7 @@ class FlowsService:
             for config in flow_configs:
                 try:
                     result = await self._update_flow_components(
-                        config, llm_template, embedding_template, llm_text_template
+                        config, llm_template, embedding_template, llm_text_template, is_embedding
                     )
                     results.append(result)
                     logger.info(f"Successfully updated {config['name']} flow")
@@ -390,7 +390,7 @@ class FlowsService:
         return llm_template, embedding_template, llm_text_template
 
     async def _update_flow_components(
-        self, config, llm_template, embedding_template, llm_text_template
+        self, config, llm_template, embedding_template, llm_text_template, is_embedding: bool = False
     ):
         """Update components in a specific flow"""
         flow_name = config["name"]
@@ -416,7 +416,7 @@ class FlowsService:
         components_updated = []
 
         # Replace embedding component
-        if not DISABLE_INGEST_WITH_LANGFLOW:
+        if not DISABLE_INGEST_WITH_LANGFLOW and is_embedding:
             embedding_node, _ = self._find_node_in_flow(flow_data, display_name=old_embedding_name)
             if embedding_node:
                 # Preserve position
@@ -433,7 +433,7 @@ class FlowsService:
                 )
 
         # Replace LLM component (if exists in this flow)
-        if old_llm_name:
+        if old_llm_name and not is_embedding:
             llm_node, _ = self._find_node_in_flow(flow_data, display_name=old_llm_name)
             if llm_node:
                 # Preserve position
@@ -448,7 +448,7 @@ class FlowsService:
                 components_updated.append(f"llm: {old_llm_name} -> {new_llm_id}")
 
         # Replace LLM component (if exists in this flow)
-        if old_llm_text_name:
+        if old_llm_text_name and not is_embedding:
             llm_text_node, _ = self._find_node_in_flow(flow_data, display_name=old_llm_text_name)
             if llm_text_node:
                 # Preserve position
@@ -461,6 +461,7 @@ class FlowsService:
                 # Replace in flow
                 self._replace_node_in_flow(flow_data, old_llm_text_name, new_llm_text_node)
                 components_updated.append(f"llm: {old_llm_text_name} -> {new_llm_text_id}")
+
 
         old_embedding_id = None
         old_llm_id = None
@@ -476,7 +477,7 @@ class FlowsService:
         flow_json_str = json.dumps(flow_data)
 
         # Replace embedding ID references
-        if not DISABLE_INGEST_WITH_LANGFLOW:
+        if not DISABLE_INGEST_WITH_LANGFLOW and is_embedding:
             flow_json_str = re.sub(
                 re.escape(old_embedding_id), new_embedding_id, flow_json_str
             )
@@ -487,7 +488,7 @@ class FlowsService:
             )
 
         # Replace LLM ID references (if applicable)
-        if old_llm_id:
+        if old_llm_id and not is_embedding:
             flow_json_str = re.sub(
                 re.escape(old_llm_id), new_llm_id, flow_json_str
             )
@@ -499,7 +500,7 @@ class FlowsService:
             )
         
         # Replace text LLM ID references (if applicable)
-        if old_llm_text_id:
+        if old_llm_text_id and not is_embedding:
             flow_json_str = re.sub(
                 re.escape(old_llm_text_id), new_llm_text_id, flow_json_str
             )
@@ -682,8 +683,8 @@ class FlowsService:
     async def change_langflow_model_value(
         self,
         provider: str,
-        embedding_model: str,
-        llm_model: str,
+        embedding_model: str = None,
+        llm_model: str = None,
         endpoint: str = None,
         flow_configs: list = None,
     ):
@@ -734,7 +735,7 @@ class FlowsService:
 
             # Determine target component IDs based on provider
             target_embedding_name, target_llm_name = self._get_provider_component_ids(
-                provider
+                provider,
             )
 
             results = []
@@ -745,8 +746,8 @@ class FlowsService:
                     result = await self._update_provider_components(
                         config,
                         provider,
-                        target_embedding_name,
-                        target_llm_name,
+                        target_embedding_name if embedding_model else None,
+                        target_llm_name if llm_model else None,
                         embedding_model,
                         llm_model,
                         endpoint,
@@ -802,10 +803,10 @@ class FlowsService:
         self,
         config,
         provider: str,
-        target_embedding_name: str,
-        target_llm_name: str,
-        embedding_model: str,
-        llm_model: str,
+        target_embedding_name: str = None,
+        target_llm_name: str = None,
+        embedding_model: str = None,
+        llm_model: str = None,
         endpoint: str = None,
     ):
         """Update provider components and their dropdown values in a flow"""
@@ -825,7 +826,7 @@ class FlowsService:
         updates_made = []
 
         # Update embedding component
-        if not DISABLE_INGEST_WITH_LANGFLOW:
+        if not DISABLE_INGEST_WITH_LANGFLOW and target_embedding_name and embedding_model:
             embedding_node, _ = self._find_node_in_flow(flow_data, display_name=target_embedding_name)
             if embedding_node:
                 if self._update_component_fields(
@@ -834,7 +835,7 @@ class FlowsService:
                     updates_made.append(f"embedding model: {embedding_model}")
 
         # Update LLM component (if exists in this flow)
-        if target_llm_name:
+        if target_llm_name and llm_model:
             llm_node, _ = self._find_node_in_flow(flow_data, display_name=target_llm_name)
             if llm_node:
                 if self._update_component_fields(

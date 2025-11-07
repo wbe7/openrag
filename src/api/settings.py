@@ -737,51 +737,11 @@ async def onboarding(request, flows_service):
                 status_code=400,
             )
 
-        if not is_embedding:
-            return JSONResponse(
-            {
-                "message": "Onboarding LLM provider configuration updated successfully",
-                "edited": True,
-            }
-        )
-
-        # Initialize the OpenSearch index now that we have the embedding model configured
-        try:
-            # Import here to avoid circular imports
-            from main import init_index
-
-            logger.info(
-                "Initializing OpenSearch index after onboarding configuration"
-            )
-            await init_index()
-            logger.info("OpenSearch index initialization completed successfully")
-        except Exception as e:
-            if isinstance(e, ValueError):
-                logger.error(
-                    "Failed to initialize OpenSearch index after onboarding",
-                    error=str(e),
-                )
-                return JSONResponse(
-                    {
-                        "error": str(e),
-                        "edited": True,
-                    },
-                    status_code=400,
-                )
-            logger.error(
-                "Failed to initialize OpenSearch index after onboarding",
-                error=str(e),
-            )
-            # Don't fail the entire onboarding process if index creation fails
-            # The application can still work, but document operations may fail
-
-        # Save the updated configuration (this will mark it as edited)
-        
         # If model_provider was updated, assign the new provider to flows
         if "model_provider" in body:
             provider = body["model_provider"].strip().lower()
             try:
-                flow_result = await flows_service.assign_model_provider(provider)
+                flow_result = await flows_service.assign_model_provider(provider, is_embedding)
 
                 if flow_result.get("success"):
                     logger.info(
@@ -855,32 +815,64 @@ async def onboarding(request, flows_service):
                 )
                 raise
 
-        # Handle sample data ingestion if requested
-        if should_ingest_sample_data:
+        if is_embedding:
+            # Initialize the OpenSearch index now that we have the embedding model configured
             try:
-                # Import the function here to avoid circular imports
-                from main import ingest_default_documents_when_ready
+                # Import here to avoid circular imports
+                from main import init_index
 
-                # Get services from the current app state
-                # We need to access the app instance to get services
-                app = request.scope.get("app")
-                if app and hasattr(app.state, "services"):
-                    services = app.state.services
-                    logger.info(
-                        "Starting sample data ingestion as requested in onboarding"
-                    )
-                    await ingest_default_documents_when_ready(services)
-                    logger.info("Sample data ingestion completed successfully")
-                else:
-                    logger.error(
-                        "Could not access services for sample data ingestion"
-                    )
-
-            except Exception as e:
-                logger.error(
-                    "Failed to complete sample data ingestion", error=str(e)
+                logger.info(
+                    "Initializing OpenSearch index after onboarding configuration"
                 )
-                # Don't fail the entire onboarding process if sample data fails
+                await init_index()
+                logger.info("OpenSearch index initialization completed successfully")
+            except Exception as e:
+                if isinstance(e, ValueError):
+                    logger.error(
+                        "Failed to initialize OpenSearch index after onboarding",
+                        error=str(e),
+                    )
+                    return JSONResponse(
+                        {
+                            "error": str(e),
+                            "edited": True,
+                        },
+                        status_code=400,
+                    )
+                logger.error(
+                    "Failed to initialize OpenSearch index after onboarding",
+                    error=str(e),
+                )
+                # Don't fail the entire onboarding process if index creation fails
+                # The application can still work, but document operations may fail
+
+            # Handle sample data ingestion if requested
+            if should_ingest_sample_data:
+                try:
+                    # Import the function here to avoid circular imports
+                    from main import ingest_default_documents_when_ready
+
+                    # Get services from the current app state
+                    # We need to access the app instance to get services
+                    app = request.scope.get("app")
+                    if app and hasattr(app.state, "services"):
+                        services = app.state.services
+                        logger.info(
+                            "Starting sample data ingestion as requested in onboarding"
+                        )
+                        await ingest_default_documents_when_ready(services)
+                        logger.info("Sample data ingestion completed successfully")
+                    else:
+                        logger.error(
+                            "Could not access services for sample data ingestion"
+                        )
+
+                except Exception as e:
+                    logger.error(
+                        "Failed to complete sample data ingestion", error=str(e)
+                    )
+                    # Don't fail the entire onboarding process if sample data fails
+            
         if config_manager.save_config_file(current_config):
             updated_fields = [
                 k for k in body.keys() if k != "sample_data"
