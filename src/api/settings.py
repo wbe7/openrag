@@ -625,27 +625,6 @@ async def onboarding(request, flows_service):
 
         is_embedding = False
 
-        # Update provider settings
-        if "model_provider" in body:
-            if (
-                not isinstance(body["model_provider"], str)
-                or not body["model_provider"].strip()
-            ):
-                return JSONResponse(
-                    {"error": "model_provider must be a non-empty string"},
-                    status_code=400,
-                )
-            current_config.provider.model_provider = body["model_provider"].strip()
-            config_updated = True
-
-        if "api_key" in body:
-            if not isinstance(body["api_key"], str):
-                return JSONResponse(
-                    {"error": "api_key must be a string"}, status_code=400
-                )
-            current_config.provider.api_key = body["api_key"]
-            config_updated = True
-
         # Update knowledge settings
         if "embedding_model" in body and not DISABLE_INGEST_WITH_LANGFLOW:
             if (
@@ -659,6 +638,33 @@ async def onboarding(request, flows_service):
             is_embedding = True
             current_config.knowledge.embedding_model = body["embedding_model"].strip()
             config_updated = True
+        # Update provider settings
+        if "model_provider" in body:
+            if (
+                not isinstance(body["model_provider"], str)
+                or not body["model_provider"].strip()
+            ):
+                return JSONResponse(
+                    {"error": "model_provider must be a non-empty string"},
+                    status_code=400,
+                )
+            if is_embedding:
+                current_config.embedding_provider.model_provider = body["model_provider"].strip()
+            else:
+                current_config.provider.model_provider = body["model_provider"].strip()
+            config_updated = True
+
+        if "api_key" in body:
+            if not isinstance(body["api_key"], str):
+                return JSONResponse(
+                    {"error": "api_key must be a string"}, status_code=400
+                )
+            if is_embedding:
+                current_config.embedding_provider.api_key = body["api_key"]
+            else:
+                current_config.provider.api_key = body["api_key"]
+            config_updated = True
+
 
         # Update agent settings
         if "llm_model" in body:
@@ -674,7 +680,10 @@ async def onboarding(request, flows_service):
                 return JSONResponse(
                     {"error": "endpoint must be a non-empty string"}, status_code=400
                 )
-            current_config.provider.endpoint = body["endpoint"].strip()
+            if is_embedding:
+                current_config.embedding_provider.endpoint = body["endpoint"].strip()
+            else:
+                current_config.provider.endpoint = body["endpoint"].strip()
             config_updated = True
 
         if "project_id" in body:
@@ -685,7 +694,10 @@ async def onboarding(request, flows_service):
                 return JSONResponse(
                     {"error": "project_id must be a non-empty string"}, status_code=400
                 )
-            current_config.provider.project_id = body["project_id"].strip()
+            if is_embedding:
+                current_config.embedding_provider.project_id = body["project_id"].strip()
+            else:
+                current_config.provider.project_id = body["project_id"].strip()
             config_updated = True
 
         # Handle sample_data

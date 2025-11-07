@@ -34,23 +34,24 @@ async def validate_provider_setup(
     try:
         logger.info(f"Starting validation for provider: {provider_lower}")
 
-        # Test completion with tool calling
-        await test_completion_with_tools(
-            provider=provider_lower,
-            api_key=api_key,
-            llm_model=llm_model,
-            endpoint=endpoint,
-            project_id=project_id,
-        )
-
-        # Test embedding
-        await test_embedding(
-            provider=provider_lower,
-            api_key=api_key,
-            embedding_model=embedding_model,
-            endpoint=endpoint,
-            project_id=project_id,
-        )
+        if llm_model:
+            # Test completion with tool calling
+            await test_completion_with_tools(
+                provider=provider_lower,
+                api_key=api_key,
+                llm_model=llm_model,
+                endpoint=endpoint,
+                project_id=project_id,
+            )
+        if embedding_model:
+            # Test embedding
+            await test_embedding(
+                provider=provider_lower,
+                api_key=api_key,
+                embedding_model=embedding_model,
+                endpoint=endpoint,
+                project_id=project_id,
+            )
 
         logger.info(f"Validation successful for provider: {provider_lower}")
 
