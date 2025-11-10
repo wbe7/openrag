@@ -12,6 +12,7 @@ import {
 import { useGetTasksQuery } from "@/app/api/queries/useGetTasksQuery";
 import type { ProviderHealthResponse } from "@/app/api/queries/useProviderHealthQuery";
 import { useDoclingHealth } from "@/components/docling-health-banner";
+import AnthropicLogo from "@/components/logo/anthropic-logo";
 import IBMLogo from "@/components/logo/ibm-logo";
 import OllamaLogo from "@/components/logo/ollama-logo";
 import OpenAILogo from "@/components/logo/openai-logo";
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { AnimatedProviderSteps } from "./animated-provider-steps";
+import { AnthropicOnboarding } from "./anthropic-onboarding";
 import { IBMOnboarding } from "./ibm-onboarding";
 import { OllamaOnboarding } from "./ollama-onboarding";
 import { OpenAIOnboarding } from "./openai-onboarding";
@@ -76,7 +78,9 @@ const OnboardingCard = ({
 		setError(null);
 	};
 
-	const totalSteps = isEmbedding ? EMBEDDING_STEP_LIST.length : STEP_LIST.length;
+	const totalSteps = isEmbedding
+		? EMBEDDING_STEP_LIST.length
+		: STEP_LIST.length;
 
 	const [settings, setSettings] = useState<OnboardingVariables>({
 		model_provider: modelProvider,
@@ -141,7 +145,7 @@ const OnboardingCard = ({
 			};
 			queryClient.setQueryData(["provider", "health"], healthData);
 			setError(null);
-			if (!isEmbedding){
+			if (!isEmbedding) {
 				setCurrentStep(totalSteps);
 				setTimeout(() => {
 					onComplete();
@@ -208,7 +212,7 @@ const OnboardingCard = ({
 
 	const isComplete =
 		(isEmbedding && !!settings.embedding_model) ||
-		(!isEmbedding && !!settings.llm_model) && isDoclingHealthy;
+		(!isEmbedding && !!settings.llm_model && isDoclingHealthy);
 
 	return (
 		<AnimatePresence mode="wait">
@@ -243,6 +247,40 @@ const OnboardingCard = ({
 								onValueChange={handleSetModelProvider}
 							>
 								<TabsList className="mb-4">
+									{!isEmbedding && (
+										<TabsTrigger
+											value="anthropic"
+											className={cn(
+												error &&
+													modelProvider === "anthropic" &&
+													"data-[state=active]:border-destructive",
+											)}
+										>
+											<TabTrigger
+												selected={modelProvider === "anthropic"}
+												isLoading={isLoadingModels}
+											>
+												<div
+													className={cn(
+														"flex items-center justify-center gap-2 w-8 h-8 rounded-md",
+														modelProvider === "anthropic"
+															? "bg-[#D97757]"
+															: "bg-muted",
+													)}
+												>
+													<AnthropicLogo
+														className={cn(
+															"w-4 h-4 shrink-0",
+															modelProvider === "anthropic"
+																? "text-black"
+																: "text-muted-foreground",
+														)}
+													/>
+												</div>
+												Anthropic
+											</TabTrigger>
+										</TabsTrigger>
+									)}
 									<TabsTrigger
 										value="openai"
 										className={cn(
@@ -336,6 +374,17 @@ const OnboardingCard = ({
 										</TabTrigger>
 									</TabsTrigger>
 								</TabsList>
+								{!isEmbedding && (
+									<TabsContent value="anthropic">
+										<AnthropicOnboarding
+											setSettings={setSettings}
+											sampleDataset={sampleDataset}
+											setSampleDataset={setSampleDataset}
+											setIsLoadingModels={setIsLoadingModels}
+											isEmbedding={isEmbedding}
+										/>
+									</TabsContent>
+								)}
 								<TabsContent value="openai">
 									<OpenAIOnboarding
 										setSettings={setSettings}

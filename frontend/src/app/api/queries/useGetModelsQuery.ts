@@ -20,6 +20,10 @@ export interface OpenAIModelsParams {
   apiKey?: string;
 }
 
+export interface AnthropicModelsParams {
+  apiKey?: string;
+}
+
 export interface OllamaModelsParams {
   endpoint?: string;
 }
@@ -54,6 +58,41 @@ export const useGetOpenAIModelsQuery = (
     {
       queryKey: ["models", "openai", params],
       queryFn: getOpenAIModels,
+      staleTime: 0, // Always fetch fresh data
+      gcTime: 0, // Don't cache results
+      retry: false,
+      ...options,
+    },
+    queryClient,
+  );
+
+  return queryResult;
+};
+
+export const useGetAnthropicModelsQuery = (
+  params?: AnthropicModelsParams,
+  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">,
+) => {
+  const queryClient = useQueryClient();
+
+  async function getAnthropicModels(): Promise<ModelsResponse> {
+    const url = new URL("/api/models/anthropic", window.location.origin);
+    if (params?.apiKey) {
+      url.searchParams.set("api_key", params.apiKey);
+    }
+
+    const response = await fetch(url.toString());
+    if (response.ok) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to fetch Anthropic models");
+    }
+  }
+
+  const queryResult = useQuery(
+    {
+      queryKey: ["models", "anthropic", params],
+      queryFn: getAnthropicModels,
       staleTime: 0, // Always fetch fresh data
       gcTime: 0, // Don't cache results
       retry: false,
