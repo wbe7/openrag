@@ -900,10 +900,12 @@ class FlowsService:
         if "model" in template:
             template["model"]["value"] = model_value
             template["model"]["options"] = [model_value]
+            template["model"]["advanced"] = False
             updated = True
         elif "model_name" in template:
             template["model_name"]["value"] = model_value
             template["model_name"]["options"] = [model_value]
+            template["model_name"]["advanced"] = False
             updated = True
 
         # Update endpoint/URL field based on provider
@@ -913,47 +915,55 @@ class FlowsService:
                 template["base_url"]["value"] = endpoint
                 template["base_url"]["options"] = [endpoint]
                 template["base_url"]["show"] = True
+                template["base_url"]["advanced"] = False
                 updated = True
             if provider == "watsonx" and "base_url_ibm_watsonx" in template:
                 # Watson uses "url" field
                 template["base_url_ibm_watsonx"]["value"] = endpoint
                 template["base_url_ibm_watsonx"]["show"] = True
+                template["base_url_ibm_watsonx"]["advanced"] = False
                 updated = True
 
         if provider == "openai" and "api_key" in template:
             template["api_key"]["value"] = "OPENAI_API_KEY"
             template["api_key"]["load_from_db"] = True
             template["api_key"]["show"] = True
+            template["api_key"]["advanced"] = False
             updated = True
 
         if provider == "ollama" and "base_url" in template:
             template["base_url"]["value"] = "OLLAMA_BASE_URL"
             template["base_url"]["load_from_db"] = True
             template["base_url"]["show"] = True
+            template["base_url"]["advanced"] = False
             updated = True
         
         if provider == "ollama" and "api_base" in template:
             template["api_base"]["value"] = "OLLAMA_BASE_URL"
             template["api_base"]["load_from_db"] = True
             template["api_base"]["show"] = True
+            template["api_base"]["advanced"] = False
             updated = True
 
         if provider == "ollama" and "ollama_base_url" in template:
             template["ollama_base_url"]["value"] = "OLLAMA_BASE_URL"
             template["ollama_base_url"]["load_from_db"] = True
             template["ollama_base_url"]["show"] = True
+            template["ollama_base_url"]["advanced"] = False
             updated = True
 
         if provider == "watsonx" and "project_id" in template:
             template["project_id"]["value"] = "WATSONX_PROJECT_ID"
             template["project_id"]["load_from_db"] = True
             template["project_id"]["show"] = True
+            template["project_id"]["advanced"] = False
             updated = True
         
         if provider == "watsonx" and "api_key" in template:
             template["api_key"]["value"] = "WATSONX_API_KEY"
             template["api_key"]["load_from_db"] = True
             template["api_key"]["show"] = True
+            template["api_key"]["advanced"] = False
             updated = True
 
         return updated
