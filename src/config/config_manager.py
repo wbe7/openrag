@@ -33,7 +33,7 @@ class EmbeddingProviderConfig:
 class KnowledgeConfig:
     """Knowledge/ingestion configuration."""
 
-    embedding_model: str = "text-embedding-3-small"
+    embedding_model: str = ""
     chunk_size: int = 1000
     chunk_overlap: int = 200
     table_structure: bool = True
@@ -45,7 +45,7 @@ class KnowledgeConfig:
 class AgentConfig:
     """Agent configuration."""
 
-    llm_model: str = "gpt-4o-mini"
+    llm_model: str = ""
     system_prompt: str = "You are a helpful AI assistant with access to a knowledge base. Answer questions based on the provided context."
 
 
