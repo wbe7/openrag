@@ -96,7 +96,7 @@ const OnboardingCard = ({
 
 	// Monitor tasks and call onComplete when all tasks are done
 	useEffect(() => {
-		if (currentStep === null || !tasks) {
+		if (currentStep === null || !tasks || !isEmbedding) {
 			return;
 		}
 
@@ -121,7 +121,7 @@ const OnboardingCard = ({
 				onComplete();
 			}, 1000);
 		}
-	}, [tasks, currentStep, onComplete, isCompleted]);
+	}, [tasks, currentStep, onComplete, isCompleted, isEmbedding]);
 
 	// Mutations
 	const onboardingMutation = useOnboardingMutation({
@@ -134,8 +134,15 @@ const OnboardingCard = ({
 				provider: settings.model_provider,
 			};
 			queryClient.setQueryData(["provider", "health"], healthData);
-			setCurrentStep(0);
 			setError(null);
+			if (!isEmbedding){
+				setCurrentStep(TOTAL_PROVIDER_STEPS);
+				setTimeout(() => {
+					onComplete();
+				}, 1000);
+			} else {
+				setCurrentStep(0);
+			}
 		},
 		onError: (error) => {
 			setError(error.message);
