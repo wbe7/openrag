@@ -13,7 +13,7 @@ async def check_provider_health(request):
     Check if the configured provider is healthy and properly validated.
     
     Query parameters:
-        provider (optional): Provider to check ('openai', 'ollama', 'watsonx').
+        provider (optional): Provider to check ('openai', 'ollama', 'watsonx', 'anthropic').
                            If not provided, checks the currently configured provider.
     
     Returns:
@@ -36,7 +36,7 @@ async def check_provider_health(request):
             provider = current_config.provider.model_provider
         
         # Validate provider name
-        valid_providers = ["openai", "ollama", "watsonx"]
+        valid_providers = ["openai", "ollama", "watsonx", "anthropic"]
         if provider not in valid_providers:
             return JSONResponse(
                 {

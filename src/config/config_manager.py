@@ -23,7 +23,7 @@ class ProviderConfig:
 class EmbeddingProviderConfig:
     """Embedding provider configuration."""
 
-    model_provider: str = "openai"  # openai, ollama, etc.
+    model_provider: str = "openai"  # openai, ollama, anthropic etc.
     api_key: str = ""
     endpoint: str = ""  # For providers like Watson/IBM that need custom endpoints
     project_id: str = ""  # For providers like Watson/IBM that need project IDs

@@ -244,293 +244,293 @@ class FlowsService:
             logger.error(f"Error while resetting {flow_type} flow", error=str(e))
             return {"success": False, "error": f"Error: {str(e)}"}
 
-    async def assign_model_provider(self, provider: str, is_embedding: bool = False):
-        """
-        Replace OpenAI components with the specified provider components in all flows
+    # async def assign_model_provider(self, provider: str, is_embedding: bool = False):
+    #     """
+    #     Replace OpenAI components with the specified provider components in all flows
 
-        Args:
-            provider: "watsonx", "ollama", or "openai"
+    #     Args:
+    #         provider: "watsonx", "ollama", "openai" or "anthropic"
 
-        Returns:
-            dict: Success/error response with details for each flow
-        """
-        if provider not in ["watsonx", "ollama", "openai"]:
-            raise ValueError("provider must be 'watsonx', 'ollama', or 'openai'")
+    #     Returns:
+    #         dict: Success/error response with details for each flow
+    #     """
+    #     if provider not in ["watsonx", "ollama", "openai", "anthropic"]:
+    #         raise ValueError("provider must be 'watsonx', 'ollama', 'openai', or 'anthropic'")
 
-        if provider == "openai":
-            logger.info("Provider is already OpenAI, no changes needed")
-            return {
-                "success": True,
-                "message": "Provider is already OpenAI, no changes needed",
-            }
+    #     if provider == "openai":
+    #         logger.info("Provider is already OpenAI, no changes needed")
+    #         return {
+    #             "success": True,
+    #             "message": "Provider is already OpenAI, no changes needed",
+    #         }
 
-        try:
-            # Load component templates based on provider
-            llm_template, embedding_template, llm_text_template = (
-                self._load_component_templates(provider)
-            )
+    #     try:
+    #         # Load component templates based on provider
+    #         llm_template, embedding_template, llm_text_template = (
+    #             self._load_component_templates(provider)
+    #         )
 
-            logger.info(f"Assigning {provider} components")
+    #         logger.info(f"Assigning {provider} components")
 
-            # Define flow configurations (removed hardcoded file paths)
-            flow_configs = [
-                {
-                    "name": "nudges",
-                    "flow_id": NUDGES_FLOW_ID,
-                    "embedding_name": OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME,
-                    "llm_text_name": OPENAI_LLM_COMPONENT_DISPLAY_NAME,
-                    "llm_name": None,
-                },
-                {
-                    "name": "retrieval",
-                    "flow_id": LANGFLOW_CHAT_FLOW_ID,
-                    "embedding_name": OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME,
-                    "llm_name": OPENAI_LLM_COMPONENT_DISPLAY_NAME,
-                    "llm_text_name": None,
-                },
-                {
-                    "name": "ingest",
-                    "flow_id": LANGFLOW_INGEST_FLOW_ID,
-                    "embedding_name": OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME,
-                    "llm_name": None,  # Ingestion flow might not have LLM
-                    "llm_text_name": None,
-                },
-                {
-                    "name": "url_ingest",
-                    "flow_id": LANGFLOW_URL_INGEST_FLOW_ID,
-                    "embedding_name": OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME,
-                    "llm_name": None,
-                    "llm_text_name": None,
-                },
-            ]
+    #         # Define flow configurations (removed hardcoded file paths)
+    #         flow_configs = [
+    #             {
+    #                 "name": "nudges",
+    #                 "flow_id": NUDGES_FLOW_ID,
+    #                 "embedding_name": OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME,
+    #                 "llm_text_name": OPENAI_LLM_COMPONENT_DISPLAY_NAME,
+    #                 "llm_name": None,
+    #             },
+    #             {
+    #                 "name": "retrieval",
+    #                 "flow_id": LANGFLOW_CHAT_FLOW_ID,
+    #                 "embedding_name": OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME,
+    #                 "llm_name": OPENAI_LLM_COMPONENT_DISPLAY_NAME,
+    #                 "llm_text_name": None,
+    #             },
+    #             {
+    #                 "name": "ingest",
+    #                 "flow_id": LANGFLOW_INGEST_FLOW_ID,
+    #                 "embedding_name": OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME,
+    #                 "llm_name": None,  # Ingestion flow might not have LLM
+    #                 "llm_text_name": None,
+    #             },
+    #             {
+    #                 "name": "url_ingest",
+    #                 "flow_id": LANGFLOW_URL_INGEST_FLOW_ID,
+    #                 "embedding_name": OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME,
+    #                 "llm_name": None,
+    #                 "llm_text_name": None,
+    #             },
+    #         ]
 
-            results = []
+    #         results = []
 
-            # Process each flow sequentially
-            for config in flow_configs:
-                try:
-                    result = await self._update_flow_components(
-                        config, llm_template, embedding_template, llm_text_template, is_embedding
-                    )
-                    results.append(result)
-                    logger.info(f"Successfully updated {config['name']} flow")
-                except Exception as e:
-                    error_msg = f"Failed to update {config['name']} flow: {str(e)}"
-                    logger.error(error_msg)
-                    results.append(
-                        {"flow": config["name"], "success": False, "error": error_msg}
-                    )
-                    # Continue with other flows even if one fails
+    #         # Process each flow sequentially
+    #         for config in flow_configs:
+    #             try:
+    #                 result = await self._update_flow_components(
+    #                     config, llm_template, embedding_template, llm_text_template, is_embedding
+    #                 )
+    #                 results.append(result)
+    #                 logger.info(f"Successfully updated {config['name']} flow")
+    #             except Exception as e:
+    #                 error_msg = f"Failed to update {config['name']} flow: {str(e)}"
+    #                 logger.error(error_msg)
+    #                 results.append(
+    #                     {"flow": config["name"], "success": False, "error": error_msg}
+    #                 )
+    #                 # Continue with other flows even if one fails
 
-            # Check if all flows were successful
-            all_success = all(r.get("success", False) for r in results)
+    #         # Check if all flows were successful
+    #         all_success = all(r.get("success", False) for r in results)
 
-            return {
-                "success": all_success,
-                "message": f"Model provider assignment to {provider} {'completed' if all_success else 'completed with errors'}",
-                "provider": provider,
-                "results": results,
-            }
+    #         return {
+    #             "success": all_success,
+    #             "message": f"Model provider assignment to {provider} {'completed' if all_success else 'completed with errors'}",
+    #             "provider": provider,
+    #             "results": results,
+    #         }
 
-        except Exception as e:
-            logger.error(f"Error assigning model provider {provider}", error=str(e))
-            return {
-                "success": False,
-                "error": f"Failed to assign model provider: {str(e)}",
-            }
+    #     except Exception as e:
+    #         logger.error(f"Error assigning model provider {provider}", error=str(e))
+    #         return {
+    #             "success": False,
+    #             "error": f"Failed to assign model provider: {str(e)}",
+    #         }
 
-    def _load_component_templates(self, provider: str):
-        """Load component templates for the specified provider"""
-        if provider == "watsonx":
-            llm_path = WATSONX_LLM_COMPONENT_PATH
-            embedding_path = WATSONX_EMBEDDING_COMPONENT_PATH
-            llm_text_path = WATSONX_LLM_TEXT_COMPONENT_PATH
-        elif provider == "ollama":
-            llm_path = OLLAMA_LLM_COMPONENT_PATH
-            embedding_path = OLLAMA_EMBEDDING_COMPONENT_PATH
-            llm_text_path = OLLAMA_LLM_TEXT_COMPONENT_PATH
-        else:
-            raise ValueError(f"Unsupported provider: {provider}")
+    # def _load_component_templates(self, provider: str):
+    #     """Load component templates for the specified provider"""
+    #     if provider == "watsonx":
+    #         llm_path = WATSONX_LLM_COMPONENT_PATH
+    #         embedding_path = WATSONX_EMBEDDING_COMPONENT_PATH
+    #         llm_text_path = WATSONX_LLM_TEXT_COMPONENT_PATH
+    #     elif provider == "ollama":
+    #         llm_path = OLLAMA_LLM_COMPONENT_PATH
+    #         embedding_path = OLLAMA_EMBEDDING_COMPONENT_PATH
+    #         llm_text_path = OLLAMA_LLM_TEXT_COMPONENT_PATH
+    #     else:
+    #         raise ValueError(f"Unsupported provider: {provider}")
 
-        # Get the project root directory (same logic as reset_langflow_flow)
-        current_file_dir = os.path.dirname(os.path.abspath(__file__))  # src/services/
-        src_dir = os.path.dirname(current_file_dir)  # src/
-        project_root = os.path.dirname(src_dir)  # project root
+    #     # Get the project root directory (same logic as reset_langflow_flow)
+    #     current_file_dir = os.path.dirname(os.path.abspath(__file__))  # src/services/
+    #     src_dir = os.path.dirname(current_file_dir)  # src/
+    #     project_root = os.path.dirname(src_dir)  # project root
 
-        # Load LLM template
-        llm_full_path = os.path.join(project_root, llm_path)
-        if not os.path.exists(llm_full_path):
-            raise FileNotFoundError(
-                f"LLM component template not found at: {llm_full_path}"
-            )
+    #     # Load LLM template
+    #     llm_full_path = os.path.join(project_root, llm_path)
+    #     if not os.path.exists(llm_full_path):
+    #         raise FileNotFoundError(
+    #             f"LLM component template not found at: {llm_full_path}"
+    #         )
 
-        with open(llm_full_path, "r") as f:
-            llm_template = json.load(f)
+    #     with open(llm_full_path, "r") as f:
+    #         llm_template = json.load(f)
 
-        # Load embedding template
-        embedding_full_path = os.path.join(project_root, embedding_path)
-        if not os.path.exists(embedding_full_path):
-            raise FileNotFoundError(
-                f"Embedding component template not found at: {embedding_full_path}"
-            )
+    #     # Load embedding template
+    #     embedding_full_path = os.path.join(project_root, embedding_path)
+    #     if not os.path.exists(embedding_full_path):
+    #         raise FileNotFoundError(
+    #             f"Embedding component template not found at: {embedding_full_path}"
+    #         )
 
-        with open(embedding_full_path, "r") as f:
-            embedding_template = json.load(f)
+    #     with open(embedding_full_path, "r") as f:
+    #         embedding_template = json.load(f)
 
-        # Load LLM Text template
-        llm_text_full_path = os.path.join(project_root, llm_text_path)
-        if not os.path.exists(llm_text_full_path):
-            raise FileNotFoundError(
-                f"LLM Text component template not found at: {llm_text_full_path}"
-            )
+    #     # Load LLM Text template
+    #     llm_text_full_path = os.path.join(project_root, llm_text_path)
+    #     if not os.path.exists(llm_text_full_path):
+    #         raise FileNotFoundError(
+    #             f"LLM Text component template not found at: {llm_text_full_path}"
+    #         )
 
-        with open(llm_text_full_path, "r") as f:
-            llm_text_template = json.load(f)
+    #     with open(llm_text_full_path, "r") as f:
+    #         llm_text_template = json.load(f)
 
-        logger.info(f"Loaded component templates for {provider}")
-        return llm_template, embedding_template, llm_text_template
+    #     logger.info(f"Loaded component templates for {provider}")
+    #     return llm_template, embedding_template, llm_text_template
 
-    async def _update_flow_components(
-        self, config, llm_template, embedding_template, llm_text_template, is_embedding: bool = False
-    ):
-        """Update components in a specific flow"""
-        flow_name = config["name"]
-        flow_id = config["flow_id"]
-        old_embedding_name = config["embedding_name"]
-        old_llm_name = config["llm_name"]
-        old_llm_text_name = config["llm_text_name"]
-        # Extract IDs from templates
-        new_llm_id = llm_template["data"]["id"]
-        new_embedding_id = embedding_template["data"]["id"]
-        new_llm_text_id = llm_text_template["data"]["id"]
+    # async def _update_flow_components(
+    #     self, config, llm_template, embedding_template, llm_text_template, is_embedding: bool = False
+    # ):
+    #     """Update components in a specific flow"""
+    #     flow_name = config["name"]
+    #     flow_id = config["flow_id"]
+    #     old_embedding_name = config["embedding_name"]
+    #     old_llm_name = config["llm_name"]
+    #     old_llm_text_name = config["llm_text_name"]
+    #     # Extract IDs from templates
+    #     new_llm_id = llm_template["data"]["id"]
+    #     new_embedding_id = embedding_template["data"]["id"]
+    #     new_llm_text_id = llm_text_template["data"]["id"]
 
-        # Dynamically find the flow file by ID
-        flow_path = self._find_flow_file_by_id(flow_id)
-        if not flow_path:
-            raise FileNotFoundError(f"Flow file not found for flow ID: {flow_id}")
+    #     # Dynamically find the flow file by ID
+    #     flow_path = self._find_flow_file_by_id(flow_id)
+    #     if not flow_path:
+    #         raise FileNotFoundError(f"Flow file not found for flow ID: {flow_id}")
 
-        # Load flow JSON
-        with open(flow_path, "r") as f:
-            flow_data = json.load(f)
+    #     # Load flow JSON
+    #     with open(flow_path, "r") as f:
+    #         flow_data = json.load(f)
 
-        # Find and replace components
-        components_updated = []
+    #     # Find and replace components
+    #     components_updated = []
 
-        # Replace embedding component
-        if not DISABLE_INGEST_WITH_LANGFLOW and is_embedding:
-            embedding_node, _ = self._find_node_in_flow(flow_data, display_name=old_embedding_name)
-            if embedding_node:
-                # Preserve position
-                original_position = embedding_node.get("position", {})
+    #     # Replace embedding component
+    #     if not DISABLE_INGEST_WITH_LANGFLOW and is_embedding:
+    #         embedding_node, _ = self._find_node_in_flow(flow_data, display_name=old_embedding_name)
+    #         if embedding_node:
+    #             # Preserve position
+    #             original_position = embedding_node.get("position", {})
 
-                # Replace with new template
-                new_embedding_node = embedding_template.copy()
-                new_embedding_node["position"] = original_position
+    #             # Replace with new template
+    #             new_embedding_node = embedding_template.copy()
+    #             new_embedding_node["position"] = original_position
 
-                # Replace in flow
-                self._replace_node_in_flow(flow_data, old_embedding_name, new_embedding_node)
-                components_updated.append(
-                    f"embedding: {old_embedding_name} -> {new_embedding_id}"
-                )
+    #             # Replace in flow
+    #             self._replace_node_in_flow(flow_data, old_embedding_name, new_embedding_node)
+    #             components_updated.append(
+    #                 f"embedding: {old_embedding_name} -> {new_embedding_id}"
+    #             )
 
-        # Replace LLM component (if exists in this flow)
-        if old_llm_name and not is_embedding:
-            llm_node, _ = self._find_node_in_flow(flow_data, display_name=old_llm_name)
-            if llm_node:
-                # Preserve position
-                original_position = llm_node.get("position", {})
+    #     # Replace LLM component (if exists in this flow)
+    #     if old_llm_name and not is_embedding:
+    #         llm_node, _ = self._find_node_in_flow(flow_data, display_name=old_llm_name)
+    #         if llm_node:
+    #             # Preserve position
+    #             original_position = llm_node.get("position", {})
 
-                # Replace with new template
-                new_llm_node = llm_template.copy()
-                new_llm_node["position"] = original_position
+    #             # Replace with new template
+    #             new_llm_node = llm_template.copy()
+    #             new_llm_node["position"] = original_position
 
-                # Replace in flow
-                self._replace_node_in_flow(flow_data, old_llm_name, new_llm_node)
-                components_updated.append(f"llm: {old_llm_name} -> {new_llm_id}")
+    #             # Replace in flow
+    #             self._replace_node_in_flow(flow_data, old_llm_name, new_llm_node)
+    #             components_updated.append(f"llm: {old_llm_name} -> {new_llm_id}")
 
-        # Replace LLM component (if exists in this flow)
-        if old_llm_text_name and not is_embedding:
-            llm_text_node, _ = self._find_node_in_flow(flow_data, display_name=old_llm_text_name)
-            if llm_text_node:
-                # Preserve position
-                original_position = llm_text_node.get("position", {})
+    #     # Replace LLM component (if exists in this flow)
+    #     if old_llm_text_name and not is_embedding:
+    #         llm_text_node, _ = self._find_node_in_flow(flow_data, display_name=old_llm_text_name)
+    #         if llm_text_node:
+    #             # Preserve position
+    #             original_position = llm_text_node.get("position", {})
 
-                # Replace with new template
-                new_llm_text_node = llm_text_template.copy()
-                new_llm_text_node["position"] = original_position
+    #             # Replace with new template
+    #             new_llm_text_node = llm_text_template.copy()
+    #             new_llm_text_node["position"] = original_position
 
-                # Replace in flow
-                self._replace_node_in_flow(flow_data, old_llm_text_name, new_llm_text_node)
-                components_updated.append(f"llm: {old_llm_text_name} -> {new_llm_text_id}")
+    #             # Replace in flow
+    #             self._replace_node_in_flow(flow_data, old_llm_text_name, new_llm_text_node)
+    #             components_updated.append(f"llm: {old_llm_text_name} -> {new_llm_text_id}")
 
 
-        old_embedding_id = None
-        old_llm_id = None
-        old_llm_text_id = None
-        if embedding_node:
-            old_embedding_id = embedding_node.get("data", {}).get("id")
-        if old_llm_name and llm_node:
-            old_llm_id = llm_node.get("data", {}).get("id")
-        if old_llm_text_name and llm_text_node:
-            old_llm_text_id = llm_text_node.get("data", {}).get("id")
+    #     old_embedding_id = None
+    #     old_llm_id = None
+    #     old_llm_text_id = None
+    #     if embedding_node:
+    #         old_embedding_id = embedding_node.get("data", {}).get("id")
+    #     if old_llm_name and llm_node:
+    #         old_llm_id = llm_node.get("data", {}).get("id")
+    #     if old_llm_text_name and llm_text_node:
+    #         old_llm_text_id = llm_text_node.get("data", {}).get("id")
 
-        # Update all edge references using regex replacement
-        flow_json_str = json.dumps(flow_data)
+    #     # Update all edge references using regex replacement
+    #     flow_json_str = json.dumps(flow_data)
 
-        # Replace embedding ID references
-        if not DISABLE_INGEST_WITH_LANGFLOW and is_embedding:
-            flow_json_str = re.sub(
-                re.escape(old_embedding_id), new_embedding_id, flow_json_str
-            )
-            flow_json_str = re.sub(
-                re.escape(old_embedding_id.split("-")[0]),
-                new_embedding_id.split("-")[0],
-                flow_json_str,
-            )
+    #     # Replace embedding ID references
+    #     if not DISABLE_INGEST_WITH_LANGFLOW and is_embedding:
+    #         flow_json_str = re.sub(
+    #             re.escape(old_embedding_id), new_embedding_id, flow_json_str
+    #         )
+    #         flow_json_str = re.sub(
+    #             re.escape(old_embedding_id.split("-")[0]),
+    #             new_embedding_id.split("-")[0],
+    #             flow_json_str,
+    #         )
 
-        # Replace LLM ID references (if applicable)
-        if old_llm_id and not is_embedding:
-            flow_json_str = re.sub(
-                re.escape(old_llm_id), new_llm_id, flow_json_str
-            )
+    #     # Replace LLM ID references (if applicable)
+    #     if old_llm_id and not is_embedding:
+    #         flow_json_str = re.sub(
+    #             re.escape(old_llm_id), new_llm_id, flow_json_str
+    #         )
 
-            flow_json_str = re.sub(
-                re.escape(old_llm_id.split("-")[0]),
-                new_llm_id.split("-")[0],
-                flow_json_str,
-            )
+    #         flow_json_str = re.sub(
+    #             re.escape(old_llm_id.split("-")[0]),
+    #             new_llm_id.split("-")[0],
+    #             flow_json_str,
+    #         )
         
-        # Replace text LLM ID references (if applicable)
-        if old_llm_text_id and not is_embedding:
-            flow_json_str = re.sub(
-                re.escape(old_llm_text_id), new_llm_text_id, flow_json_str
-            )
+    #     # Replace text LLM ID references (if applicable)
+    #     if old_llm_text_id and not is_embedding:
+    #         flow_json_str = re.sub(
+    #             re.escape(old_llm_text_id), new_llm_text_id, flow_json_str
+    #         )
 
-            flow_json_str = re.sub(
-                re.escape(old_llm_text_id.split("-")[0]),
-                new_llm_text_id.split("-")[0],
-                flow_json_str,
-            )
+    #         flow_json_str = re.sub(
+    #             re.escape(old_llm_text_id.split("-")[0]),
+    #             new_llm_text_id.split("-")[0],
+    #             flow_json_str,
+    #         )
 
-        # Convert back to JSON
-        flow_data = json.loads(flow_json_str)
+    #     # Convert back to JSON
+    #     flow_data = json.loads(flow_json_str)
 
-        # PATCH the updated flow
-        response = await clients.langflow_request(
-            "PATCH", f"/api/v1/flows/{flow_id}", json=flow_data
-        )
+    #     # PATCH the updated flow
+    #     response = await clients.langflow_request(
+    #         "PATCH", f"/api/v1/flows/{flow_id}", json=flow_data
+    #     )
 
-        if response.status_code != 200:
-            raise Exception(
-                f"Failed to update flow: HTTP {response.status_code} - {response.text}"
-            )
+    #     if response.status_code != 200:
+    #         raise Exception(
+    #             f"Failed to update flow: HTTP {response.status_code} - {response.text}"
+    #         )
 
-        return {
-            "flow": flow_name,
-            "success": True,
-            "components_updated": components_updated,
-            "flow_id": flow_id,
-        }
+    #     return {
+    #         "flow": flow_name,
+    #         "success": True,
+    #         "components_updated": components_updated,
+    #         "flow_id": flow_id,
+    #     }
 
     def _find_node_in_flow(self, flow_data, node_id=None, display_name=None):
         """
@@ -693,7 +693,7 @@ class FlowsService:
         Change dropdown values for provider-specific components across flows
 
         Args:
-            provider: The provider ("watsonx", "ollama", "openai")
+            provider: The provider ("watsonx", "ollama", "openai", "anthropic")
             embedding_model: The embedding model name to set
             llm_model: The LLM model name to set
             endpoint: The endpoint URL (required for watsonx/ibm provider)
@@ -702,8 +702,8 @@ class FlowsService:
         Returns:
             dict: Success/error response with details for each flow
         """
-        if provider not in ["watsonx", "ollama", "openai"]:
-            raise ValueError("provider must be 'watsonx', 'ollama', or 'openai'")
+        if provider not in ["watsonx", "ollama", "openai", "anthropic"]:
+            raise ValueError("provider must be 'watsonx', 'ollama', 'openai', or 'anthropic'")
 
         if provider == "watsonx" and not endpoint:
             raise ValueError("endpoint is required for watsonx provider")
@@ -783,17 +783,17 @@ class FlowsService:
                 "error": f"Failed to change provider models: {str(e)}",
             }
 
-    def _get_provider_component_ids(self, provider: str):
-        """Get the component IDs for a specific provider"""
-        if provider == "watsonx":
-            return WATSONX_EMBEDDING_COMPONENT_DISPLAY_NAME, WATSONX_LLM_COMPONENT_DISPLAY_NAME
-        elif provider == "ollama":
-            return OLLAMA_EMBEDDING_COMPONENT_DISPLAY_NAME, OLLAMA_LLM_COMPONENT_DISPLAY_NAME
-        elif provider == "openai":
-            # OpenAI components are the default ones
-            return OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME, OPENAI_LLM_COMPONENT_DISPLAY_NAME
-        else:
-            raise ValueError(f"Unsupported provider: {provider}")
+    # def _get_provider_component_ids(self, provider: str):
+    #     """Get the component IDs for a specific provider"""
+    #     if provider == "watsonx":
+    #         return WATSONX_EMBEDDING_COMPONENT_DISPLAY_NAME, WATSONX_LLM_COMPONENT_DISPLAY_NAME
+    #     elif provider == "ollama":
+    #         return OLLAMA_EMBEDDING_COMPONENT_DISPLAY_NAME, OLLAMA_LLM_COMPONENT_DISPLAY_NAME
+    #     elif provider == "openai":
+    #         # OpenAI components are the default ones
+    #         return OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME, OPENAI_LLM_COMPONENT_DISPLAY_NAME
+    #     else:
+    #         raise ValueError(f"Unsupported provider: {provider}")
 
     async def _update_provider_components(
         self,
@@ -887,7 +887,7 @@ class FlowsService:
 
         updated = False
 
-        provider_name = "IBM watsonx.ai" if provider == "watsonx" else "Ollama" if provider == "ollama" else "OpenAI"
+        provider_name = "IBM watsonx.ai" if provider == "watsonx" else "Ollama" if provider == "ollama" else "Anthropic" if provider == "anthropic" else "OpenAI"
         if "agent_llm" in template:
             template["agent_llm"]["value"] = provider_name
             updated = True
@@ -926,6 +926,13 @@ class FlowsService:
 
         if provider == "openai" and "api_key" in template:
             template["api_key"]["value"] = "OPENAI_API_KEY"
+            template["api_key"]["load_from_db"] = True
+            template["api_key"]["show"] = True
+            template["api_key"]["advanced"] = False
+            updated = True
+
+        if provider == "anthropic" and "api_key" in template:
+            template["api_key"]["value"] = "ANTHROPIC_API_KEY"
             template["api_key"]["load_from_db"] = True
             template["api_key"]["show"] = True
             template["api_key"]["advanced"] = False

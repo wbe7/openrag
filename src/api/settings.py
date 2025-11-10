@@ -791,6 +791,14 @@ async def onboarding(request, flows_service):
                     )
                     logger.info("Set OPENAI_API_KEY global variable in Langflow")
 
+                # Set API key for Anthropic provider
+                if provider == "anthropic" and "api_key" in body:
+                    api_key = body["api_key"]
+                    await clients._create_langflow_global_variable(
+                        "ANTHROPIC_API_KEY", api_key, modify=True
+                    )
+                    logger.info("Set ANTHROPIC_API_KEY global variable in Langflow")
+
                 # Set base URL for Ollama provider
                 if provider == "ollama" and "endpoint" in body:
                     endpoint = transform_localhost_url(body["endpoint"])

@@ -39,6 +39,40 @@ async def get_openai_models(request, models_service, session_manager):
             {"error": f"Failed to retrieve OpenAI models: {str(e)}"}, status_code=500
         )
 
+async def get_anthropic_models(request, models_service, session_manager):
+    """Get available Anthropic models"""
+    try:
+        # Get API key from query parameters
+        query_params = dict(request.query_params)
+        api_key = query_params.get("api_key")
+
+        # If no API key provided, try to get it from stored configuration
+        if not api_key:
+            try:
+                config = get_openrag_config()
+                api_key = config.provider.api_key
+                logger.info(
+                    f"Retrieved API key from config: {'yes' if api_key else 'no'}"
+                )
+            except Exception as e:
+                logger.error(f"Failed to get config: {e}")
+
+        if not api_key:
+            return JSONResponse(
+                {
+                    "error": "Anthropic API key is required either as query parameter or in configuration"
+                },
+                status_code=400,
+            )
+
+        models = await models_service.get_anthropic_models(api_key=api_key)
+        return JSONResponse(models)
+    except Exception as e:
+        logger.error(f"Failed to get Anthropic models: {str(e)}")
+        return JSONResponse(
+            {"error": f"Failed to retrieve Anthropic models: {str(e)}"}, status_code=500
+        )
+
 
 async def get_ollama_models(request, models_service, session_manager):
     """Get available Ollama models"""

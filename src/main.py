@@ -1008,6 +1008,17 @@ async def create_app():
             methods=["GET"],
         ),
         Route(
+            "/models/anthropic",
+            require_auth(services["session_manager"])(
+                partial(
+                    models.get_anthropic_models,
+                    models_service=services["models_service"],
+                    session_manager=services["session_manager"],
+                )
+            ),
+            methods=["GET"],
+        ),
+        Route(
             "/models/ollama",
             require_auth(services["session_manager"])(
                 partial(
