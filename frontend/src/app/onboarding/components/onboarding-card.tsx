@@ -41,10 +41,14 @@ const STEP_LIST = [
 	"Setting up your model provider",
 	"Defining schema",
 	"Configuring Langflow",
-	"Ingesting sample data",
 ];
 
-const TOTAL_PROVIDER_STEPS = STEP_LIST.length;
+const EMBEDDING_STEP_LIST = [
+	"Setting up your model provider",
+	"Defining schema",
+	"Configuring Langflow",
+	"Ingesting sample data",
+];
 
 const OnboardingCard = ({
 	onComplete,
@@ -72,6 +76,8 @@ const OnboardingCard = ({
 		setError(null);
 	};
 
+	const totalSteps = isEmbedding ? EMBEDDING_STEP_LIST.length : STEP_LIST.length;
+
 	const [settings, setSettings] = useState<OnboardingVariables>({
 		model_provider: modelProvider,
 		embedding_model: "",
@@ -79,7 +85,7 @@ const OnboardingCard = ({
 	});
 
 	const [currentStep, setCurrentStep] = useState<number | null>(
-		isCompleted ? TOTAL_PROVIDER_STEPS : null,
+		isCompleted ? totalSteps : null,
 	);
 
 	const [processingStartTime, setProcessingStartTime] = useState<number | null>(
@@ -115,13 +121,13 @@ const OnboardingCard = ({
 			!isCompleted
 		) {
 			// Set to final step to show "Done"
-			setCurrentStep(TOTAL_PROVIDER_STEPS);
+			setCurrentStep(totalSteps);
 			// Wait a bit before completing
 			setTimeout(() => {
 				onComplete();
 			}, 1000);
 		}
-	}, [tasks, currentStep, onComplete, isCompleted, isEmbedding]);
+	}, [tasks, currentStep, onComplete, isCompleted, isEmbedding, totalSteps]);
 
 	// Mutations
 	const onboardingMutation = useOnboardingMutation({
@@ -136,7 +142,7 @@ const OnboardingCard = ({
 			queryClient.setQueryData(["provider", "health"], healthData);
 			setError(null);
 			if (!isEmbedding){
-				setCurrentStep(TOTAL_PROVIDER_STEPS);
+				setCurrentStep(totalSteps);
 				setTimeout(() => {
 					onComplete();
 				}, 1000);
@@ -146,7 +152,7 @@ const OnboardingCard = ({
 		},
 		onError: (error) => {
 			setError(error.message);
-			setCurrentStep(TOTAL_PROVIDER_STEPS);
+			setCurrentStep(totalSteps);
 			// Reset to provider selection after 1 second
 			setTimeout(() => {
 				setCurrentStep(null);
@@ -399,7 +405,7 @@ const OnboardingCard = ({
 						currentStep={currentStep}
 						isCompleted={isCompleted}
 						setCurrentStep={setCurrentStep}
-						steps={STEP_LIST}
+						steps={isEmbedding ? EMBEDDING_STEP_LIST : STEP_LIST}
 						processingStartTime={processingStartTime}
 						hasError={!!error}
 					/>
