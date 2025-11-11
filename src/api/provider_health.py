@@ -57,6 +57,12 @@ async def check_provider_health(request):
                 endpoint = current_config.provider.endpoint
                 project_id = current_config.provider.project_id
                 llm_model = current_config.agent.llm_model
+                embedding_model = None
+            elif provider == current_config.embedding_provider.model_provider:
+                api_key = current_config.embedding_provider.api_key
+                endpoint = current_config.embedding_provider.endpoint
+                project_id = current_config.embedding_provider.project_id
+                llm_model = None
                 embedding_model = current_config.knowledge.embedding_model
             else:
                 # For other providers, we can't validate without config
@@ -71,6 +77,9 @@ async def check_provider_health(request):
         else:
             # Check current provider
             api_key = current_config.provider.api_key
+            embedding_api_key = current_config.embedding_provider.api_key
+            embedding_endpoint = current_config.embedding_provider.endpoint
+            embedding_project_id = current_config.embedding_provider.project_id
             endpoint = current_config.provider.endpoint
             project_id = current_config.provider.project_id
             llm_model = current_config.agent.llm_model
@@ -82,11 +91,20 @@ async def check_provider_health(request):
         await validate_provider_setup(
             provider=provider,
             api_key=api_key,
-            embedding_model=embedding_model,
+            embedding_model=embedding_model if check_provider else None,
             llm_model=llm_model,
             endpoint=endpoint,
             project_id=project_id,
         )
+
+        if not check_provider:
+            await validate_provider_setup(
+                provider=current_config.embedding_provider.model_provider,
+                api_key=embedding_api_key,
+                embedding_model=embedding_model,
+                endpoint=embedding_endpoint,
+                project_id=embedding_project_id,
+            )
         
         return JSONResponse(
             {
