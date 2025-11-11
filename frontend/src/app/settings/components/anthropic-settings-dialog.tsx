@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useUpdateSettingsMutation } from "@/app/api/mutations/useUpdateSettingsMutation";
 import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
 import type { ProviderHealthResponse } from "@/app/api/queries/useProviderHealthQuery";
-import OpenAILogo from "@/components/logo/openai-logo";
+import AnthropicLogo from "@/components/logo/anthropic-logo";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -16,11 +16,11 @@ import {
 } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/auth-context";
 import {
-	OpenAISettingsForm,
-	type OpenAISettingsFormData,
-} from "./openai-settings-form";
+	AnthropicSettingsForm,
+	type AnthropicSettingsFormData,
+} from "./anthropic-settings-form";
 
-const OpenAISettingsDialog = ({
+const AnthropicSettingsDialog = ({
 	open,
 	setOpen,
 }: {
@@ -34,14 +34,14 @@ const OpenAISettingsDialog = ({
 		enabled: isAuthenticated || isNoAuthMode,
 	});
 
-	const isOpenAIConfigured = settings.provider?.model_provider === "openai";
+	const isAnthropicConfigured = settings.provider?.model_provider === "anthropic";
 
-	const methods = useForm<OpenAISettingsFormData>({
+	const methods = useForm<AnthropicSettingsFormData>({
 		mode: "onSubmit",
 		defaultValues: {
 			apiKey: "",
-			llmModel: isOpenAIConfigured ? settings.agent?.llm_model : "",
-			embeddingModel: isOpenAIConfigured
+			llmModel: isAnthropicConfigured ? settings.agent?.llm_model : "",
+			embeddingModel: isAnthropicConfigured
 				? settings.knowledge?.embedding_model
 				: "",
 		},
@@ -55,23 +55,23 @@ const OpenAISettingsDialog = ({
 			const healthData: ProviderHealthResponse = {
 				status: "healthy",
 				message: "Provider is configured and working correctly",
-				provider: "openai",
+				provider: "anthropic",
 			};
 			queryClient.setQueryData(["provider", "health"], healthData);
 
-			toast.success("OpenAI settings updated successfully");
+			toast.success("Anthropic settings updated successfully");
 			setOpen(false);
 		},
 	});
 
-	const onSubmit = (data: OpenAISettingsFormData) => {
+	const onSubmit = (data: AnthropicSettingsFormData) => {
 		const payload: {
 			api_key?: string;
 			model_provider: string;
 			llm_model: string;
 			embedding_model: string;
 		} = {
-			model_provider: "openai",
+			model_provider: "anthropic",
 			llm_model: data.llmModel,
 			embedding_model: data.embeddingModel,
 		};
@@ -93,13 +93,13 @@ const OpenAISettingsDialog = ({
 						<DialogHeader className="mb-2">
 							<DialogTitle className="flex items-center gap-3">
 								<div className="w-8 h-8 rounded flex items-center justify-center bg-white border">
-									<OpenAILogo className="text-black" />
+									<AnthropicLogo className="text-black" />
 								</div>
-								OpenAI Setup
+								Anthropic Setup
 							</DialogTitle>
 						</DialogHeader>
 
-						<OpenAISettingsForm isCurrentProvider={isOpenAIConfigured} />
+						<AnthropicSettingsForm isCurrentProvider={isAnthropicConfigured} />
 
 						<AnimatePresence mode="wait">
 							{settingsMutation.isError && (
@@ -134,4 +134,4 @@ const OpenAISettingsDialog = ({
 	);
 };
 
-export default OpenAISettingsDialog;
+export default AnthropicSettingsDialog;

@@ -30,6 +30,12 @@ export interface Settings {
     endpoint?: string;
     project_id?: string;
   };
+  embedding_provider?: {
+    model_provider?: string;
+    // Note: api_key is never returned by the backend for security reasons
+    endpoint?: string;
+    project_id?: string;
+  };
   knowledge?: KnowledgeSettings;
   agent?: AgentSettings;
   langflow_edit_url?: string;
