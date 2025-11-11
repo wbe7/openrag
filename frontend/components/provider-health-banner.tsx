@@ -45,6 +45,7 @@ export function useProviderHealth() {
 
 const providerTitleMap: Record<ModelProvider, string> = {
   openai: "OpenAI",
+  anthropic: "Anthropic",
   ollama: "Ollama",
   watsonx: "IBM watsonx.ai",
 };
@@ -56,7 +57,7 @@ export function ProviderHealthBanner({ className }: ProviderHealthBannerProps) {
   const { data: settings = {} } = useGetSettingsQuery();
 
   const providerTitle =
-    providerTitleMap[settings.provider?.model_provider as ModelProvider] ||
+    providerTitleMap[settings.agent?.llm_provider as ModelProvider] ||
     "Provider";
 
   // Only show banner when provider is unhealthy (not when backend is unavailable)
@@ -66,8 +67,8 @@ export function ProviderHealthBanner({ className }: ProviderHealthBannerProps) {
 
   if (isUnhealthy) {
     const errorMessage = health?.message || "Provider validation failed";
-    const settingsUrl = settings.provider?.model_provider
-      ? `/settings?setup=${settings.provider?.model_provider}`
+    const settingsUrl = settings.agent?.llm_provider
+      ? `/settings?setup=${settings.agent?.llm_provider}`
       : "/settings";
 
     return (
