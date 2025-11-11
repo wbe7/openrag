@@ -1,8 +1,10 @@
+import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { LabelInput } from "@/components/label-input";
 import { LabelWrapper } from "@/components/label-wrapper";
 import AnthropicLogo from "@/components/logo/anthropic-logo";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useDebouncedValue } from "@/lib/debounce";
 import type { OnboardingVariables } from "../../api/mutations/useOnboardingMutation";
 import { useGetAnthropicModelsQuery } from "../../api/queries/useGetModelsQuery";
@@ -16,15 +18,17 @@ export function AnthropicOnboarding({
 	setSampleDataset,
 	setIsLoadingModels,
 	isEmbedding = false,
+	hasEnvApiKey = false,
 }: {
-	setSettings: (settings: OnboardingVariables) => void;
+	setSettings: Dispatch<SetStateAction<OnboardingVariables>>;
 	sampleDataset: boolean;
 	setSampleDataset: (dataset: boolean) => void;
 	setIsLoadingModels?: (isLoading: boolean) => void;
 	isEmbedding?: boolean;
+	hasEnvApiKey?: boolean;
 }) {
 	const [apiKey, setApiKey] = useState("");
-	const [getFromEnv, setGetFromEnv] = useState(true);
+	const [getFromEnv, setGetFromEnv] = useState(hasEnvApiKey);
 	const debouncedApiKey = useDebouncedValue(apiKey, 500);
 
 	// Fetch models from API when API key is provided
@@ -75,6 +79,7 @@ export function AnthropicOnboarding({
 			embeddingModel,
 		},
 		setSettings,
+		isEmbedding,
 	);
 	
 	return (
@@ -86,10 +91,20 @@ export function AnthropicOnboarding({
 					description="Reuse the key from your environment config. Turn off to enter a different key."
 					flex
 				>
-					<Switch
-						checked={getFromEnv}
-						onCheckedChange={handleGetFromEnvChange}
-					/>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<div>
+								<Switch
+									checked={getFromEnv}
+									onCheckedChange={handleGetFromEnvChange}
+									disabled={!hasEnvApiKey}
+								/>
+							</div>
+						</TooltipTrigger>
+						{!hasEnvApiKey && (
+							<TooltipContent>Anthropic API key not detected in the environment.</TooltipContent>
+						)}
+					</Tooltip>
 				</LabelWrapper>
 				{!getFromEnv && (
 					<div className="space-y-1">

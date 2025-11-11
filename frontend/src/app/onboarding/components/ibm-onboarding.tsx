@@ -1,7 +1,9 @@
+import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { LabelInput } from "@/components/label-input";
 import { LabelWrapper } from "@/components/label-wrapper";
 import IBMLogo from "@/components/logo/ibm-logo";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useDebouncedValue } from "@/lib/debounce";
 import type { OnboardingVariables } from "../../api/mutations/useOnboardingMutation";
 import { useGetIBMModelsQuery } from "../../api/queries/useGetModelsQuery";
@@ -16,12 +18,14 @@ export function IBMOnboarding({
   sampleDataset,
   setSampleDataset,
   setIsLoadingModels,
+  alreadyConfigured = false,
 }: {
   isEmbedding?: boolean;
-  setSettings: (settings: OnboardingVariables) => void;
+  setSettings: Dispatch<SetStateAction<OnboardingVariables>>;
   sampleDataset: boolean;
   setSampleDataset: (dataset: boolean) => void;
   setIsLoadingModels?: (isLoading: boolean) => void;
+  alreadyConfigured?: boolean;
 }) {
   const [endpoint, setEndpoint] = useState("https://us-south.ml.cloud.ibm.com");
   const [apiKey, setApiKey] = useState("");
@@ -107,6 +111,7 @@ export function IBMOnboarding({
       embeddingModel,
     },
     setSettings,
+    isEmbedding,
   );
 
   return (
@@ -118,35 +123,64 @@ export function IBMOnboarding({
           id="api-endpoint"
           required
         >
-          <ModelSelector
-            options={options}
-            value={endpoint}
-            custom
-            onValueChange={setEndpoint}
-            searchPlaceholder="Search endpoint..."
-            noOptionsPlaceholder="No endpoints available"
-            placeholder="Select endpoint..."
-          />
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <ModelSelector
+                  options={options}
+                  value={endpoint}
+                  custom
+                  onValueChange={alreadyConfigured ? () => {} : setEndpoint}
+                  searchPlaceholder="Search endpoint..."
+                  noOptionsPlaceholder="No endpoints available"
+                  placeholder="Select endpoint..."
+                />
+              </div>
+            </TooltipTrigger>
+            {alreadyConfigured && (
+              <TooltipContent>This provider is already configured. The same credentials will be used for embeddings.</TooltipContent>
+            )}
+          </Tooltip>
         </LabelWrapper>
-        <LabelInput
-          label="watsonx Project ID"
-          helperText="Project ID for the model"
-          id="project-id"
-          required
-          placeholder="your-project-id"
-          value={projectId}
-          onChange={(e) => setProjectId(e.target.value)}
-        />
-        <LabelInput
-          label="watsonx API key"
-          helperText="API key to access watsonx.ai"
-          id="api-key"
-          type="password"
-          required
-          placeholder="your-api-key"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <LabelInput
+                label="watsonx Project ID"
+                helperText="Project ID for the model"
+                id="project-id"
+                required
+                placeholder="your-project-id"
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                disabled={alreadyConfigured}
+              />
+            </div>
+          </TooltipTrigger>
+          {alreadyConfigured && (
+            <TooltipContent>This provider is already configured. The same credentials will be used for embeddings.</TooltipContent>
+          )}
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <LabelInput
+                label="watsonx API key"
+                helperText="API key to access watsonx.ai"
+                id="api-key"
+                type="password"
+                required
+                placeholder="your-api-key"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                disabled={alreadyConfigured}
+              />
+            </div>
+          </TooltipTrigger>
+          {alreadyConfigured && (
+            <TooltipContent>This provider is already configured. The same credentials will be used for embeddings.</TooltipContent>
+          )}
+        </Tooltip>
         {isLoadingModels && (
           <p className="text-mmd text-muted-foreground">
             Validating configuration...

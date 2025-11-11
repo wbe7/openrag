@@ -1,8 +1,10 @@
+import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { LabelInput } from "@/components/label-input";
 import { LabelWrapper } from "@/components/label-wrapper";
 import OpenAILogo from "@/components/logo/openai-logo";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useDebouncedValue } from "@/lib/debounce";
 import type { OnboardingVariables } from "../../api/mutations/useOnboardingMutation";
 import { useGetOpenAIModelsQuery } from "../../api/queries/useGetModelsQuery";
@@ -16,15 +18,19 @@ export function OpenAIOnboarding({
 	setSampleDataset,
 	setIsLoadingModels,
 	isEmbedding = false,
+	hasEnvApiKey = false,
+	alreadyConfigured = false,
 }: {
-	setSettings: (settings: OnboardingVariables) => void;
+	setSettings: Dispatch<SetStateAction<OnboardingVariables>>;
 	sampleDataset: boolean;
 	setSampleDataset: (dataset: boolean) => void;
 	setIsLoadingModels?: (isLoading: boolean) => void;
 	isEmbedding?: boolean;
+	hasEnvApiKey?: boolean;
+	alreadyConfigured?: boolean;
 }) {
 	const [apiKey, setApiKey] = useState("");
-	const [getFromEnv, setGetFromEnv] = useState(true);
+	const [getFromEnv, setGetFromEnv] = useState(hasEnvApiKey);
 	const debouncedApiKey = useDebouncedValue(apiKey, 500);
 
 	// Fetch models from API when API key is provided
@@ -75,35 +81,58 @@ export function OpenAIOnboarding({
 			embeddingModel,
 		},
 		setSettings,
+		isEmbedding,
 	);
 	
 	return (
 		<>
 			<div className="space-y-5">
-				<LabelWrapper
-					label="Use environment OpenAI API key"
-					id="get-api-key"
-					description="Reuse the key from your environment config. Turn off to enter a different key."
-					flex
-				>
-					<Switch
-						checked={getFromEnv}
-						onCheckedChange={handleGetFromEnvChange}
-					/>
-				</LabelWrapper>
-				{!getFromEnv && (
+				{!alreadyConfigured && (
+					<LabelWrapper
+						label="Use environment OpenAI API key"
+						id="get-api-key"
+						description="Reuse the key from your environment config. Turn off to enter a different key."
+						flex
+					>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<div>
+									<Switch
+										checked={getFromEnv}
+										onCheckedChange={handleGetFromEnvChange}
+										disabled={!hasEnvApiKey}
+									/>
+								</div>
+							</TooltipTrigger>
+							{!hasEnvApiKey && (
+								<TooltipContent>OpenAI API key not detected in the environment.</TooltipContent>
+							)}
+						</Tooltip>
+					</LabelWrapper>
+				)}
+				{(!getFromEnv || alreadyConfigured) && (
 					<div className="space-y-1">
-						<LabelInput
-							label="OpenAI API key"
-							helperText="The API key for your OpenAI account."
-							className={modelsError ? "!border-destructive" : ""}
-							id="api-key"
-							type="password"
-							required
-							placeholder="sk-..."
-							value={apiKey}
-							onChange={(e) => setApiKey(e.target.value)}
-						/>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<div>
+									<LabelInput
+										label="OpenAI API key"
+										helperText="The API key for your OpenAI account."
+										className={modelsError ? "!border-destructive" : ""}
+										id="api-key"
+										type="password"
+										required
+										placeholder="sk-..."
+										value={apiKey}
+										onChange={(e) => setApiKey(e.target.value)}
+										disabled={alreadyConfigured}
+									/>
+								</div>
+							</TooltipTrigger>
+							{alreadyConfigured && (
+								<TooltipContent>This provider is already configured. The same credentials will be used for embeddings.</TooltipContent>
+							)}
+						</Tooltip>
 						{isLoadingModels && (
 							<p className="text-mmd text-muted-foreground">
 								Validating API key...
