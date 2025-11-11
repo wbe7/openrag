@@ -807,6 +807,36 @@ async def onboarding(request, flows_service):
             current_config.providers.ollama.configured = True
             config_updated = True
 
+        # Mark providers as configured if they were chosen during onboarding
+        # Check LLM provider
+        if "llm_provider" in body:
+            llm_provider = body["llm_provider"].strip().lower()
+            if llm_provider == "openai" and current_config.providers.openai.api_key:
+                current_config.providers.openai.configured = True
+                logger.info("Marked OpenAI as configured (chosen as LLM provider)")
+            elif llm_provider == "anthropic" and current_config.providers.anthropic.api_key:
+                current_config.providers.anthropic.configured = True
+                logger.info("Marked Anthropic as configured (chosen as LLM provider)")
+            elif llm_provider == "watsonx" and current_config.providers.watsonx.api_key and current_config.providers.watsonx.endpoint and current_config.providers.watsonx.project_id:
+                current_config.providers.watsonx.configured = True
+                logger.info("Marked WatsonX as configured (chosen as LLM provider)")
+            elif llm_provider == "ollama" and current_config.providers.ollama.endpoint:
+                current_config.providers.ollama.configured = True
+                logger.info("Marked Ollama as configured (chosen as LLM provider)")
+
+        # Check embedding provider
+        if "embedding_provider" in body:
+            embedding_provider = body["embedding_provider"].strip().lower()
+            if embedding_provider == "openai" and current_config.providers.openai.api_key:
+                current_config.providers.openai.configured = True
+                logger.info("Marked OpenAI as configured (chosen as embedding provider)")
+            elif embedding_provider == "watsonx" and current_config.providers.watsonx.api_key and current_config.providers.watsonx.endpoint and current_config.providers.watsonx.project_id:
+                current_config.providers.watsonx.configured = True
+                logger.info("Marked WatsonX as configured (chosen as embedding provider)")
+            elif embedding_provider == "ollama" and current_config.providers.ollama.endpoint:
+                current_config.providers.ollama.configured = True
+                logger.info("Marked Ollama as configured (chosen as embedding provider)")
+
         # Handle sample_data
         should_ingest_sample_data = False
         if "sample_data" in body:
