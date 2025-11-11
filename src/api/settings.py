@@ -21,7 +21,9 @@ logger = get_logger(__name__)
 
 
 # Docling preset configurations
-def get_docling_preset_configs(table_structure=False, ocr=False, picture_descriptions=False):
+def get_docling_preset_configs(
+    table_structure=False, ocr=False, picture_descriptions=False
+):
     """Get docling preset configurations based on toggle settings
 
     Args:
@@ -40,7 +42,7 @@ def get_docling_preset_configs(table_structure=False, ocr=False, picture_descrip
         "picture_description_local": {
             "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
             "prompt": "Describe this image in a few sentences.",
-        }
+        },
     }
 
     return config
@@ -65,14 +67,22 @@ async def get_settings(request, session_manager):
             # OpenRAG configuration
             "provider": {
                 "model_provider": provider_config.model_provider,
-                "endpoint": provider_config.endpoint if provider_config.endpoint else None,
-                "project_id": provider_config.project_id if provider_config.project_id else None,
+                "endpoint": provider_config.endpoint
+                if provider_config.endpoint
+                else None,
+                "project_id": provider_config.project_id
+                if provider_config.project_id
+                else None,
                 # Note: API key is not exposed for security
             },
             "embedding_provider": {
                 "model_provider": embedding_provider_config.model_provider,
-                "endpoint": embedding_provider_config.endpoint if embedding_provider_config.endpoint else None,
-                "project_id": embedding_provider_config.project_id if embedding_provider_config.project_id else None,
+                "endpoint": embedding_provider_config.endpoint
+                if embedding_provider_config.endpoint
+                else None,
+                "project_id": embedding_provider_config.project_id
+                if embedding_provider_config.project_id
+                else None,
                 # Note: API key is not exposed for security
             },
             "knowledge": {
@@ -196,7 +206,7 @@ async def update_settings(request, session_manager):
             "model_provider",
             "api_key",
             "endpoint",
-            "project_id", # TODO: Add embedding provider configuration
+            "project_id",  # TODO: Add embedding provider configuration
         }
 
         # Check for invalid fields
@@ -219,38 +229,36 @@ async def update_settings(request, session_manager):
                     {"error": "embedding_model must be a non-empty string"},
                     status_code=400,
                 )
-        
+
         if "table_structure" in body:
             if not isinstance(body["table_structure"], bool):
                 return JSONResponse(
                     {"error": "table_structure must be a boolean"}, status_code=400
                 )
-        
+
         if "ocr" in body:
             if not isinstance(body["ocr"], bool):
-                return JSONResponse(
-                    {"error": "ocr must be a boolean"}, status_code=400
-                )
-        
+                return JSONResponse({"error": "ocr must be a boolean"}, status_code=400)
+
         if "picture_descriptions" in body:
             if not isinstance(body["picture_descriptions"], bool):
                 return JSONResponse(
                     {"error": "picture_descriptions must be a boolean"}, status_code=400
                 )
-        
+
         if "chunk_size" in body:
             if not isinstance(body["chunk_size"], int) or body["chunk_size"] <= 0:
                 return JSONResponse(
                     {"error": "chunk_size must be a positive integer"}, status_code=400
                 )
-        
+
         if "chunk_overlap" in body:
             if not isinstance(body["chunk_overlap"], int) or body["chunk_overlap"] < 0:
                 return JSONResponse(
                     {"error": "chunk_overlap must be a non-negative integer"},
                     status_code=400,
                 )
-        
+
         if "model_provider" in body:
             if (
                 not isinstance(body["model_provider"], str)
@@ -260,19 +268,19 @@ async def update_settings(request, session_manager):
                     {"error": "model_provider must be a non-empty string"},
                     status_code=400,
                 )
-        
+
         if "api_key" in body:
             if not isinstance(body["api_key"], str):
                 return JSONResponse(
                     {"error": "api_key must be a string"}, status_code=400
                 )
-        
+
         if "endpoint" in body:
             if not isinstance(body["endpoint"], str) or not body["endpoint"].strip():
                 return JSONResponse(
                     {"error": "endpoint must be a non-empty string"}, status_code=400
                 )
-        
+
         if "project_id" in body:
             if (
                 not isinstance(body["project_id"], str)
@@ -284,20 +292,35 @@ async def update_settings(request, session_manager):
 
         # Validate provider setup if provider-related fields are being updated
         # Do this BEFORE modifying any config
-        provider_fields = ["model_provider", "api_key", "endpoint", "project_id", "llm_model", "embedding_model"]
+        provider_fields = [
+            "model_provider",
+            "api_key",
+            "endpoint",
+            "project_id",
+            "llm_model",
+            "embedding_model",
+        ]
         should_validate = any(field in body for field in provider_fields)
-        
+
         if should_validate:
             try:
                 logger.info("Running provider validation before modifying config")
-                
-                provider = body.get("model_provider", current_config.provider.model_provider)
-                api_key = body.get("api_key") if "api_key" in body and body["api_key"].strip() else current_config.provider.api_key
+
+                provider = body.get(
+                    "model_provider", current_config.provider.model_provider
+                )
+                api_key = (
+                    body.get("api_key")
+                    if "api_key" in body and body["api_key"].strip()
+                    else current_config.provider.api_key
+                )
                 endpoint = body.get("endpoint", current_config.provider.endpoint)
                 project_id = body.get("project_id", current_config.provider.project_id)
                 llm_model = body.get("llm_model", current_config.agent.llm_model)
-                embedding_model = body.get("embedding_model", current_config.knowledge.embedding_model)
-        
+                embedding_model = body.get(
+                    "embedding_model", current_config.knowledge.embedding_model
+                )
+
                 await validate_provider_setup(
                     provider=provider,
                     api_key=api_key,
@@ -306,15 +329,12 @@ async def update_settings(request, session_manager):
                     endpoint=endpoint,
                     project_id=project_id,
                 )
-                
+
                 logger.info(f"Provider validation successful for {provider}")
-                
+
             except Exception as e:
                 logger.error(f"Provider validation failed: {str(e)}")
-                return JSONResponse(
-                    {"error": f"{str(e)}"}, 
-                    status_code=400
-                )
+                return JSONResponse({"error": f"{str(e)}"}, status_code=400)
 
         # Update configuration
         # Only reached if validation passed or wasn't needed
@@ -328,7 +348,9 @@ async def update_settings(request, session_manager):
             # Also update the chat flow with the new model
             try:
                 flows_service = _get_flows_service()
-                await flows_service.update_chat_flow_model(body["llm_model"], current_config.provider.model_provider.lower())
+                await flows_service.update_chat_flow_model(
+                    body["llm_model"], current_config.provider.model_provider.lower()
+                )
                 logger.info(
                     f"Successfully updated chat flow model to '{body['llm_model']}'"
                 )
@@ -345,8 +367,7 @@ async def update_settings(request, session_manager):
             try:
                 flows_service = _get_flows_service()
                 await flows_service.update_chat_flow_system_prompt(
-                    body["system_prompt"],
-                    current_config.agent.system_prompt
+                    body["system_prompt"], current_config.agent.system_prompt
                 )
                 logger.info(f"Successfully updated chat flow system prompt")
             except Exception as e:
@@ -364,8 +385,7 @@ async def update_settings(request, session_manager):
             try:
                 flows_service = _get_flows_service()
                 await flows_service.update_ingest_flow_embedding_model(
-                    new_embedding_model,
-                    current_config.provider.model_provider.lower()
+                    new_embedding_model, current_config.provider.model_provider.lower()
                 )
                 logger.info(
                     f"Successfully updated ingest flow embedding model to '{body['embedding_model'].strip()}'"
@@ -414,7 +434,7 @@ async def update_settings(request, session_manager):
                 preset_config = get_docling_preset_configs(
                     table_structure=body["table_structure"],
                     ocr=current_config.knowledge.ocr,
-                    picture_descriptions=current_config.knowledge.picture_descriptions
+                    picture_descriptions=current_config.knowledge.picture_descriptions,
                 )
                 await flows_service.update_flow_docling_preset("custom", preset_config)
                 logger.info(f"Successfully updated table_structure setting in flow")
@@ -431,7 +451,7 @@ async def update_settings(request, session_manager):
                 preset_config = get_docling_preset_configs(
                     table_structure=current_config.knowledge.table_structure,
                     ocr=body["ocr"],
-                    picture_descriptions=current_config.knowledge.picture_descriptions
+                    picture_descriptions=current_config.knowledge.picture_descriptions,
                 )
                 await flows_service.update_flow_docling_preset("custom", preset_config)
                 logger.info(f"Successfully updated ocr setting in flow")
@@ -448,10 +468,12 @@ async def update_settings(request, session_manager):
                 preset_config = get_docling_preset_configs(
                     table_structure=current_config.knowledge.table_structure,
                     ocr=current_config.knowledge.ocr,
-                    picture_descriptions=body["picture_descriptions"]
+                    picture_descriptions=body["picture_descriptions"],
                 )
                 await flows_service.update_flow_docling_preset("custom", preset_config)
-                logger.info(f"Successfully updated picture_descriptions setting in flow")
+                logger.info(
+                    f"Successfully updated picture_descriptions setting in flow"
+                )
             except Exception as e:
                 logger.error(f"Failed to update docling settings in flow: {str(e)}")
 
@@ -520,10 +542,17 @@ async def update_settings(request, session_manager):
             )
 
         # Update Langflow global variables if provider settings changed
-        if any(key in body for key in ["model_provider", "api_key", "endpoint", "project_id"]):
+        if any(
+            key in body
+            for key in ["model_provider", "api_key", "endpoint", "project_id"]
+        ):
             try:
-                provider = current_config.provider.model_provider.lower() if current_config.provider.model_provider else "openai"
-                
+                provider = (
+                    current_config.provider.model_provider.lower()
+                    if current_config.provider.model_provider
+                    else "openai"
+                )
+
                 # Set API key for IBM/Watson providers
                 if (provider == "watsonx") and "api_key" in body:
                     api_key = body["api_key"]
@@ -565,7 +594,9 @@ async def update_settings(request, session_manager):
                         current_config.agent.llm_model,
                         current_config.provider.endpoint,
                     )
-                    logger.info(f"Successfully updated Langflow flows for provider {provider}")
+                    logger.info(
+                        f"Successfully updated Langflow flows for provider {provider}"
+                    )
 
             except Exception as e:
                 logger.error(f"Failed to update Langflow settings: {str(e)}")
@@ -649,7 +680,9 @@ async def onboarding(request, flows_service):
                     status_code=400,
                 )
             if is_embedding:
-                current_config.embedding_provider.model_provider = body["model_provider"].strip()
+                current_config.embedding_provider.model_provider = body[
+                    "model_provider"
+                ].strip()
             else:
                 current_config.provider.model_provider = body["model_provider"].strip()
             config_updated = True
@@ -664,7 +697,6 @@ async def onboarding(request, flows_service):
             else:
                 current_config.provider.api_key = body["api_key"]
             config_updated = True
-
 
         # Update agent settings
         if "llm_model" in body:
@@ -695,7 +727,9 @@ async def onboarding(request, flows_service):
                     {"error": "project_id must be a non-empty string"}, status_code=400
                 )
             if is_embedding:
-                current_config.embedding_provider.project_id = body["project_id"].strip()
+                current_config.embedding_provider.project_id = body[
+                    "project_id"
+                ].strip()
             else:
                 current_config.provider.project_id = body["project_id"].strip()
             config_updated = True
@@ -718,18 +752,26 @@ async def onboarding(request, flows_service):
         try:
             from api.provider_validation import validate_provider_setup
 
-            provider = current_config.provider.model_provider.lower() if current_config.provider.model_provider else "openai"
+            provider = (
+                current_config.embedding_provider.model_provider.lower()
+                if (current_config.embedding_provider.model_provider and is_embedding)
+                else current_config.provider.model_provider.lower()
+                if (current_config.provider.model_provider and not is_embedding)
+                else "openai"
+            )
 
             logger.info(f"Validating provider setup for {provider}")
             await validate_provider_setup(
                 provider=provider,
-                api_key=current_config.provider.api_key,
-                embedding_model=current_config.knowledge.embedding_model,
-                llm_model=current_config.agent.llm_model,
-                endpoint=current_config.provider.endpoint,
-                project_id=current_config.provider.project_id,
+                api_key=current_config.embedding_provider.api_key if is_embedding else current_config.provider.api_key,
+                embedding_model=current_config.knowledge.embedding_model if is_embedding else None,
+                llm_model=current_config.agent.llm_model if not is_embedding else None,
+                endpoint=current_config.embedding_provider.endpoint if is_embedding else current_config.provider.endpoint,
+                project_id=current_config.embedding_provider.project_id if is_embedding else current_config.provider.project_id,
             )
-            logger.info(f"Provider setup validation completed successfully for {provider}")
+            logger.info(
+                f"Provider setup validation completed successfully for {provider}"
+            )
         except Exception as e:
             logger.error(f"Provider validation failed: {str(e)}")
             return JSONResponse(
@@ -779,9 +821,7 @@ async def onboarding(request, flows_service):
                     await clients._create_langflow_global_variable(
                         "WATSONX_PROJECT_ID", project_id, modify=True
                     )
-                    logger.info(
-                        "Set WATSONX_PROJECT_ID global variable in Langflow"
-                    )
+                    logger.info("Set WATSONX_PROJECT_ID global variable in Langflow")
 
                 # Set API key for OpenAI provider
                 if provider == "openai" and "api_key" in body:
@@ -880,7 +920,7 @@ async def onboarding(request, flows_service):
                         "Failed to complete sample data ingestion", error=str(e)
                     )
                     # Don't fail the entire onboarding process if sample data fails
-            
+
         if config_manager.save_config_file(current_config):
             updated_fields = [
                 k for k in body.keys() if k != "sample_data"
@@ -928,16 +968,34 @@ async def update_docling_preset(request, session_manager):
         if "preset" in body:
             # Map old presets to new toggle settings
             preset_map = {
-                "standard": {"table_structure": False, "ocr": False, "picture_descriptions": False},
-                "ocr": {"table_structure": False, "ocr": True, "picture_descriptions": False},
-                "picture_description": {"table_structure": False, "ocr": True, "picture_descriptions": True},
-                "VLM": {"table_structure": False, "ocr": False, "picture_descriptions": False},
+                "standard": {
+                    "table_structure": False,
+                    "ocr": False,
+                    "picture_descriptions": False,
+                },
+                "ocr": {
+                    "table_structure": False,
+                    "ocr": True,
+                    "picture_descriptions": False,
+                },
+                "picture_description": {
+                    "table_structure": False,
+                    "ocr": True,
+                    "picture_descriptions": True,
+                },
+                "VLM": {
+                    "table_structure": False,
+                    "ocr": False,
+                    "picture_descriptions": False,
+                },
             }
 
             preset = body["preset"]
             if preset not in preset_map:
                 return JSONResponse(
-                    {"error": f"Invalid preset '{preset}'. Valid presets: {', '.join(preset_map.keys())}"},
+                    {
+                        "error": f"Invalid preset '{preset}'. Valid presets: {', '.join(preset_map.keys())}"
+                    },
                     status_code=400,
                 )
 
