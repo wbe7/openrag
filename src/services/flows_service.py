@@ -824,7 +824,7 @@ class FlowsService:
             embedding_node, _ = self._find_node_in_flow(flow_data, display_name=OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME)
             if embedding_node:
                 if self._update_component_fields(
-                    embedding_node, provider, embedding_model, endpoint
+                    embedding_node, provider, embedding_model, endpoint, is_embedding=True
                 ):
                     updates_made.append(f"embedding model: {embedding_model}")
 
@@ -833,14 +833,14 @@ class FlowsService:
             llm_node, _ = self._find_node_in_flow(flow_data, display_name=OPENAI_LLM_COMPONENT_DISPLAY_NAME)
             if llm_node:
                 if self._update_component_fields(
-                    llm_node, provider, llm_model, endpoint
+                    llm_node, provider, llm_model, endpoint, is_embedding=False
                 ):
                     updates_made.append(f"llm model: {llm_model}")
             # Update LLM component (if exists in this flow)
             agent_node, _ = self._find_node_in_flow(flow_data, display_name=AGENT_COMPONENT_DISPLAY_NAME)
             if agent_node:
                 if self._update_component_fields(
-                    agent_node, provider, llm_model, endpoint
+                    agent_node, provider, llm_model, endpoint, is_embedding=False
                 ):
                     updates_made.append(f"agent model: {llm_model}")
 
@@ -878,6 +878,7 @@ class FlowsService:
         provider: str,
         model_value: str,
         endpoint: str = None,
+        is_embedding: bool = False,
     ):
         """Update fields in a component node based on provider and component type"""
         template = component_node.get("data", {}).get("node", {}).get("template", {})
@@ -925,7 +926,7 @@ class FlowsService:
                 updated = True
 
         if provider == "openai" and "api_key" in template:
-            template["api_key"]["value"] = "OPENAI_API_KEY"
+            template["api_key"]["value"] = "OPENAI_API_KEY" if not is_embedding else "OPENAI_EMBEDDING_API_KEY"
             template["api_key"]["load_from_db"] = True
             template["api_key"]["show"] = True
             template["api_key"]["advanced"] = False
@@ -952,35 +953,35 @@ class FlowsService:
             updated = True
 
         if provider == "ollama" and "base_url" in template:
-            template["base_url"]["value"] = "OLLAMA_BASE_URL"
+            template["base_url"]["value"] = "OLLAMA_BASE_URL" if not is_embedding else "OLLAMA_EMBEDDING_BASE_URL"
             template["base_url"]["load_from_db"] = True
             template["base_url"]["show"] = True
             template["base_url"]["advanced"] = False
             updated = True
         
         if provider == "ollama" and "api_base" in template:
-            template["api_base"]["value"] = "OLLAMA_BASE_URL"
+            template["api_base"]["value"] = "OLLAMA_BASE_URL" if not is_embedding else "OLLAMA_EMBEDDING_BASE_URL"
             template["api_base"]["load_from_db"] = True
             template["api_base"]["show"] = True
             template["api_base"]["advanced"] = False
             updated = True
 
         if provider == "ollama" and "ollama_base_url" in template:
-            template["ollama_base_url"]["value"] = "OLLAMA_BASE_URL"
+            template["ollama_base_url"]["value"] = "OLLAMA_BASE_URL" if not is_embedding else "OLLAMA_EMBEDDING_BASE_URL"
             template["ollama_base_url"]["load_from_db"] = True
             template["ollama_base_url"]["show"] = True
             template["ollama_base_url"]["advanced"] = False
             updated = True
 
         if provider == "watsonx" and "project_id" in template:
-            template["project_id"]["value"] = "WATSONX_PROJECT_ID"
+            template["project_id"]["value"] = "WATSONX_PROJECT_ID" if not is_embedding else "WATSONX_EMBEDDING_PROJECT_ID"
             template["project_id"]["load_from_db"] = True
             template["project_id"]["show"] = True
             template["project_id"]["advanced"] = False
             updated = True
         
         if provider == "watsonx" and "api_key" in template:
-            template["api_key"]["value"] = "WATSONX_API_KEY"
+            template["api_key"]["value"] = "WATSONX_API_KEY" if not is_embedding else "WATSONX_EMBEDDING_API_KEY"
             template["api_key"]["load_from_db"] = True
             template["api_key"]["show"] = True
             template["api_key"]["advanced"] = False

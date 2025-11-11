@@ -810,26 +810,44 @@ async def onboarding(request, flows_service):
                 # Set API key for IBM/Watson providers
                 if (provider == "watsonx") and "api_key" in body:
                     api_key = body["api_key"]
-                    await clients._create_langflow_global_variable(
-                        "WATSONX_API_KEY", api_key, modify=True
-                    )
-                    logger.info("Set WATSONX_API_KEY global variable in Langflow")
+                    if is_embedding:
+                        await clients._create_langflow_global_variable(
+                            "WATSONX_EMBEDDING_API_KEY", api_key, modify=True
+                        )
+                        logger.info("Set WATSONX_EMBEDDING_API_KEY global variable in Langflow")
+                    else:
+                        await clients._create_langflow_global_variable(
+                            "WATSONX_API_KEY", api_key, modify=True
+                        )
+                        logger.info("Set WATSONX_API_KEY global variable in Langflow")
 
                 # Set project ID for IBM/Watson providers
                 if (provider == "watsonx") and "project_id" in body:
                     project_id = body["project_id"]
-                    await clients._create_langflow_global_variable(
-                        "WATSONX_PROJECT_ID", project_id, modify=True
-                    )
-                    logger.info("Set WATSONX_PROJECT_ID global variable in Langflow")
+                    if is_embedding:
+                        await clients._create_langflow_global_variable(
+                            "WATSONX_EMBEDDING_PROJECT_ID", project_id, modify=True
+                        )
+                        logger.info("Set WATSONX_EMBEDDING_PROJECT_ID global variable in Langflow")
+                    else:
+                        await clients._create_langflow_global_variable(
+                            "WATSONX_PROJECT_ID", project_id, modify=True
+                        )
+                        logger.info("Set WATSONX_PROJECT_ID global variable in Langflow")
 
                 # Set API key for OpenAI provider
                 if provider == "openai" and "api_key" in body:
                     api_key = body["api_key"]
-                    await clients._create_langflow_global_variable(
-                        "OPENAI_API_KEY", api_key, modify=True
-                    )
-                    logger.info("Set OPENAI_API_KEY global variable in Langflow")
+                    if is_embedding:
+                        await clients._create_langflow_global_variable(
+                            "OPENAI_EMBEDDING_API_KEY", api_key, modify=True
+                        )
+                        logger.info("Set OPENAI_EMBEDDING_API_KEY global variable in Langflow")
+                    else:
+                        await clients._create_langflow_global_variable(
+                            "OPENAI_API_KEY", api_key, modify=True
+                        )
+                        logger.info("Set OPENAI_API_KEY global variable in Langflow")
 
                 # Set API key for Anthropic provider
                 if provider == "anthropic" and "api_key" in body:
@@ -843,7 +861,13 @@ async def onboarding(request, flows_service):
                 if provider == "ollama" and "endpoint" in body:
                     endpoint = transform_localhost_url(body["endpoint"])
 
-                    await clients._create_langflow_global_variable(
+                    if is_embedding:
+                        await clients._create_langflow_global_variable(
+                            "OLLAMA_EMBEDDING_BASE_URL", endpoint, modify=True
+                        )
+                        logger.info("Set OLLAMA_EMBEDDING_BASE_URL global variable in Langflow")
+                    else:
+                        await clients._create_langflow_global_variable(
                         "OLLAMA_BASE_URL", endpoint, modify=True
                     )
                     logger.info("Set OLLAMA_BASE_URL global variable in Langflow")
