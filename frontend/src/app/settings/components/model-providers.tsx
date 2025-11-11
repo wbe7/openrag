@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
 import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
@@ -26,7 +25,7 @@ export const ModelProviders = () => {
 		enabled: isAuthenticated || isNoAuthMode,
 	});
 
-	const { isUnhealthy } = useProviderHealth();
+	const { health } = useProviderHealth();
 
 	const [dialogOpen, setDialogOpen] = useState<ModelProvider | undefined>();
 
@@ -92,13 +91,16 @@ export const ModelProviders = () => {
 		},
 	};
 
-	const currentProviderKey =
-		(settings.provider?.model_provider as ModelProvider) || "openai";
+	const currentLlmProvider =
+		(settings.agent?.llm_provider as ModelProvider) || "openai";
+	const currentEmbeddingProvider =
+		(settings.knowledge?.embedding_provider as ModelProvider) || "openai";
 
-	// Get all provider keys with active provider first
+	// Get all provider keys with active providers first
+	const activeProviders = new Set([currentLlmProvider, currentEmbeddingProvider]);
 	const sortedProviderKeys = [
-		currentProviderKey,
-		...allProviderKeys.filter((key) => key !== currentProviderKey),
+		...Array.from(activeProviders),
+		...allProviderKeys.filter((key) => !activeProviders.has(key)),
 	];
 
 	return (
@@ -111,7 +113,14 @@ export const ModelProviders = () => {
 						logoColor,
 						logoBgColor,
 					} = modelProvidersMap[providerKey];
-					const isCurrentProvider = providerKey === currentProviderKey;
+					const isLlmProvider = providerKey === currentLlmProvider;
+					const isEmbeddingProvider = providerKey === currentEmbeddingProvider;
+					const isCurrentProvider = isLlmProvider || isEmbeddingProvider;
+
+					// Check if this specific provider is unhealthy
+					const hasLlmError = isLlmProvider && health?.llm_error;
+					const hasEmbeddingError = isEmbeddingProvider && health?.embedding_error;
+					const isProviderUnhealthy = hasLlmError || hasEmbeddingError;
 
 					return (
 						<Card
@@ -119,7 +128,7 @@ export const ModelProviders = () => {
 							className={cn(
 								"relative flex flex-col",
 								!isCurrentProvider && "text-muted-foreground",
-								isCurrentProvider && isUnhealthy && "border-destructive",
+								isProviderUnhealthy && "border-destructive",
 							)}
 						>
 							<CardHeader>
@@ -149,7 +158,7 @@ export const ModelProviders = () => {
 												<div
 													className={cn(
 														"h-2 w-2 rounded-full",
-														isUnhealthy
+														isProviderUnhealthy
 															? "bg-destructive"
 															: "bg-accent-emerald-foreground",
 													)}
@@ -160,27 +169,13 @@ export const ModelProviders = () => {
 								</div>
 							</CardHeader>
 							<CardContent className="flex-1 flex flex-col justify-end space-y-4">
-								{isCurrentProvider ? (
-									<Button
-										variant={isUnhealthy ? "default" : "outline"}
-										onClick={() => setDialogOpen(providerKey)}
-									>
-										{isUnhealthy ? "Fix Setup" : "Edit Setup"}
-									</Button>
-								) : (
-									<p>
-										See{" "}
-										<Link
-											href="https://docs.openr.ag/install/#application-onboarding"
-											className="text-accent-purple-foreground"
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											Application onboarding docs
-										</Link>{" "}
-										for configuration detail.
-									</p>
-								)}
+								<Button
+									variant={isProviderUnhealthy ? "default" : "outline"}
+									onClick={() => setDialogOpen(providerKey)}
+								>
+									{isProviderUnhealthy ? "Fix Setup" :
+									 settings.providers?.[providerKey]?.configured ? "Edit Setup" : "Configure"}
+								</Button>
 							</CardContent>
 						</Card>
 					);
