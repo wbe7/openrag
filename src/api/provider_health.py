@@ -90,38 +90,94 @@ async def check_provider_health(request):
         logger.info(f"Checking health for provider: {provider}")
         
         # Validate provider setup
-        await validate_provider_setup(
-            provider=provider,
-            api_key=api_key,
-            embedding_model=embedding_model if check_provider else None,
-            llm_model=llm_model,
-            endpoint=endpoint,
-            project_id=project_id,
-        )
-
-        if not check_provider:
-            # Also validate embedding provider
+        if check_provider:
+            # Validate specific provider
             await validate_provider_setup(
-                provider=embedding_provider,
-                api_key=embedding_api_key,
+                provider=provider,
+                api_key=api_key,
                 embedding_model=embedding_model,
-                endpoint=embedding_endpoint,
-                project_id=embedding_project_id,
+                llm_model=llm_model,
+                endpoint=endpoint,
+                project_id=project_id,
             )
-        
-        return JSONResponse(
-            {
-                "status": "healthy",
-                "message": "Properly configured and validated",
-                "provider": provider,
-                "details": {
-                    "llm_model": llm_model,
-                    "embedding_model": embedding_model,
-                    "endpoint": endpoint if provider in ["ollama", "watsonx"] else None,
+
+            return JSONResponse(
+                {
+                    "status": "healthy",
+                    "message": "Properly configured and validated",
+                    "provider": provider,
+                    "details": {
+                        "llm_model": llm_model,
+                        "embedding_model": embedding_model,
+                        "endpoint": endpoint if provider in ["ollama", "watsonx"] else None,
+                    },
                 },
-            },
-            status_code=200,
-        )
+                status_code=200,
+            )
+        else:
+            # Validate both LLM and embedding providers
+            llm_error = None
+            embedding_error = None
+
+            # Validate LLM provider
+            try:
+                await validate_provider_setup(
+                    provider=provider,
+                    api_key=api_key,
+                    llm_model=llm_model,
+                    endpoint=endpoint,
+                    project_id=project_id,
+                )
+            except Exception as e:
+                llm_error = str(e)
+                logger.error(f"LLM provider ({provider}) validation failed: {llm_error}")
+
+            # Validate embedding provider
+            try:
+                await validate_provider_setup(
+                    provider=embedding_provider,
+                    api_key=embedding_api_key,
+                    embedding_model=embedding_model,
+                    endpoint=embedding_endpoint,
+                    project_id=embedding_project_id,
+                )
+            except Exception as e:
+                embedding_error = str(e)
+                logger.error(f"Embedding provider ({embedding_provider}) validation failed: {embedding_error}")
+
+            # Return combined status
+            if llm_error or embedding_error:
+                errors = []
+                if llm_error:
+                    errors.append(f"LLM ({provider}): {llm_error}")
+                if embedding_error:
+                    errors.append(f"Embedding ({embedding_provider}): {embedding_error}")
+
+                return JSONResponse(
+                    {
+                        "status": "unhealthy",
+                        "message": "; ".join(errors),
+                        "llm_provider": provider,
+                        "embedding_provider": embedding_provider,
+                        "llm_error": llm_error,
+                        "embedding_error": embedding_error,
+                    },
+                    status_code=503,
+                )
+
+            return JSONResponse(
+                {
+                    "status": "healthy",
+                    "message": "Both providers properly configured and validated",
+                    "llm_provider": provider,
+                    "embedding_provider": embedding_provider,
+                    "details": {
+                        "llm_model": llm_model,
+                        "embedding_model": embedding_model,
+                    },
+                },
+                status_code=200,
+            )
         
     except Exception as e:
         error_message = str(e)
