@@ -930,6 +930,12 @@ class FlowsService:
             template["api_key"]["show"] = True
             template["api_key"]["advanced"] = False
             updated = True
+        if provider == "openai" and "api_base" in template:
+            template["api_base"]["value"] = ""
+            template["api_base"]["load_from_db"] = False
+            template["api_base"]["show"] = True
+            template["api_base"]["advanced"] = False
+            updated = True
 
         if provider == "anthropic" and "api_key" in template:
             template["api_key"]["value"] = "ANTHROPIC_API_KEY"
@@ -940,6 +946,7 @@ class FlowsService:
         
         if provider == "anthropic" and "base_url" in template:
             template["base_url"]["value"] = "https://api.anthropic.com"
+            template["api_base"]["load_from_db"] = False
             template["base_url"]["show"] = True
             template["base_url"]["advanced"] = True
             updated = True
