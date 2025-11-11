@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useGetCurrentProviderModelsQuery } from "@/app/api/queries/useGetModelsQuery";
+import { useGetOpenAIModelsQuery, useGetAnthropicModelsQuery, useGetOllamaModelsQuery, useGetIBMModelsQuery } from "@/app/api/queries/useGetModelsQuery";
 import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
 import { ConfirmationDialog } from "@/components/confirmation-dialog";
 import { LabelWrapper } from "@/components/label-wrapper";
@@ -116,13 +116,90 @@ function KnowledgeSourcesPage() {
 		enabled: isAuthenticated || isNoAuthMode,
 	});
 
-	// Get the current provider from settings
-	const currentProvider = (settings.provider?.model_provider ||
+	// Get the current providers from settings
+	const currentLlmProvider = (settings.agent?.llm_provider ||
 		"openai") as ModelProvider;
-	const currentEmbeddingProvider = (settings.embedding_provider?.model_provider ||
+	const currentEmbeddingProvider = (settings.knowledge?.embedding_provider ||
 		"openai") as ModelProvider;
-	const { data: modelsData, isLoading: modelsLoading } =
-		useGetCurrentProviderModelsQuery();
+
+	// State for selected providers (for changing provider on the fly)
+	const [selectedLlmProvider, setSelectedLlmProvider] = useState<ModelProvider>(currentLlmProvider);
+	const [selectedEmbeddingProvider, setSelectedEmbeddingProvider] = useState<ModelProvider>(currentEmbeddingProvider);
+
+	// Sync state with settings when they change
+	useEffect(() => {
+		if (settings.agent?.llm_provider) {
+			setSelectedLlmProvider(settings.agent.llm_provider as ModelProvider);
+		}
+	}, [settings.agent?.llm_provider]);
+
+	useEffect(() => {
+		if (settings.knowledge?.embedding_provider) {
+			setSelectedEmbeddingProvider(settings.knowledge.embedding_provider as ModelProvider);
+		}
+	}, [settings.knowledge?.embedding_provider]);
+
+	// Fetch models for each provider
+	const { data: openaiModels, isLoading: openaiLoading } = useGetOpenAIModelsQuery(
+		{ apiKey: "" },
+		{ enabled: settings?.providers?.openai?.configured === true }
+	);
+
+	const { data: anthropicModels, isLoading: anthropicLoading } = useGetAnthropicModelsQuery(
+		{ apiKey: "" },
+		{ enabled: settings?.providers?.anthropic?.configured === true }
+	);
+
+	const { data: ollamaModels, isLoading: ollamaLoading } = useGetOllamaModelsQuery(
+		{ endpoint: settings?.providers?.ollama?.endpoint },
+		{ enabled: settings?.providers?.ollama?.configured === true && !!settings?.providers?.ollama?.endpoint }
+	);
+
+	const { data: watsonxModels, isLoading: watsonxLoading } = useGetIBMModelsQuery(
+		{
+			endpoint: settings?.providers?.watsonx?.endpoint,
+			apiKey: "",
+			projectId: settings?.providers?.watsonx?.project_id,
+		},
+		{
+			enabled: settings?.providers?.watsonx?.configured === true &&
+				!!settings?.providers?.watsonx?.endpoint &&
+				!!settings?.providers?.watsonx?.project_id
+		}
+	);
+
+	// Get models for selected LLM provider
+	const getModelsForProvider = (provider: ModelProvider) => {
+		switch (provider) {
+			case "openai":
+				return { data: openaiModels, isLoading: openaiLoading };
+			case "anthropic":
+				return { data: anthropicModels, isLoading: anthropicLoading };
+			case "ollama":
+				return { data: ollamaModels, isLoading: ollamaLoading };
+			case "watsonx":
+				return { data: watsonxModels, isLoading: watsonxLoading };
+			default:
+				return { data: undefined, isLoading: false };
+		}
+	};
+
+	const llmModelsQuery = getModelsForProvider(selectedLlmProvider);
+	const embeddingModelsQuery = getModelsForProvider(selectedEmbeddingProvider);
+
+	// Filter provider options to only show configured ones
+	const configuredLlmProviders = [
+		{ value: "openai", label: "OpenAI", default: selectedLlmProvider === "openai" },
+		{ value: "anthropic", label: "Anthropic", default: selectedLlmProvider === "anthropic" },
+		{ value: "ollama", label: "Ollama", default: selectedLlmProvider === "ollama" },
+		{ value: "watsonx", label: "IBM watsonx.ai", default: selectedLlmProvider === "watsonx" },
+	].filter((option) => settings.providers?.[option.value as ModelProvider]?.configured === true);
+
+	const configuredEmbeddingProviders = [
+		{ value: "openai", label: "OpenAI", default: selectedEmbeddingProvider === "openai" },
+		{ value: "ollama", label: "Ollama", default: selectedEmbeddingProvider === "ollama" },
+		{ value: "watsonx", label: "IBM watsonx.ai", default: selectedEmbeddingProvider === "watsonx" },
+	].filter((option) => settings.providers?.[option.value as ModelProvider]?.configured === true);
 
 	// Mutations
 	const updateSettingsMutation = useUpdateSettingsMutation({
@@ -188,6 +265,26 @@ function KnowledgeSourcesPage() {
 		if (newModel) updateSettingsMutation.mutate({ llm_model: newModel });
 	};
 
+	// Update LLM provider selection
+	const handleLlmProviderChange = (newProvider: string) => {
+		setSelectedLlmProvider(newProvider as ModelProvider);
+
+		// Get models for the new provider
+		const modelsForProvider = getModelsForProvider(newProvider as ModelProvider);
+		const models = modelsForProvider.data?.language_models;
+
+		// If models are available, select the first one along with the provider
+		if (models && models.length > 0 && models[0].value) {
+			updateSettingsMutation.mutate({
+				llm_provider: newProvider,
+				llm_model: models[0].value
+			});
+		} else {
+			// If models aren't loaded yet, just update the provider
+			updateSettingsMutation.mutate({ llm_provider: newProvider });
+		}
+	};
+
 	// Update system prompt with save button
 	const handleSystemPromptSave = () => {
 		updateSettingsMutation.mutate({ system_prompt: systemPrompt });
@@ -196,6 +293,26 @@ function KnowledgeSourcesPage() {
 	// Update embedding model selection immediately
 	const handleEmbeddingModelChange = (newModel: string) => {
 		if (newModel) updateSettingsMutation.mutate({ embedding_model: newModel });
+	};
+
+	// Update embedding provider selection
+	const handleEmbeddingProviderChange = (newProvider: string) => {
+		setSelectedEmbeddingProvider(newProvider as ModelProvider);
+
+		// Get models for the new provider
+		const modelsForProvider = getModelsForProvider(newProvider as ModelProvider);
+		const models = modelsForProvider.data?.embedding_models;
+
+		// If models are available, select the first one along with the provider
+		if (models && models.length > 0 && models[0].value) {
+			updateSettingsMutation.mutate({
+				embedding_provider: newProvider,
+				embedding_model: models[0].value
+			});
+		} else {
+			// If models aren't loaded yet, just update the provider
+			updateSettingsMutation.mutate({ embedding_provider: newProvider });
+		}
 	};
 
 	const isEmbeddingModelSelectDisabled = updateSettingsMutation.isPending;
@@ -853,19 +970,35 @@ function KnowledgeSourcesPage() {
 					<div className="space-y-6">
 						<div className="space-y-2">
 							<LabelWrapper
-								label="Language model"
-								helperText="Model used for chat"
-								id="embedding-model"
+								label="Language model provider"
+								helperText="Choose which provider to use for chat"
+								id="llm-provider"
 								required={true}
 							>
 								<ModelSelector
-									options={modelsData?.language_models || []}
+									options={configuredLlmProviders}
+									noOptionsPlaceholder="No providers available"
+									icon={getModelLogo("", selectedLlmProvider)}
+									value={selectedLlmProvider}
+									onValueChange={handleLlmProviderChange}
+								/>
+							</LabelWrapper>
+						</div>
+						<div className="space-y-2">
+							<LabelWrapper
+								label="Language model"
+								helperText="Model used for chat"
+								id="language-model"
+								required={true}
+							>
+								<ModelSelector
+									options={llmModelsQuery.data?.language_models || []}
 									noOptionsPlaceholder={
-										modelsLoading
+										llmModelsQuery.isLoading
 											? "Loading models..."
-											: "No language models detected."
+											: "No language models detected. Configure this provider first."
 									}
-									icon={getModelLogo("", currentProvider)}
+									icon={getModelLogo("", selectedLlmProvider)}
 									value={settings.agent?.llm_model || ""}
 									onValueChange={handleModelChange}
 								/>
@@ -999,18 +1132,35 @@ function KnowledgeSourcesPage() {
 					<div className="space-y-6">
 						<div className="space-y-2">
 							<LabelWrapper
+								label="Embedding model provider"
+								helperText="Choose which provider to use for embeddings"
+								id="embedding-provider"
+								required={true}
+							>
+								<ModelSelector
+									options={configuredEmbeddingProviders}
+									noOptionsPlaceholder="No providers available"
+									icon={getModelLogo("", selectedEmbeddingProvider)}
+									value={selectedEmbeddingProvider}
+									onValueChange={handleEmbeddingProviderChange}
+								/>
+							</LabelWrapper>
+						</div>
+						<div className="space-y-2">
+							<LabelWrapper
 								helperText="Model used for knowledge ingest and retrieval"
 								id="embedding-model-select"
 								label="Embedding model"
+								required={true}
 							>
 								<ModelSelector
-									options={modelsData?.embedding_models || []}
+									options={embeddingModelsQuery.data?.embedding_models || []}
 									noOptionsPlaceholder={
-										modelsLoading
+										embeddingModelsQuery.isLoading
 											? "Loading models..."
-											: "No embedding models detected."
+											: "No embedding models detected. Configure this provider first."
 									}
-									icon={getModelLogo("", currentEmbeddingProvider)}
+									icon={getModelLogo("", selectedEmbeddingProvider)}
 									value={settings.knowledge?.embedding_model || ""}
 									onValueChange={handleEmbeddingModelChange}
 								/>

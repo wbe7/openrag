@@ -349,7 +349,7 @@ async def update_settings(request, session_manager):
                     llm_provider_config = current_config.providers.get_provider_config(llm_provider)
 
                     # Apply any updates from the request
-                    api_key = llm_provider_config.api_key
+                    api_key = getattr(llm_provider_config, "api_key", None)
                     endpoint = getattr(llm_provider_config, "endpoint", None)
                     project_id = getattr(llm_provider_config, "project_id", None)
 

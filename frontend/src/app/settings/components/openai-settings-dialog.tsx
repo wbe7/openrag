@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useUpdateSettingsMutation } from "@/app/api/mutations/useUpdateSettingsMutation";
-import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
+import { useGetOpenAIModelsQuery } from "@/app/api/queries/useGetModelsQuery";
 import type { ProviderHealthResponse } from "@/app/api/queries/useProviderHealthQuery";
 import OpenAILogo from "@/components/logo/openai-logo";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { useAuth } from "@/contexts/auth-context";
+import { useDebouncedValue } from "@/lib/debounce";
 import {
 	OpenAISettingsForm,
 	type OpenAISettingsFormData,
@@ -27,27 +27,32 @@ const OpenAISettingsDialog = ({
 	open: boolean;
 	setOpen: (open: boolean) => void;
 }) => {
-	const { isAuthenticated, isNoAuthMode } = useAuth();
 	const queryClient = useQueryClient();
-
-	const { data: settings = {} } = useGetSettingsQuery({
-		enabled: isAuthenticated || isNoAuthMode,
-	});
-
-	const isOpenAIConfigured = settings.provider?.model_provider === "openai";
 
 	const methods = useForm<OpenAISettingsFormData>({
 		mode: "onSubmit",
 		defaultValues: {
 			apiKey: "",
-			llmModel: isOpenAIConfigured ? settings.agent?.llm_model : "",
-			embeddingModel: isOpenAIConfigured
-				? settings.knowledge?.embedding_model
-				: "",
 		},
 	});
 
-	const { handleSubmit } = methods;
+	const { handleSubmit, watch, formState } = methods;
+	const apiKey = watch("apiKey");
+	const debouncedApiKey = useDebouncedValue(apiKey, 500);
+
+	const {
+		isLoading: isLoadingModels,
+		error: modelsError,
+	} = useGetOpenAIModelsQuery(
+		{
+			apiKey: debouncedApiKey,
+		},
+		{
+			enabled: !!debouncedApiKey && open,
+		}
+	);
+
+	const hasValidationError = !!modelsError || !!formState.errors.apiKey;
 
 	const settingsMutation = useUpdateSettingsMutation({
 		onSuccess: () => {
@@ -59,26 +64,19 @@ const OpenAISettingsDialog = ({
 			};
 			queryClient.setQueryData(["provider", "health"], healthData);
 
-			toast.success("OpenAI settings updated successfully");
+			toast.success("OpenAI credentials saved. Configure models in the Settings page.");
 			setOpen(false);
 		},
 	});
 
 	const onSubmit = (data: OpenAISettingsFormData) => {
 		const payload: {
-			api_key?: string;
-			model_provider: string;
-			llm_model: string;
-			embedding_model: string;
-		} = {
-			model_provider: "openai",
-			llm_model: data.llmModel,
-			embedding_model: data.embeddingModel,
-		};
+			openai_api_key?: string;
+		} = {};
 
 		// Only include api_key if a value was entered
 		if (data.apiKey) {
-			payload.api_key = data.apiKey;
+			payload.openai_api_key = data.apiKey;
 		}
 
 		// Submit the update
@@ -99,7 +97,10 @@ const OpenAISettingsDialog = ({
 							</DialogTitle>
 						</DialogHeader>
 
-						<OpenAISettingsForm isCurrentProvider={isOpenAIConfigured} />
+						<OpenAISettingsForm
+							modelsError={modelsError}
+							isLoadingModels={isLoadingModels}
+						/>
 
 						<AnimatePresence mode="wait">
 							{settingsMutation.isError && (
@@ -123,8 +124,11 @@ const OpenAISettingsDialog = ({
 							>
 								Cancel
 							</Button>
-							<Button type="submit" disabled={settingsMutation.isPending}>
-								{settingsMutation.isPending ? "Saving..." : "Save"}
+							<Button
+								type="submit"
+								disabled={settingsMutation.isPending || hasValidationError || isLoadingModels}
+							>
+								{settingsMutation.isPending ? "Saving..." : isLoadingModels ? "Validating..." : "Save"}
 							</Button>
 						</DialogFooter>
 					</form>

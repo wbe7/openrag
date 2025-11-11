@@ -127,7 +127,7 @@ export const ModelProviders = () => {
 							key={providerKey}
 							className={cn(
 								"relative flex flex-col",
-								!isCurrentProvider && "text-muted-foreground",
+								!settings.providers?.[providerKey]?.configured && "text-muted-foreground",
 								isProviderUnhealthy && "border-destructive",
 							)}
 						>
@@ -138,13 +138,13 @@ export const ModelProviders = () => {
 											<div
 												className={cn(
 													"w-8 h-8 rounded flex items-center justify-center border",
-													isCurrentProvider ? logoBgColor : "bg-muted",
+													settings.providers?.[providerKey]?.configured ? logoBgColor : "bg-muted",
 												)}
 											>
 												{
 													<Logo
 														className={
-															isCurrentProvider
+															settings.providers?.[providerKey]?.configured
 																? logoColor
 																: "text-muted-foreground"
 														}
