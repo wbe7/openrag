@@ -937,6 +937,12 @@ class FlowsService:
             template["api_key"]["show"] = True
             template["api_key"]["advanced"] = False
             updated = True
+        
+        if provider == "anthropic" and "base_url" in template:
+            template["base_url"]["value"] = "https://api.anthropic.com"
+            template["base_url"]["show"] = True
+            template["base_url"]["advanced"] = True
+            updated = True
 
         if provider == "ollama" and "base_url" in template:
             template["base_url"]["value"] = "OLLAMA_BASE_URL"
