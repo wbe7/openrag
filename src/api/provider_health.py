@@ -33,8 +33,9 @@ async def check_provider_health(request):
         if check_provider:
             provider = check_provider.lower()
         else:
-            provider = current_config.provider.model_provider
-        
+            # Default to checking LLM provider
+            provider = current_config.agent.llm_provider
+
         # Validate provider name
         valid_providers = ["openai", "ollama", "watsonx", "anthropic"]
         if provider not in valid_providers:
@@ -46,26 +47,21 @@ async def check_provider_health(request):
                 },
                 status_code=400,
             )
-        
+
         # Get provider configuration
         if check_provider:
-            # If checking a specific provider, we may not have all config
-            # So we'll try to use what's available or fail gracefully
-            if provider == current_config.provider.model_provider:
-                # Use current config if checking current provider
-                api_key = current_config.provider.api_key
-                endpoint = current_config.provider.endpoint
-                project_id = current_config.provider.project_id
-                llm_model = current_config.agent.llm_model
-                embedding_model = None
-            elif provider == current_config.embedding_provider.model_provider:
-                api_key = current_config.embedding_provider.api_key
-                endpoint = current_config.embedding_provider.endpoint
-                project_id = current_config.embedding_provider.project_id
-                llm_model = None
-                embedding_model = current_config.knowledge.embedding_model
-            else:
-                # For other providers, we can't validate without config
+            # If checking a specific provider, use its configuration
+            try:
+                provider_config = current_config.providers.get_provider_config(provider)
+                api_key = getattr(provider_config, "api_key", None)
+                endpoint = getattr(provider_config, "endpoint", None)
+                project_id = getattr(provider_config, "project_id", None)
+
+                # Check if this provider is used for LLM or embedding
+                llm_model = current_config.agent.llm_model if provider == current_config.agent.llm_provider else None
+                embedding_model = current_config.knowledge.embedding_model if provider == current_config.knowledge.embedding_provider else None
+            except ValueError:
+                # Provider not found in configuration
                 return JSONResponse(
                     {
                         "status": "error",
@@ -75,14 +71,20 @@ async def check_provider_health(request):
                     status_code=400,
                 )
         else:
-            # Check current provider
-            api_key = current_config.provider.api_key
-            embedding_api_key = current_config.embedding_provider.api_key
-            embedding_endpoint = current_config.embedding_provider.endpoint
-            embedding_project_id = current_config.embedding_provider.project_id
-            endpoint = current_config.provider.endpoint
-            project_id = current_config.provider.project_id
+            # Check both LLM and embedding providers
+            embedding_provider = current_config.knowledge.embedding_provider
+
+            llm_provider_config = current_config.get_llm_provider_config()
+            embedding_provider_config = current_config.get_embedding_provider_config()
+
+            api_key = getattr(llm_provider_config, "api_key", None)
+            endpoint = getattr(llm_provider_config, "endpoint", None)
+            project_id = getattr(llm_provider_config, "project_id", None)
             llm_model = current_config.agent.llm_model
+
+            embedding_api_key = getattr(embedding_provider_config, "api_key", None)
+            embedding_endpoint = getattr(embedding_provider_config, "endpoint", None)
+            embedding_project_id = getattr(embedding_provider_config, "project_id", None)
             embedding_model = current_config.knowledge.embedding_model
         
         logger.info(f"Checking health for provider: {provider}")
@@ -98,8 +100,9 @@ async def check_provider_health(request):
         )
 
         if not check_provider:
+            # Also validate embedding provider
             await validate_provider_setup(
-                provider=current_config.embedding_provider.model_provider,
+                provider=embedding_provider,
                 api_key=embedding_api_key,
                 embedding_model=embedding_model,
                 endpoint=embedding_endpoint,

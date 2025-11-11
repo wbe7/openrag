@@ -167,13 +167,15 @@ async def init_index():
     # Get the configured embedding model from user configuration
     config = get_openrag_config()
     embedding_model = config.knowledge.embedding_model
+    embedding_provider = config.knowledge.embedding_provider
+    embedding_provider_config = config.get_embedding_provider_config()
 
     # Create dynamic index body based on the configured embedding model
     # Pass provider and endpoint for dynamic dimension resolution (Ollama probing)
     dynamic_index_body = await create_dynamic_index_body(
         embedding_model,
-        provider=config.provider.model_provider,
-        endpoint=config.provider.endpoint
+        provider=embedding_provider,
+        endpoint=getattr(embedding_provider_config, "endpoint", None)
     )
 
     # Create documents index

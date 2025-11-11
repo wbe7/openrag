@@ -11,22 +11,56 @@ logger = get_logger(__name__)
 
 
 @dataclass
-class ProviderConfig:
-    """Model provider configuration."""
-
-    model_provider: str = "openai"  # openai, anthropic, etc.
+class OpenAIConfig:
+    """OpenAI provider configuration."""
     api_key: str = ""
-    endpoint: str = ""  # For providers like Watson/IBM that need custom endpoints
-    project_id: str = ""  # For providers like Watson/IBM that need project IDs
+    configured: bool = False
+
 
 @dataclass
-class EmbeddingProviderConfig:
-    """Embedding provider configuration."""
-
-    model_provider: str = "openai"  # openai, ollama, anthropic etc.
+class AnthropicConfig:
+    """Anthropic provider configuration."""
     api_key: str = ""
-    endpoint: str = ""  # For providers like Watson/IBM that need custom endpoints
-    project_id: str = ""  # For providers like Watson/IBM that need project IDs
+    configured: bool = False
+
+
+@dataclass
+class WatsonXConfig:
+    """IBM WatsonX provider configuration."""
+    api_key: str = ""
+    endpoint: str = ""
+    project_id: str = ""
+    configured: bool = False
+
+
+@dataclass
+class OllamaConfig:
+    """Ollama provider configuration."""
+    endpoint: str = ""
+    configured: bool = False
+
+
+@dataclass
+class ProvidersConfig:
+    """All provider configurations."""
+    openai: OpenAIConfig
+    anthropic: AnthropicConfig
+    watsonx: WatsonXConfig
+    ollama: OllamaConfig
+
+    def get_provider_config(self, provider: str):
+        """Get configuration for a specific provider."""
+        provider_lower = provider.lower()
+        if provider_lower == "openai":
+            return self.openai
+        elif provider_lower == "anthropic":
+            return self.anthropic
+        elif provider_lower == "watsonx":
+            return self.watsonx
+        elif provider_lower == "ollama":
+            return self.ollama
+        else:
+            raise ValueError(f"Unknown provider: {provider}")
 
 
 @dataclass
@@ -34,6 +68,7 @@ class KnowledgeConfig:
     """Knowledge/ingestion configuration."""
 
     embedding_model: str = ""
+    embedding_provider: str = "openai"  # Which provider to use for embeddings
     chunk_size: int = 1000
     chunk_overlap: int = 200
     table_structure: bool = True
@@ -46,6 +81,7 @@ class AgentConfig:
     """Agent configuration."""
 
     llm_model: str = ""
+    llm_provider: str = "openai"  # Which provider to use for LLM
     system_prompt: str = "You are a helpful AI assistant with access to a knowledge base. Answer questions based on the provided context."
 
 
@@ -53,8 +89,7 @@ class AgentConfig:
 class OpenRAGConfig:
     """Complete OpenRAG configuration."""
 
-    provider: ProviderConfig
-    embedding_provider: EmbeddingProviderConfig
+    providers: ProvidersConfig
     knowledge: KnowledgeConfig
     agent: AgentConfig
     edited: bool = False  # Track if manually edited
@@ -62,9 +97,14 @@ class OpenRAGConfig:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "OpenRAGConfig":
         """Create config from dictionary."""
+        providers_data = data.get("providers", {})
         return cls(
-            provider=ProviderConfig(**data.get("provider", {})),
-            embedding_provider=EmbeddingProviderConfig(**data.get("embedding_provider", {})),
+            providers=ProvidersConfig(
+                openai=OpenAIConfig(**providers_data.get("openai", {})),
+                anthropic=AnthropicConfig(**providers_data.get("anthropic", {})),
+                watsonx=WatsonXConfig(**providers_data.get("watsonx", {})),
+                ollama=OllamaConfig(**providers_data.get("ollama", {})),
+            ),
             knowledge=KnowledgeConfig(**data.get("knowledge", {})),
             agent=AgentConfig(**data.get("agent", {})),
             edited=data.get("edited", False),
@@ -73,6 +113,14 @@ class OpenRAGConfig:
     def to_dict(self) -> Dict[str, Any]:
         """Convert config to dictionary."""
         return asdict(self)
+
+    def get_llm_provider_config(self):
+        """Get the provider configuration for the current LLM provider."""
+        return self.providers.get_provider_config(self.agent.llm_provider)
+
+    def get_embedding_provider_config(self):
+        """Get the provider configuration for the current embedding provider."""
+        return self.providers.get_provider_config(self.knowledge.embedding_provider)
 
 
 class ConfigManager:
@@ -99,7 +147,16 @@ class ConfigManager:
             return self._config
 
         # Start with defaults
-        config_data = {"provider": {}, "embedding_provider": {}, "knowledge": {}, "agent": {}}
+        config_data = {
+            "providers": {
+                "openai": {},
+                "anthropic": {},
+                "watsonx": {},
+                "ollama": {},
+            },
+            "knowledge": {},
+            "agent": {},
+        }
 
         # Load from config file if it exists
         if self.config_file.exists():
@@ -108,9 +165,17 @@ class ConfigManager:
                     file_config = yaml.safe_load(f) or {}
 
                 # Merge file config
-                for section in ["provider", "embedding_provider", "knowledge", "agent"]:
+                if "providers" in file_config:
+                    for provider in ["openai", "anthropic", "watsonx", "ollama"]:
+                        if provider in file_config["providers"]:
+                            config_data["providers"][provider].update(
+                                file_config["providers"][provider]
+                            )
+
+                for section in ["knowledge", "agent"]:
                     if section in file_config:
                         config_data[section].update(file_config[section])
+
                 config_data["edited"] = file_config.get("edited", False)
 
                 logger.info(f"Loaded configuration from {self.config_file}")
@@ -139,39 +204,31 @@ class ConfigManager:
             logger.debug("Skipping all env overrides - config marked as edited")
             return
 
-        # Provider settings
-        if os.getenv("MODEL_PROVIDER"):
-            config_data["provider"]["model_provider"] = os.getenv("MODEL_PROVIDER")
-        if os.getenv("PROVIDER_API_KEY"):
-            config_data["provider"]["api_key"] = os.getenv("PROVIDER_API_KEY")
-        if os.getenv("PROVIDER_ENDPOINT"):
-            config_data["provider"]["endpoint"] = os.getenv("PROVIDER_ENDPOINT")
-        if os.getenv("PROVIDER_PROJECT_ID"):
-            config_data["provider"]["project_id"] = os.getenv("PROVIDER_PROJECT_ID")
-        # Backward compatibility for OpenAI
+        # OpenAI provider settings
         if os.getenv("OPENAI_API_KEY"):
-            config_data["provider"]["api_key"] = os.getenv("OPENAI_API_KEY")
-            if not config_data["provider"].get("model_provider"):
-                config_data["provider"]["model_provider"] = "openai"
+            config_data["providers"]["openai"]["api_key"] = os.getenv("OPENAI_API_KEY")
 
-        # Embedding provider settings
-        if os.getenv("EMBEDDING_MODEL_PROVIDER"):
-            config_data["embedding_provider"]["model_provider"] = os.getenv("EMBEDDING_MODEL_PROVIDER")
-        if os.getenv("EMBEDDING_API_KEY"):
-            config_data["embedding_provider"]["api_key"] = os.getenv("EMBEDDING_API_KEY")
-        if os.getenv("EMBEDDING_ENDPOINT"):
-            config_data["embedding_provider"]["endpoint"] = os.getenv("EMBEDDING_ENDPOINT")
-        if os.getenv("EMBEDDING_PROJECT_ID"):
-            config_data["embedding_provider"]["project_id"] = os.getenv("EMBEDDING_PROJECT_ID")
-        # Backward compatibility for OpenAI
-        if os.getenv("OPENAI_API_KEY"):
-            config_data["embedding_provider"]["api_key"] = os.getenv("OPENAI_API_KEY")
-            if not config_data["embedding_provider"].get("model_provider"):
-                config_data["embedding_provider"]["model_provider"] = "openai"
+        # Anthropic provider settings
+        if os.getenv("ANTHROPIC_API_KEY"):
+            config_data["providers"]["anthropic"]["api_key"] = os.getenv("ANTHROPIC_API_KEY")
+
+        # WatsonX provider settings
+        if os.getenv("WATSONX_API_KEY"):
+            config_data["providers"]["watsonx"]["api_key"] = os.getenv("WATSONX_API_KEY")
+        if os.getenv("WATSONX_ENDPOINT"):
+            config_data["providers"]["watsonx"]["endpoint"] = os.getenv("WATSONX_ENDPOINT")
+        if os.getenv("WATSONX_PROJECT_ID"):
+            config_data["providers"]["watsonx"]["project_id"] = os.getenv("WATSONX_PROJECT_ID")
+
+        # Ollama provider settings
+        if os.getenv("OLLAMA_ENDPOINT"):
+            config_data["providers"]["ollama"]["endpoint"] = os.getenv("OLLAMA_ENDPOINT")
 
         # Knowledge settings
         if os.getenv("EMBEDDING_MODEL"):
             config_data["knowledge"]["embedding_model"] = os.getenv("EMBEDDING_MODEL")
+        if os.getenv("EMBEDDING_PROVIDER"):
+            config_data["knowledge"]["embedding_provider"] = os.getenv("EMBEDDING_PROVIDER")
         if os.getenv("CHUNK_SIZE"):
             config_data["knowledge"]["chunk_size"] = int(os.getenv("CHUNK_SIZE"))
         if os.getenv("CHUNK_OVERLAP"):
@@ -190,6 +247,8 @@ class ConfigManager:
         # Agent settings
         if os.getenv("LLM_MODEL"):
             config_data["agent"]["llm_model"] = os.getenv("LLM_MODEL")
+        if os.getenv("LLM_PROVIDER"):
+            config_data["agent"]["llm_provider"] = os.getenv("LLM_PROVIDER")
         if os.getenv("SYSTEM_PROMPT"):
             config_data["agent"]["system_prompt"] = os.getenv("SYSTEM_PROMPT")
 
