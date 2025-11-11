@@ -91,7 +91,7 @@ export const ModelProviders = () => {
 
   return (
     <>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 xs:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {sortedProviderKeys.map((providerKey) => {
           const {
             name,
@@ -110,44 +110,35 @@ export const ModelProviders = () => {
                 isCurrentProvider && isUnhealthy && "border-destructive"
               )}
             >
-              <CardHeader>
-                <div className="flex flex-col items-start justify-between">
-                  <div className="flex flex-col gap-3">
-                    <div className="mb-1">
-                      <div
-                        className={cn(
-                          "w-8 h-8 rounded flex items-center justify-center border",
-                          isCurrentProvider ? logoBgColor : "bg-muted"
-                        )}
-                      >
-                        {
-                          <Logo
-                            className={
-                              isCurrentProvider
-                                ? logoColor
-                                : "text-muted-foreground"
-                            }
-                          />
-                        }
-                      </div>
-                    </div>
-                    <CardTitle className="flex flex-row items-center gap-2">
-                      {name}
-                      {isCurrentProvider && (
-                        <div
-                          className={cn(
-                            "h-2 w-2 rounded-full",
-                            isUnhealthy
-                              ? "bg-destructive"
-                              : "bg-accent-emerald-foreground"
-                          )}
-                        />
-                      )}
-                    </CardTitle>
-                  </div>
+              <CardContent className="p-5 flex flex-col gap-3">
+                <div
+                  className={cn(
+                    "w-8 h-8 rounded flex items-center justify-center border",
+                    isCurrentProvider ? logoBgColor : "bg-muted"
+                  )}
+                >
+                  {
+                    <Logo
+                      className={
+                        isCurrentProvider ? logoColor : "text-muted-foreground"
+                      }
+                    />
+                  }
                 </div>
-              </CardHeader>
-              <CardContent className="flex-1 flex flex-col justify-end space-y-4">
+                <CardTitle className="flex items-center gap-2">
+                  {name}
+                  {isCurrentProvider && (
+                    <span
+                      className={cn(
+                        "h-2 w-2 rounded-full",
+                        isUnhealthy
+                          ? "bg-destructive"
+                          : "bg-accent-emerald-foreground"
+                      )}
+                      aria-label={isUnhealthy ? "Error" : "Active"}
+                    />
+                  )}
+                </CardTitle>
                 {isCurrentProvider ? (
                   <Button
                     variant={isUnhealthy ? "default" : "outline"}
@@ -156,7 +147,7 @@ export const ModelProviders = () => {
                     {isUnhealthy ? "Fix Setup" : "Edit Setup"}
                   </Button>
                 ) : (
-                  <p>
+                  <p className="text-sm">
                     See{" "}
                     <Link
                       href="https://docs.openr.ag/install/#application-onboarding"
