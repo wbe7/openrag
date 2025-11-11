@@ -907,14 +907,14 @@ async def onboarding(request, flows_service):
                 logger.info("Set WATSONX_PROJECT_ID global variable in Langflow")
 
             # Set OpenAI global variables
-            if "openai_api_key" in body:
+            if "openai_api_key" in body or current_config.providers.openai.api_key != "":
                 await clients._create_langflow_global_variable(
                     "OPENAI_API_KEY", current_config.providers.openai.api_key, modify=True
                 )
                 logger.info("Set OPENAI_API_KEY global variable in Langflow")
 
             # Set Anthropic global variables
-            if "anthropic_api_key" in body:
+            if "anthropic_api_key" in body or current_config.providers.anthropic.api_key != "":
                 await clients._create_langflow_global_variable(
                     "ANTHROPIC_API_KEY", current_config.providers.anthropic.api_key, modify=True
                 )
