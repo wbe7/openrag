@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { LabelInput } from "@/components/label-input";
 import { LabelWrapper } from "@/components/label-wrapper";
 import OllamaLogo from "@/components/logo/ollama-logo";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useDebouncedValue } from "@/lib/debounce";
 import type { OnboardingVariables } from "../../api/mutations/useOnboardingMutation";
 import { useGetOllamaModelsQuery } from "../../api/queries/useGetModelsQuery";
@@ -92,25 +91,21 @@ export function OllamaOnboarding({
 	return (
 		<div className="space-y-4">
 			<div className="space-y-1">
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<div>
-							<LabelInput
-								label="Ollama Base URL"
-								helperText="Base URL of your Ollama server"
-								id="api-endpoint"
-								required
-								placeholder="http://localhost:11434"
-								value={endpoint}
-								onChange={(e) => setEndpoint(e.target.value)}
-								disabled={alreadyConfigured}
-							/>
-						</div>
-					</TooltipTrigger>
-					{alreadyConfigured && (
-						<TooltipContent>This provider is already configured. The same credentials will be used for embeddings.</TooltipContent>
-					)}
-				</Tooltip>
+				<LabelInput
+					label="Ollama Base URL"
+					helperText="Base URL of your Ollama server"
+					id="api-endpoint"
+					required
+					placeholder={alreadyConfigured ? "http://••••••••••••••••••••" : "http://localhost:11434"}
+					value={endpoint}
+					onChange={(e) => setEndpoint(e.target.value)}
+					disabled={alreadyConfigured}
+				/>
+				{alreadyConfigured && (
+					<p className="text-mmd text-muted-foreground">
+						Reusing endpoint from model provider selection.
+					</p>
+				)}
 				{showConnecting && (
 					<p className="text-mmd text-muted-foreground">
 						Connecting to Ollama server...
