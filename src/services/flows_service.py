@@ -939,7 +939,7 @@ class FlowsService:
         
         if provider == "anthropic" and "base_url" in template:
             template["base_url"]["value"] = "https://api.anthropic.com"
-            template["api_base"]["load_from_db"] = False
+            template["base_url"]["load_from_db"] = False
             template["base_url"]["show"] = True
             template["base_url"]["advanced"] = True
             updated = True
