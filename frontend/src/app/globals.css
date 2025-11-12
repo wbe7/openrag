@@ -9,6 +9,7 @@
     --font-chivo: "Chivo", sans-serif;
 
     /* Core Theme Colors */
+    --onboarding-background: 240 5% 96%;
     --background: 0 0% 100%;
     --foreground: 0 0% 0%;
     --card: 0 0% 100%;
@@ -56,6 +57,7 @@
   }
 
   .dark {
+    --onboarding-background: 0 0% 0%;
     --background: 240 6% 10%;
     --foreground: 0 0% 100%;
     --card: 240 6% 10%;

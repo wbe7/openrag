@@ -90,6 +90,7 @@ const config = {
         shimmer: "shimmer 3s ease-in-out infinite",
       },
       colors: {
+        "onboarding-background": "hsl(var(--onboarding-background))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -143,7 +143,7 @@ export function ChatRenderer({
 					animate={{
 						width: showLayout ? "100%" : "850px",
 						borderRadius: showLayout ? "0" : "16px",
-						border: showLayout ? "0" : "1px solid #27272A",
+						border: showLayout ? "0" : "1px solid hsl(var(--border))",
 						height: showLayout ? "100%" : "800px",
 						x: x,
 						y: y,
