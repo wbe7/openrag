@@ -162,7 +162,7 @@ export const ModelProviders = () => {
 															? "bg-destructive"
 															: "bg-accent-emerald-foreground",
 													)}
-                          aria-label={isUnhealthy ? "Error" : "Active"}
+                          aria-label={isProviderUnhealthy ? "Error" : "Active"}
 												/>
 											)}
 										</CardTitle>
