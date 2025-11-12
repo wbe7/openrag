@@ -164,7 +164,10 @@ export const IngestSettings = ({
               <SelectContent>
                 <ModelSelectItems
                   models={modelsData?.embedding_models}
-                  fallbackModels={getFallbackModels(currentProvider).embedding as ModelOption[]}
+                  fallbackModels={
+                    getFallbackModels(currentProvider)
+                      .embedding as ModelOption[]
+                  }
                   provider={currentProvider}
                 />
               </SelectContent>
