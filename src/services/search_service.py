@@ -34,7 +34,7 @@ class SearchService:
 
         # Strategy: Use provided model, or default to the configured embedding
         # model. This assumes documents are embedded with that model by default.
-        # Future enhancement: Could auto-detect available models in corpus
+        # Future enhancement: Could auto-detect available models in corpus.
         embedding_model = embedding_model or get_embedding_model() or EMBED_MODEL
         embedding_field_name = get_embedding_field_name(embedding_model)
 
