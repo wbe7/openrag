@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Install OpenRAG containers | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/docker"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Install OpenRAG containers | OpenRAG"><meta data-rh="true" name="description" content="OpenRAG has two Docker Compose files. Both files deploy the same applications and containers locally, but they are for different environments."><meta data-rh="true" property="og:description" content="OpenRAG has two Docker Compose files. Both files deploy the same applications and containers locally, but they are for different environments."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/docker"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/docker" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/docker" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Install OpenRAG containers","item":"https://docs.openr.ag/docker"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.4b51d832.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.d05a75ce.js" defer="defer"></script>
 <script src="/assets/js/main.179a52a2.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -97,25 +97,32 @@ This enables <a href="https://opensource.apple.com/projects/mlx/" target="_blank
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="application-onboarding">Application onboarding<a href="#application-onboarding" class="hash-link" aria-label="Direct link to Application onboarding" title="Direct link to Application onboarding" translate="no">​</a></h2>
 <p>The first time you start OpenRAG, whether using the TUI or a <code>.env</code> file, you must complete application onboarding.</p>
 <div class="theme-admonition theme-admonition-warning admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg></span>warning</div><div class="admonitionContent_BuS1"><p>Most values from onboarding can be changed later in the OpenRAG <strong>Settings</strong> page, but there are important restrictions.</p><p>The <strong>language model provider</strong> and <strong>embeddings model provider</strong> can only be selected at onboarding.
-To change your provider selection later, you must <a class="" href="/install#reinstall">reinstall OpenRAG</a>.</p><p>You must use the same provider for your language model and embedding model, unless you&#x27;re using Ollama.</p></div></div>
-<p>Choose one LLM provider and complete only those steps:</p>
-<div class="theme-tabs-container tabs-container tabList__CuJ"><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active">OpenAI</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">IBM watsonx.ai</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Ollama</li></ul><div class="margin-top--md"><div role="tabpanel" class="tabItem_Ymn6"><ol>
+To change your provider selection later, you must <a class="" href="/install#reinstall">reinstall OpenRAG</a>.</p><p>You can use different providers for your language model and embedding model, such as Anthropic for the language model and OpenAI for the embeddings model.</p></div></div>
+<p>Choose one LLM provider and complete these steps:</p>
+<div class="theme-tabs-container tabs-container tabList__CuJ"><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active">OpenAI</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">IBM watsonx.ai</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Anthropic</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Ollama</li></ul><div class="margin-top--md"><div role="tabpanel" class="tabItem_Ymn6"><ol>
 <li class="">Enable <strong>Get API key from environment variable</strong> to automatically enter your key from the TUI-generated <code>.env</code> file.
 Alternatively, paste an OpenAI API key into the field.</li>
-<li class="">Under <strong>Advanced settings</strong>, select your <strong>Embedding Model</strong> and <strong>Language Model</strong>.</li>
-<li class="">To load 2 sample PDFs, enable <strong>Sample dataset</strong>.
-This is recommended, but not required.</li>
+<li class="">Under <strong>Advanced settings</strong>, select your <strong>Language Model</strong>.</li>
 <li class="">Click <strong>Complete</strong>.</li>
+<li class="">In the second onboarding panel, select a provider for embeddings and select your <strong>Embedding Model</strong>.</li>
 <li class="">To complete the onboarding tasks, click <strong>What is OpenRAG</strong>, and then click <strong>Add a Document</strong>.
 Alternatively, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg> <strong>Skip overview</strong>.</li>
 <li class="">Continue with the <a class="" href="/quickstart">Quickstart</a>.</li>
 </ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><ol>
 <li class="">Complete the fields for <strong>watsonx.ai API Endpoint</strong>, <strong>IBM Project ID</strong>, and <strong>IBM API key</strong>.
 These values are found in your IBM watsonx deployment.</li>
-<li class="">Under <strong>Advanced settings</strong>, select your <strong>Embedding Model</strong> and <strong>Language Model</strong>.</li>
-<li class="">To load 2 sample PDFs, enable <strong>Sample dataset</strong>.
-This is recommended, but not required.</li>
+<li class="">Under <strong>Advanced settings</strong>, select your <strong>Language Model</strong>.</li>
 <li class="">Click <strong>Complete</strong>.</li>
+<li class="">In the second onboarding panel, select a provider for embeddings and select your <strong>Embedding Model</strong>.</li>
+<li class="">To complete the onboarding tasks, click <strong>What is OpenRAG</strong>, and then click <strong>Add a Document</strong>.
+Alternatively, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg> <strong>Skip overview</strong>.</li>
+<li class="">Continue with the <a class="" href="/quickstart">Quickstart</a>.</li>
+</ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>Anthropic does not provide embedding models. If you select Anthropic for your language model, you must then select a different provider for embeddings.</p></div></div><ol>
+<li class="">Enable <strong>Use environment Anthropic API key</strong> to automatically use your key from the TUI-generated <code>.env</code> file.
+Alternatively, paste an Anthropic API key into the field.</li>
+<li class="">Under <strong>Advanced settings</strong>, select your <strong>Language Model</strong>.</li>
+<li class="">Click <strong>Complete</strong>.</li>
+<li class="">In the second onboarding panel, select a provider for embeddings and select your <strong>Embedding Model</strong>.</li>
 <li class="">To complete the onboarding tasks, click <strong>What is OpenRAG</strong>, and then click <strong>Add a Document</strong>.
 Alternatively, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg> <strong>Skip overview</strong>.</li>
 <li class="">Continue with the <a class="" href="/quickstart">Quickstart</a>.</li>
@@ -123,11 +130,9 @@ Alternatively, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="
 <li class="">Enter your Ollama server&#x27;s base URL address.
 The default Ollama server address is <code>http://localhost:11434</code>.
 OpenRAG automatically transforms <code>localhost</code> to access services outside of the container, and sends a test connection to your Ollama server to confirm connectivity.</li>
-<li class="">Select the <strong>Embedding Model</strong> and <strong>Language Model</strong> your Ollama server is running.
-OpenRAG retrieves the available models from your Ollama server.</li>
-<li class="">To load 2 sample PDFs, enable <strong>Sample dataset</strong>.
-This is recommended, but not required.</li>
+<li class="">Under <strong>Advanced settings</strong>, select your <strong>Language Model</strong> from the models available on your Ollama server.</li>
 <li class="">Click <strong>Complete</strong>.</li>
+<li class="">In the second onboarding panel, select your <strong>Embedding Model</strong> from the models available on your Ollama server.</li>
 <li class="">To complete the onboarding tasks, click <strong>What is OpenRAG</strong>, and then click <strong>Add a Document</strong>.
 Alternatively, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg> <strong>Skip overview</strong>.</li>
 <li class="">Continue with the <a class="" href="/quickstart">Quickstart</a>.</li>
