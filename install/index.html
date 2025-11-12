@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Install OpenRAG with TUI | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/install"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Install OpenRAG with TUI | OpenRAG"><meta data-rh="true" name="description" content="Install OpenRAG and then run the OpenRAG Terminal User Interface(TUI) to start your OpenRAG deployment with a guided setup process."><meta data-rh="true" property="og:description" content="Install OpenRAG and then run the OpenRAG Terminal User Interface(TUI) to start your OpenRAG deployment with a guided setup process."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/install"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/install" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/install" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Install OpenRAG with TUI","item":"https://docs.openr.ag/install"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.d05a75ce.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.4aa57787.js" defer="defer"></script>
 <script src="/assets/js/main.179a52a2.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -221,14 +221,34 @@ Alternatively, paste an Anthropic API key into the field.</li>
 Alternatively, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg> <strong>Skip overview</strong>.</li>
 <li class="">Continue with the <a class="" href="/quickstart">Quickstart</a>.</li>
 </ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><p>Ollama is not included with OpenRAG. To install Ollama, see the <a href="https://docs.ollama.com/" target="_blank" rel="noopener noreferrer" class="">Ollama documentation</a>.</p></div></div><ol>
-<li class="">Enter your Ollama server&#x27;s base URL address.
+<li class="">To connect to an Ollama server running on your local machine, enter your Ollama server&#x27;s base URL address.
 The default Ollama server address is <code>http://localhost:11434</code>.
-OpenRAG automatically transforms <code>localhost</code> to access services outside of the container, and sends a test connection to your Ollama server to confirm connectivity.</li>
-<li class="">Under <strong>Advanced settings</strong>, select your <strong>Language Model</strong> from the models available on your Ollama server.</li>
+OpenRAG connects to the Ollama server and populates the model lists with the server&#x27;s available models.</li>
+<li class="">Select the <strong>Embedding Model</strong> and <strong>Language Model</strong> your Ollama server is running.<!-- -->
+<details class="details_lb9f alert alert--info details_b_Ee" data-collapsed="true"><summary>Ollama model selection and external server configuration</summary><div><div class="collapsibleContent_i85q"><p>Using Ollama for your OpenRAG language model provider offers greater flexibility and configuration, but can also be overwhelming to start.
+These recommendations are a reasonable starting point for users with at least one GPU and experience running LLMs locally.</p>
+<p>For best performance, OpenRAG recommends OpenAI&#x27;s <code>gpt-oss:20b</code> language model. However, this model uses 16GB of RAM, so consider using Ollama Cloud or running Ollama on a remote machine.</p>
+<p>For generating embeddings, OpenRAG recommends the <a href="https://ollama.com/library/nomic-embed-text" target="_blank" rel="noopener noreferrer" class=""><code>nomic-embed-text</code></a> embedding model, which provides high-quality embeddings optimized for retrieval tasks.</p>
+<p>To run models in <a href="https://docs.ollama.com/cloud" target="_blank" rel="noopener noreferrer" class=""><strong>Ollama Cloud</strong></a>, follow these steps:</p>
+<ol>
+<li class="">Sign in to Ollama Cloud.
+In a terminal, enter <code>ollama signin</code> to connect your local environment with Ollama Cloud.</li>
+<li class="">To run the model, in Ollama, select the <code>gpt-oss:20b-cloud</code> model, or run <code>ollama run gpt-oss:20b-cloud</code> in a terminal.
+Ollama Cloud models are run at the same URL as your local Ollama server at <code>http://localhost:11434</code>, and automatically offloaded to Ollama&#x27;s cloud service.</li>
+<li class="">Connect OpenRAG to the same local Ollama server as you would for local models in onboarding, using the default address of <code>http://localhost:11434</code>.</li>
+<li class="">In the <strong>Language model</strong> field, select the <code>gpt-oss:20b-cloud</code> model.</li>
+</ol>
+<br>
+<p>To run models on a <strong>remote Ollama server</strong>, follow these steps:</p>
+<ol>
+<li class="">Ensure your remote Ollama server is accessible from your OpenRAG instance.</li>
+<li class="">In the <strong>Ollama Base URL</strong> field, enter your remote Ollama server&#x27;s base URL, such as <code>http://your-remote-server:11434</code>.
+OpenRAG connects to the remote Ollama server and populates the lists with the server&#x27;s available models.</li>
+<li class="">Select your <strong>Embedding model</strong> and <strong>Language model</strong> from the available options.</li>
+</ol></div></div></details>
+</li>
 <li class="">Click <strong>Complete</strong>.</li>
-<li class="">In the second onboarding panel, select your <strong>Embedding Model</strong> from the models available on your Ollama server.</li>
-<li class="">To complete the onboarding tasks, click <strong>What is OpenRAG</strong>, and then click <strong>Add a Document</strong>.
-Alternatively, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg> <strong>Skip overview</strong>.</li>
+<li class="">To complete the onboarding tasks, click <strong>What is OpenRAG</strong>, and then click <strong>Add a Document</strong>.</li>
 <li class="">Continue with the <a class="" href="/quickstart">Quickstart</a>.</li>
 </ol></div></div></div>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="close-the-openrag-tui">Close the OpenRAG TUI<a href="#close-the-openrag-tui" class="hash-link" aria-label="Direct link to Close the OpenRAG TUI" title="Direct link to Close the OpenRAG TUI" translate="no">​</a></h2>
