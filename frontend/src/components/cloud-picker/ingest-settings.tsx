@@ -21,7 +21,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ModelSelectItems } from "@/app/settings/helpers/model-select-item";
-import { getFallbackModels, type ModelProvider } from "@/app/settings/helpers/model-helpers";
+import {
+  getFallbackModels,
+  type ModelProvider,
+} from "@/app/settings/helpers/model-helpers";
 import { NumberInput } from "@/components/ui/inputs/number-input";
 import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
 import {
@@ -31,6 +34,7 @@ import {
 } from "@/app/api/queries/useGetModelsQuery";
 import { useAuth } from "@/contexts/auth-context";
 import { useEffect } from "react";
+import { ModelOption } from "@/app/onboarding/components/model-selector";
 
 interface IngestSettingsProps {
   isOpen: boolean;
@@ -53,7 +57,7 @@ export const IngestSettings = ({
   });
 
   // Get the current provider from API settings
-  const currentProvider = (apiSettings.provider?.model_provider ||
+  const currentProvider = (apiSettings.knowledge?.embedding_provider ||
     "openai") as ModelProvider;
 
   // Fetch available models based on provider
@@ -99,8 +103,14 @@ export const IngestSettings = ({
 
   // Update settings when API embedding model changes
   useEffect(() => {
-    if (apiEmbeddingModel && (!settings || settings.embeddingModel !== apiEmbeddingModel)) {
-      onSettingsChange?.({ ...currentSettings, embeddingModel: apiEmbeddingModel });
+    if (
+      apiEmbeddingModel &&
+      (!settings || settings.embeddingModel !== apiEmbeddingModel)
+    ) {
+      onSettingsChange?.({
+        ...currentSettings,
+        embeddingModel: apiEmbeddingModel,
+      });
     }
   }, [apiEmbeddingModel]);
 
@@ -137,7 +147,9 @@ export const IngestSettings = ({
             <Select
               disabled={false}
               value={currentSettings.embeddingModel}
-              onValueChange={(value) => handleSettingsChange({ embeddingModel: value })}
+              onValueChange={(value) =>
+                handleSettingsChange({ embeddingModel: value })
+              }
             >
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -152,7 +164,7 @@ export const IngestSettings = ({
               <SelectContent>
                 <ModelSelectItems
                   models={modelsData?.embedding_models}
-                  fallbackModels={getFallbackModels(currentProvider).embedding}
+                  fallbackModels={getFallbackModels(currentProvider).embedding as ModelOption[]}
                   provider={currentProvider}
                 />
               </SelectContent>
