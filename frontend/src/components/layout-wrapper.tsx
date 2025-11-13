@@ -66,45 +66,45 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
   // For all other pages, render with Langflow-styled navigation and task menu
   return (
-    <div className="h-screen w-screen flex items-center justify-center">
-      <div
-        className={cn(
-          "app-grid-arrangement bg-black relative",
-          isPanelOpen && isOnKnowledgePage && !isMenuOpen && "filters-open",
-          isMenuOpen && "notifications-open"
-        )}
-      >
-        <div className="w-full z-10 bg-background [grid-area:banner]">
+    <div className="h-screen w-screen flex items-center justify-center bg-muted dark:bg-black">
+    <div
+      className={cn(
+          "app-grid-arrangement relative",
+        isPanelOpen && isOnKnowledgePage && !isMenuOpen && "filters-open",
+        isMenuOpen && "notifications-open"
+      )}
+    >
+      <div className="w-full z-10 bg-background [grid-area:banner]">
+        <AnimatedConditional
+          vertical
+          isOpen={isDoclingUnhealthy}
+          className="w-full"
+        >
+          <DoclingHealthBanner />
+        </AnimatedConditional>
+        {settings?.edited && (
           <AnimatedConditional
             vertical
-            isOpen={isDoclingUnhealthy}
+            isOpen={isProviderUnhealthy}
             className="w-full"
           >
-            <DoclingHealthBanner />
+            <ProviderHealthBanner />
           </AnimatedConditional>
-          {settings?.edited && (
-            <AnimatedConditional
-              vertical
-              isOpen={isProviderUnhealthy}
-              className="w-full"
-            >
-              <ProviderHealthBanner />
-            </AnimatedConditional>
-          )}
-        </div>
-
-        <ChatRenderer settings={settings}>{children}</ChatRenderer>
-
-        {/* Task Notifications Panel */}
-        <aside className="overflow-y-auto overflow-x-hidden [grid-area:notifications]">
-          {isMenuOpen && <TaskNotificationMenu />}
-        </aside>
-
-        {/* Knowledge Filter Panel */}
-        <aside className="overflow-y-auto overflow-x-hidden [grid-area:filters]">
-          {isPanelOpen && <KnowledgeFilterPanel />}
-        </aside>
+        )}
       </div>
+
+      <ChatRenderer settings={settings}>{children}</ChatRenderer>
+
+      {/* Task Notifications Panel */}
+      <aside className="overflow-y-auto overflow-x-hidden [grid-area:notifications]">
+        {isMenuOpen && <TaskNotificationMenu />}
+      </aside>
+
+      {/* Knowledge Filter Panel */}
+      <aside className="overflow-y-auto overflow-x-hidden [grid-area:filters]">
+        {isPanelOpen && <KnowledgeFilterPanel />}
+      </aside>
+    </div>
     </div>
   );
 }
