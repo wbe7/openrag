@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} ${chivo.variable} antialiased bg-white dark:bg-black`}
+        className={`${inter.variable} ${jetbrainsMono.variable} ${chivo.variable} antialiased overflow-hidden bg-white dark:bg-black`}
       >
         <ThemeProvider
           attribute="class"
