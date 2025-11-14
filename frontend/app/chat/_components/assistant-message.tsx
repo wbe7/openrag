@@ -1,9 +1,9 @@
 import { GitBranch } from "lucide-react";
 import { motion } from "motion/react";
-import DogIcon from "@/components/logo/dog-icon";
+import DogIcon from "@/components/icons/dog-icon";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { cn } from "@/lib/utils";
-import type { FunctionCall } from "../types";
+import type { FunctionCall } from "../_types/types";
 import { FunctionCalls } from "./function-calls";
 import { Message } from "./message";
 
