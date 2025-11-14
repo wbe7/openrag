@@ -83,7 +83,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
         description: "Task has been cancelled successfully",
       });
     },
-    onError: (error) => {
+    onError: error => {
       toast.error("Failed to cancel task", {
         description: error.message,
       });
@@ -106,7 +106,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
   const addFiles = useCallback(
     (newFiles: Partial<TaskFile>[], taskId: string) => {
       const now = new Date().toISOString();
-      const filesToAdd: TaskFile[] = newFiles.map((file) => ({
+      const filesToAdd: TaskFile[] = newFiles.map(file => ({
         filename: file.filename || "",
         mimetype: file.mimetype || "",
         source_url: file.source_url || "",
@@ -121,7 +121,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
         embedding_dimensions: file.embedding_dimensions,
       }));
 
-      setFiles((prevFiles) => [...prevFiles, ...filesToAdd]);
+      setFiles(prevFiles => [...prevFiles, ...filesToAdd]);
     },
     []
   );
@@ -135,9 +135,9 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Check for task status changes by comparing with previous tasks
-    tasks.forEach((currentTask) => {
+    tasks.forEach(currentTask => {
       const previousTask = previousTasksRef.current.find(
-        (prev) => prev.task_id === currentTask.task_id
+        prev => prev.task_id === currentTask.task_id
       );
 
       // Check if task is in progress
@@ -210,9 +210,9 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
                 return undefined;
               })();
 
-              setFiles((prevFiles) => {
+              setFiles(prevFiles => {
                 const existingFileIndex = prevFiles.findIndex(
-                  (f) =>
+                  f =>
                     f.source_url === filePath &&
                     f.task_id === currentTask.task_id
                 );
@@ -299,9 +299,9 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
             });
           }
           setTimeout(() => {
-            setFiles((prevFiles) =>
+            setFiles(prevFiles =>
               prevFiles.filter(
-                (file) => file.status === "active" || file.status === "failed"
+                file => file.status === "active" || file.status === "failed"
               )
             );
             refetchSearch();
@@ -339,9 +339,9 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
   );
 
   const refreshTasks = useCallback(async () => {
-    setFiles((prevFiles) =>
+    setFiles(prevFiles =>
       prevFiles.filter(
-        (file) => file.status !== "active" && file.status !== "failed"
+        file => file.status !== "active" && file.status !== "failed"
       )
     );
     await refetchTasks();
@@ -355,14 +355,14 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
   );
 
   const toggleMenu = useCallback(() => {
-    setIsMenuOpen((prev) => !prev);
+    setIsMenuOpen(prev => !prev);
   }, []);
 
   // Determine if we're polling based on React Query's refetch interval
   const isPolling =
     isFetching &&
     tasks.some(
-      (task) =>
+      task =>
         task.status === "pending" ||
         task.status === "running" ||
         task.status === "processing"

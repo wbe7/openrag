@@ -457,7 +457,7 @@ export function KnowledgeDropdown() {
                 type="text"
                 placeholder="/path/to/documents"
                 value={folderPath}
-                onChange={(e) => setFolderPath(e.target.value)}
+                onChange={e => setFolderPath(e.target.value)}
               />
             </div>
             <div className="flex justify-end gap-2">
@@ -499,7 +499,7 @@ export function KnowledgeDropdown() {
                 type="text"
                 placeholder="s3://bucket/path"
                 value={bucketUrl}
-                onChange={(e) => setBucketUrl(e.target.value)}
+                onChange={e => setBucketUrl(e.target.value)}
               />
             </div>
             <div className="flex justify-end gap-2">

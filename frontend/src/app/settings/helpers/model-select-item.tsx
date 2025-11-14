@@ -36,7 +36,7 @@ export function ModelSelectItems({
 
   return (
     <>
-      {modelsToRender.map((model) => (
+      {modelsToRender.map(model => (
         <ModelSelectItem key={model.value} model={model} provider={provider} />
       ))}
     </>

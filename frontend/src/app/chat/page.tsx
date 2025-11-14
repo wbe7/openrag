@@ -90,12 +90,12 @@ function ChatPage() {
   } = useChatStreaming({
     endpoint: apiEndpoint,
     onComplete: (message, responseId) => {
-      setMessages((prev) => [...prev, message]);
+      setMessages(prev => [...prev, message]);
       setLoading(false);
 
       if (responseId) {
         cancelNudges();
-        setPreviousResponseIds((prev) => ({
+        setPreviousResponseIds(prev => ({
           ...prev,
           [endpoint]: responseId,
         }));
@@ -108,7 +108,7 @@ function ChatPage() {
         }
       }
     },
-    onError: (error) => {
+    onError: error => {
       console.error("Streaming error:", error);
       setLoading(false);
       const errorMessage: Message = {
@@ -117,7 +117,7 @@ function ChatPage() {
           "Sorry, I couldn't connect to the chat service. Please try again.",
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages(prev => [...prev, errorMessage]);
     },
   });
 
@@ -250,7 +250,7 @@ function ChatPage() {
           timestamp: new Date(),
         };
 
-        setMessages((prev) => [...prev, uploadMessage, confirmationMessage]);
+        setMessages(prev => [...prev, uploadMessage, confirmationMessage]);
 
         // Add file to conversation docs
         if (result.filename) {
@@ -259,7 +259,7 @@ function ChatPage() {
 
         // Update the response ID for this endpoint
         if (result.response_id) {
-          setPreviousResponseIds((prev) => ({
+          setPreviousResponseIds(prev => ({
             ...prev,
             [endpoint]: result.response_id,
           }));
@@ -285,7 +285,7 @@ function ChatPage() {
         content: `❌ Failed to process document. Please try again.`,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev.slice(0, -1), errorMessage]);
+      setMessages(prev => [...prev.slice(0, -1), errorMessage]);
     } finally {
       setIsUploading(false);
       setLoading(false);
@@ -551,7 +551,7 @@ function ChatPage() {
       lastLoadedConversationRef.current = conversationData.response_id;
 
       // Set the previous response ID for this conversation
-      setPreviousResponseIds((prev) => ({
+      setPreviousResponseIds(prev => ({
         ...prev,
         [conversationData.endpoint]: conversationData.response_id,
       }));
@@ -597,7 +597,7 @@ function ChatPage() {
 
       // Update the response ID for this endpoint
       if (result.response_id) {
-        setPreviousResponseIds((prev) => ({
+        setPreviousResponseIds(prev => ({
           ...prev,
           [endpoint]: result.response_id,
         }));
@@ -624,7 +624,7 @@ function ChatPage() {
         content: `❌ Upload failed for **${filename}**: ${error}`,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev.slice(0, -1), errorMessage]);
+      setMessages(prev => [...prev.slice(0, -1), errorMessage]);
       setUploadedFile(null); // Clear file on error
     };
 
@@ -782,7 +782,7 @@ function ChatPage() {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput("");
     setLoading(true);
     setIsFilterHighlighted(false);
@@ -853,14 +853,14 @@ function ChatPage() {
             content: result.response,
             timestamp: new Date(),
           };
-          setMessages((prev) => [...prev, assistantMessage]);
+          setMessages(prev => [...prev, assistantMessage]);
           if (result.response_id) {
             cancelNudges();
           }
 
           // Store the response ID if present for this endpoint
           if (result.response_id) {
-            setPreviousResponseIds((prev) => ({
+            setPreviousResponseIds(prev => ({
               ...prev,
               [endpoint]: result.response_id,
             }));
@@ -881,7 +881,7 @@ function ChatPage() {
             content: "Sorry, I encountered an error. Please try again.",
             timestamp: new Date(),
           };
-          setMessages((prev) => [...prev, errorMessage]);
+          setMessages(prev => [...prev, errorMessage]);
         }
       } catch (error) {
         console.error("Chat error:", error);
@@ -891,7 +891,7 @@ function ChatPage() {
             "Sorry, I couldn't connect to the chat service. Please try again.",
           timestamp: new Date(),
         };
-        setMessages((prev) => [...prev, errorMessage]);
+        setMessages(prev => [...prev, errorMessage]);
       }
     }
 
@@ -912,7 +912,7 @@ function ChatPage() {
       // If the upload resulted in a new conversation, store the response ID
       if (responseId) {
         uploadedResponseId = responseId;
-        setPreviousResponseIds((prev) => ({
+        setPreviousResponseIds(prev => ({
           ...prev,
           [endpoint]: responseId,
         }));
@@ -930,7 +930,7 @@ function ChatPage() {
   };
 
   const toggleFunctionCall = (functionCallId: string) => {
-    setExpandedFunctionCalls((prev) => {
+    setExpandedFunctionCalls(prev => {
       const newSet = new Set(prev);
       if (newSet.has(functionCallId)) {
         newSet.delete(functionCallId);
@@ -987,7 +987,7 @@ function ChatPage() {
 
       // Set the response_id we want to continue from as the previous response ID
       // This tells the backend to continue the conversation from this point
-      setPreviousResponseIds((prev) => ({
+      setPreviousResponseIds(prev => ({
         ...prev,
         [endpoint]: responseIdToForkFrom,
       }));
@@ -1027,7 +1027,7 @@ function ChatPage() {
     }
 
     if (isFilterDropdownOpen) {
-      const filteredFilters = availableFilters.filter((filter) =>
+      const filteredFilters = availableFilters.filter(filter =>
         filter.name.toLowerCase().includes(filterSearchTerm.toLowerCase())
       );
 
@@ -1045,7 +1045,7 @@ function ChatPage() {
 
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setSelectedFilterIndex((prev) =>
+        setSelectedFilterIndex(prev =>
           prev < filteredFilters.length - 1 ? prev + 1 : 0
         );
         return;
@@ -1053,7 +1053,7 @@ function ChatPage() {
 
       if (e.key === "ArrowUp") {
         e.preventDefault();
-        setSelectedFilterIndex((prev) =>
+        setSelectedFilterIndex(prev =>
           prev > 0 ? prev - 1 : filteredFilters.length - 1
         );
         return;
@@ -1285,7 +1285,7 @@ function ChatPage() {
                           expandedFunctionCalls={expandedFunctionCalls}
                           onToggle={toggleFunctionCall}
                           showForkButton={endpoint === "chat"}
-                          onFork={(e) => handleForkConversation(index, e)}
+                          onFork={e => handleForkConversation(index, e)}
                           animate={false}
                           isInactive={index < messages.length - 1}
                         />

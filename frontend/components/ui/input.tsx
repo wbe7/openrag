@@ -56,7 +56,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <button
             type="button"
             className="absolute top-1/2 opacity-0 group-hover:opacity-100 hover:text-primary transition-all right-3 transform -translate-y-1/2 text-sm text-muted-foreground"
-            onMouseDown={(e) => e.preventDefault()}
+            onMouseDown={e => e.preventDefault()}
             onMouseUp={handleTogglePassword}
           >
             {showPassword ? (

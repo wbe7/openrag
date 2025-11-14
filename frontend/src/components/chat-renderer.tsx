@@ -96,7 +96,7 @@ export function ChatRenderer({
 
   // List of paths with smaller max-width
   const smallWidthPaths = ["/settings", "/upload"];
-  const isSmallWidthPath = smallWidthPaths.some((path) =>
+  const isSmallWidthPath = smallWidthPaths.some(path =>
     pathname.startsWith(path)
   );
 

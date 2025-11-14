@@ -17,7 +17,7 @@ export function useUpdateSettings(
   isEmbedding?: boolean
 ) {
   useEffect(() => {
-    setSettings((prev) => {
+    setSettings(prev => {
       const updatedSettings: OnboardingVariables = {
         ...prev,
         embedding_model: config.embeddingModel || prev.embedding_model || "",

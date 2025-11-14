@@ -147,7 +147,7 @@ const OnboardingCard = ({
 
     // Check if there are any active tasks (pending, running, or processing)
     const activeTasks = tasks.find(
-      (task) =>
+      task =>
         task.status === "pending" ||
         task.status === "running" ||
         task.status === "processing"
@@ -170,7 +170,7 @@ const OnboardingCard = ({
 
   // Mutations
   const onboardingMutation = useOnboardingMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       console.log("Onboarding completed successfully", data);
       // Update provider health cache to healthy since backend just validated
       const provider =
@@ -192,7 +192,7 @@ const OnboardingCard = ({
         setCurrentStep(0);
       }
     },
-    onError: (error) => {
+    onError: error => {
       setError(error.message);
       setCurrentStep(totalSteps);
       // Reset to provider selection after 1 second

@@ -103,13 +103,13 @@ export const ModelProviders = () => {
   ]);
   const sortedProviderKeys = [
     ...Array.from(activeProviders),
-    ...allProviderKeys.filter((key) => !activeProviders.has(key)),
+    ...allProviderKeys.filter(key => !activeProviders.has(key)),
   ];
 
   return (
     <>
       <div className="grid gap-6 xs:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        {sortedProviderKeys.map((providerKey) => {
+        {sortedProviderKeys.map(providerKey => {
           const {
             name,
             logo: Logo,

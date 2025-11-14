@@ -38,14 +38,14 @@ export function TaskNotificationMenu() {
   if (!isMenuOpen) return null;
 
   const activeTasks = tasks.filter(
-    (task) =>
+    task =>
       task.status === "pending" ||
       task.status === "running" ||
       task.status === "processing"
   );
   const recentTasks = tasks
     .filter(
-      (task) =>
+      task =>
         task.status === "completed" ||
         task.status === "failed" ||
         task.status === "error"
@@ -233,7 +233,7 @@ export function TaskNotificationMenu() {
               <h4 className="text-sm font-medium text-muted-foreground">
                 Active Tasks
               </h4>
-              {activeTasks.map((task) => {
+              {activeTasks.map(task => {
                 const progress = formatTaskProgress(task);
                 const showCancel =
                   task.status === "pending" ||
@@ -342,7 +342,7 @@ export function TaskNotificationMenu() {
 
               {isExpanded && (
                 <div className="space-y-2 transition-all duration-200">
-                  {recentTasks.map((task) => {
+                  {recentTasks.map(task => {
                     const progress = formatTaskProgress(task);
 
                     return (

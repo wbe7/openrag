@@ -51,7 +51,7 @@ export const useGetSearchAggregations = (
     {
       queryKey: ["search-aggregations", query, limit, scoreThreshold],
       queryFn: fetchAggregations,
-      placeholderData: (prev) => prev,
+      placeholderData: prev => prev,
       ...options,
     },
     queryClient

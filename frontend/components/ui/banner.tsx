@@ -113,7 +113,7 @@ export const BannerClose = ({
 }: BannerCloseProps) => {
   const { setShow } = useContext(BannerContext);
 
-  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+  const handleClick: MouseEventHandler<HTMLButtonElement> = e => {
     setShow(false);
     onClick?.(e);
   };

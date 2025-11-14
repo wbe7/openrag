@@ -123,7 +123,7 @@ export function AnthropicOnboarding({
               required
               placeholder="sk-..."
               value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
+              onChange={e => setApiKey(e.target.value)}
             />
             {isLoadingModels && (
               <p className="text-mmd text-muted-foreground">

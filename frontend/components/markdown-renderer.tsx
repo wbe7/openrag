@@ -34,7 +34,7 @@ export const isMarkdownTable = (text: string): boolean => {
 export const cleanupTableEmptyCells = (text: string): string => {
   return text
     .split("\n")
-    .filter((line) => {
+    .filter(line => {
       const trimmed = line.trim();
 
       // Keep non-table lines
@@ -45,7 +45,7 @@ export const cleanupTableEmptyCells = (text: string): string => {
 
       // For data rows, check if any cell has content
       const cells = trimmed.split("|").slice(1, -1); // Remove delimiter cells
-      return cells.some((cell) => cell.trim() !== "");
+      return cells.some(cell => cell.trim() !== "");
     })
     .join("\n");
 };
@@ -67,7 +67,7 @@ export const MarkdownRenderer = ({
       <Markdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeMathjax, rehypeRaw]}
-        urlTransform={(url) => url}
+        urlTransform={url => url}
         components={{
           p({ node, ...props }) {
             return (

@@ -52,7 +52,7 @@ export function MultiSelect({
 
   const isAllSelected = value.includes("*");
 
-  const filteredOptions = options.filter((option) =>
+  const filteredOptions = options.filter(option =>
     option.label.toLowerCase().includes(searchValue.toLowerCase())
   );
 
@@ -68,10 +68,10 @@ export function MultiSelect({
       let newValue: string[];
       if (value.includes(optionValue)) {
         // Remove the item
-        newValue = value.filter((v) => v !== optionValue && v !== "*");
+        newValue = value.filter(v => v !== optionValue && v !== "*");
       } else {
         // Add the item and remove "All" if present
-        newValue = [...value.filter((v) => v !== "*"), optionValue];
+        newValue = [...value.filter(v => v !== "*"), optionValue];
 
         // Check max selection limit
         if (maxSelection && newValue.length > maxSelection) {
@@ -137,7 +137,7 @@ export function MultiSelect({
                   />
                 </CommandItem>
               )}
-              {filteredOptions.map((option) => (
+              {filteredOptions.map(option => (
                 <CommandItem
                   key={option.value}
                   onSelect={() => handleSelect(option.value)}

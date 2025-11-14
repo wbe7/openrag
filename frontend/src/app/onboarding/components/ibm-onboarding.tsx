@@ -154,7 +154,7 @@ export function IBMOnboarding({
               alreadyConfigured ? "••••••••••••••••••••••••" : "your-project-id"
             }
             value={projectId}
-            onChange={(e) => setProjectId(e.target.value)}
+            onChange={e => setProjectId(e.target.value)}
             disabled={alreadyConfigured}
           />
           {alreadyConfigured && (
@@ -176,7 +176,7 @@ export function IBMOnboarding({
                 : "your-api-key"
             }
             value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
+            onChange={e => setApiKey(e.target.value)}
             disabled={alreadyConfigured}
           />
           {alreadyConfigured && (

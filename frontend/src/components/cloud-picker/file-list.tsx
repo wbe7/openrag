@@ -39,7 +39,7 @@ export const FileList = ({
       </div>
       <div className="box-shadow-inner">
         <div className="max-h-[calc(100vh-720px)] overflow-y-auto space-y-1 pr-1 pb-4 relative">
-          {files.map((file) => (
+          {files.map(file => (
             <FileItem
               key={file.id}
               file={file}

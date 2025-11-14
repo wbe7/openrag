@@ -97,7 +97,7 @@ export function KnowledgeFilterDropdown({
 
       if (response.ok) {
         // Remove from local state
-        setFilters((prev) => prev.filter((f) => f.id !== filterId));
+        setFilters(prev => prev.filter(f => f.id !== filterId));
 
         // If this was the selected filter, clear selection
         if (selectedFilter?.id === filterId) {
@@ -169,7 +169,7 @@ export function KnowledgeFilterDropdown({
         };
 
         // Add to local filters list
-        setFilters((prev) => [newFilter, ...prev]);
+        setFilters(prev => [newFilter, ...prev]);
 
         // Select the new filter
         onFilterSelect(newFilter);
@@ -278,7 +278,7 @@ export function KnowledgeFilterDropdown({
                 <Input
                   placeholder="Search filters..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   className="pl-9 h-8 text-sm"
                 />
               </div>
@@ -317,7 +317,7 @@ export function KnowledgeFilterDropdown({
                   {searchQuery ? "No filters found" : "No saved filters"}
                 </div>
               ) : (
-                filters.map((filter) => (
+                filters.map(filter => (
                   <div
                     key={filter.id}
                     onClick={() => handleFilterSelect(filter)}
@@ -341,7 +341,7 @@ export function KnowledgeFilterDropdown({
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={(e) => deleteFilter(filter.id, e)}
+                      onClick={e => deleteFilter(filter.id, e)}
                       className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 bg-transparent hover:bg-gray-700 hover:text-white transition-all duration-200 border border-transparent hover:border-gray-600"
                     >
                       <X className="h-3 w-3 text-gray-400 hover:text-white" />
@@ -404,7 +404,7 @@ export function KnowledgeFilterDropdown({
                   type="text"
                   placeholder="Enter filter name"
                   value={createName}
-                  onChange={(e) => setCreateName(e.target.value)}
+                  onChange={e => setCreateName(e.target.value)}
                   className="mt-1"
                 />
               </div>
@@ -417,7 +417,7 @@ export function KnowledgeFilterDropdown({
                   id="filter-description"
                   placeholder="Brief description of this filter"
                   value={createDescription}
-                  onChange={(e) => setCreateDescription(e.target.value)}
+                  onChange={e => setCreateDescription(e.target.value)}
                   className="mt-1"
                   rows={3}
                 />

@@ -105,8 +105,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         redirect_uri: redirectUri,
       }),
     })
-      .then((response) => response.json())
-      .then((result) => {
+      .then(response => response.json())
+      .then(result => {
         console.log("Auth init response:", result);
 
         if (result.oauth_config) {
@@ -141,7 +141,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           console.error("No oauth_config in response:", result);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Login failed:", error);
       });
   };

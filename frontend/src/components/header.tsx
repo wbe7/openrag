@@ -11,7 +11,7 @@ export function Header() {
 
   // Calculate active tasks for the bell icon
   const activeTasks = tasks.filter(
-    (task) =>
+    task =>
       task.status === "pending" ||
       task.status === "running" ||
       task.status === "processing"

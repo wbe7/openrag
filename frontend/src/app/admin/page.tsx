@@ -237,7 +237,7 @@ function AdminPage() {
                 <Input
                   id="file-input"
                   type="file"
-                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                  onChange={e => setSelectedFile(e.target.files?.[0] || null)}
                   accept=".pdf,.doc,.docx,.txt,.md"
                   className="cursor-pointer"
                 />
@@ -282,7 +282,7 @@ function AdminPage() {
                   type="text"
                   placeholder="/path/to/documents"
                   value={folderPath}
-                  onChange={(e) => setFolderPath(e.target.value)}
+                  onChange={e => setFolderPath(e.target.value)}
                 />
               </div>
               <Button
@@ -326,7 +326,7 @@ function AdminPage() {
                     type="text"
                     placeholder="s3://bucket/path"
                     value={bucketUrl}
-                    onChange={(e) => setBucketUrl(e.target.value)}
+                    onChange={e => setBucketUrl(e.target.value)}
                   />
                 </div>
                 <Button

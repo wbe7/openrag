@@ -131,7 +131,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
                       variant="ghost"
                       size="iconSm"
                       className="h-8 w-8 p-0 rounded-md hover:bg-muted/50"
-                      onMouseDown={(e) => {
+                      onMouseDown={e => {
                         e.preventDefault();
                       }}
                       onClick={onAtClick}
@@ -149,7 +149,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
                     value={input}
                     onChange={onChange}
                     onKeyDown={onKeyDown}
-                    onHeightChange={(height) => setTextareaHeight(height)}
+                    onHeightChange={height => setTextareaHeight(height)}
                     maxRows={7}
                     autoComplete="off"
                     minRows={1}
@@ -181,7 +181,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
                       variant="ghost"
                       size="iconSm"
                       className="h-8 w-8 p-0 rounded-md hover:bg-muted/50"
-                      onMouseDown={(e) => {
+                      onMouseDown={e => {
                         e.preventDefault();
                       }}
                       onClick={onAtClick}
@@ -228,7 +228,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
 
           <Popover
             open={isFilterDropdownOpen}
-            onOpenChange={(open) => {
+            onOpenChange={open => {
               setIsFilterDropdownOpen(open);
             }}
           >
@@ -253,7 +253,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
               align="start"
               sideOffset={6}
               alignOffset={-18}
-              onOpenAutoFocus={(e) => {
+              onOpenAutoFocus={e => {
                 // Prevent auto focus on the popover content
                 e.preventDefault();
                 // Keep focus on the input
@@ -286,7 +286,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
                       </button>
                     )}
                     {availableFilters
-                      .filter((filter) =>
+                      .filter(filter =>
                         filter.name
                           .toLowerCase()
                           .includes(filterSearchTerm.toLowerCase())
@@ -315,7 +315,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
                           )}
                         </button>
                       ))}
-                    {availableFilters.filter((filter) =>
+                    {availableFilters.filter(filter =>
                       filter.name
                         .toLowerCase()
                         .includes(filterSearchTerm.toLowerCase())

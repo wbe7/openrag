@@ -175,7 +175,7 @@ export const useGetSearchQuery = (
         }
       });
 
-      const files: File[] = Array.from(fileMap.values()).map((file) => ({
+      const files: File[] = Array.from(fileMap.values()).map(file => ({
         filename: file.filename,
         mimetype: file.mimetype,
         chunkCount: file.chunks.length,
@@ -201,7 +201,7 @@ export const useGetSearchQuery = (
   const queryResult = useQuery(
     {
       queryKey: ["search", queryData, query],
-      placeholderData: (prev) => prev,
+      placeholderData: prev => prev,
       queryFn: getFiles,
       ...options,
     },

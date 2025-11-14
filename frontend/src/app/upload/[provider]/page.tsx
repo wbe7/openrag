@@ -146,9 +146,7 @@ export default function UploadProviderPage() {
   useEffect(() => {
     if (!currentSyncTaskId) return;
 
-    const currentTask = tasks.find(
-      (task) => task.task_id === currentSyncTaskId
-    );
+    const currentTask = tasks.find(task => task.task_id === currentSyncTaskId);
 
     if (currentTask && currentTask.status === "completed") {
       // Task completed successfully, show toast and redirect
@@ -182,7 +180,7 @@ export default function UploadProviderPage() {
         settings?: IngestSettings;
       } = {
         connection_id: connector.connectionId,
-        selected_files: selectedFiles.map((file) => file.id),
+        selected_files: selectedFiles.map(file => file.id),
         settings: ingestSettings,
       };
 

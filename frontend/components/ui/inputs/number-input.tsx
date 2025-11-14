@@ -34,7 +34,7 @@ export const NumberInput = ({
           max={max}
           min={min}
           value={value}
-          onChange={(e) => onChange(parseInt(e.target.value) || 0)}
+          onChange={e => onChange(parseInt(e.target.value) || 0)}
           className="w-full pr-20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         <div className="absolute inset-y-0 right-0 top-0 p-[1px] py-[1.5px] flex items-center ">

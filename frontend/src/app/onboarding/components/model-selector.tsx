@@ -58,11 +58,11 @@ export function ModelSelector({
 
   // Flatten grouped options or use regular options
   const allOptions =
-    groupedOptions?.flatMap((group) => group.options) || options || [];
+    groupedOptions?.flatMap(group => group.options) || options || [];
 
   // Find the group icon for the selected value
-  const selectedOptionGroup = groupedOptions?.find((group) =>
-    group.options.some((opt) => opt.value === value)
+  const selectedOptionGroup = groupedOptions?.find(group =>
+    group.options.some(opt => opt.value === value)
   );
   const selectedIcon = selectedOptionGroup?.icon || icon;
 
@@ -70,7 +70,7 @@ export function ModelSelector({
     if (
       value &&
       value !== "" &&
-      !allOptions.find((option) => option.value === value) &&
+      !allOptions.find(option => option.value === value) &&
       !custom
     ) {
       onValueChange("");
@@ -94,11 +94,11 @@ export function ModelSelector({
           {value ? (
             <div className="flex items-center gap-2">
               {selectedIcon && <div className="w-4 h-4">{selectedIcon}</div>}
-              {allOptions.find((framework) => framework.value === value)
-                ?.label || value}
+              {allOptions.find(framework => framework.value === value)?.label ||
+                value}
               {custom &&
                 value &&
-                !allOptions.find((framework) => framework.value === value) && (
+                !allOptions.find(framework => framework.value === value) && (
                   <Badge variant="outline" className="text-xs">
                     CUSTOM
                   </Badge>
@@ -115,7 +115,7 @@ export function ModelSelector({
       <PopoverContent
         align="start"
         className="p-0 w-[var(--radix-popover-trigger-width)]"
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        onOpenAutoFocus={e => e.preventDefault()}
       >
         <Command>
           <CommandInput
@@ -125,11 +125,11 @@ export function ModelSelector({
           />
           <CommandList
             className="max-h-[300px] overflow-y-auto"
-            onWheel={(e) => e.stopPropagation()}
+            onWheel={e => e.stopPropagation()}
           >
             <CommandEmpty>{noOptionsPlaceholder}</CommandEmpty>
             {groupedOptions ? (
-              groupedOptions.map((group) => (
+              groupedOptions.map(group => (
                 <CommandGroup
                   key={group.group}
                   heading={
@@ -141,11 +141,11 @@ export function ModelSelector({
                     </div>
                   }
                 >
-                  {group.options.map((option) => (
+                  {group.options.map(option => (
                     <CommandItem
                       key={option.value}
                       value={option.value}
-                      onSelect={(currentValue) => {
+                      onSelect={currentValue => {
                         if (currentValue !== value) {
                           onValueChange(currentValue, option.provider);
                         }
@@ -167,11 +167,11 @@ export function ModelSelector({
               ))
             ) : (
               <CommandGroup>
-                {allOptions.map((option) => (
+                {allOptions.map(option => (
                   <CommandItem
                     key={option.value}
                     value={option.value}
-                    onSelect={(currentValue) => {
+                    onSelect={currentValue => {
                       if (currentValue !== value) {
                         onValueChange(currentValue, option.provider);
                       }
@@ -191,12 +191,10 @@ export function ModelSelector({
                 ))}
                 {custom &&
                   searchValue &&
-                  !allOptions.find(
-                    (option) => option.value === searchValue
-                  ) && (
+                  !allOptions.find(option => option.value === searchValue) && (
                     <CommandItem
                       value={searchValue}
-                      onSelect={(currentValue) => {
+                      onSelect={currentValue => {
                         if (currentValue !== value) {
                           onValueChange(currentValue);
                         }

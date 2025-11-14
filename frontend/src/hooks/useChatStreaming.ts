@@ -216,7 +216,7 @@ export function useChatStreaming({
 
                   // Handle finish reason
                   if (chunk.delta.finish_reason) {
-                    currentFunctionCalls.forEach((fc) => {
+                    currentFunctionCalls.forEach(fc => {
                       if (fc.status === "pending" && fc.argumentsString) {
                         try {
                           fc.arguments = JSON.parse(fc.argumentsString);
@@ -235,13 +235,13 @@ export function useChatStreaming({
                   chunk.item?.type === "function_call"
                 ) {
                   let existing = currentFunctionCalls.find(
-                    (fc) => fc.id === chunk.item.id
+                    fc => fc.id === chunk.item.id
                   );
                   if (!existing) {
                     existing = [...currentFunctionCalls]
                       .reverse()
                       .find(
-                        (fc) =>
+                        fc =>
                           fc.status === "pending" &&
                           !fc.id &&
                           fc.name === (chunk.item.tool_name || chunk.item.name)
@@ -275,13 +275,13 @@ export function useChatStreaming({
                   chunk.item?.type !== "function_call"
                 ) {
                   let existing = currentFunctionCalls.find(
-                    (fc) => fc.id === chunk.item.id
+                    fc => fc.id === chunk.item.id
                   );
                   if (!existing) {
                     existing = [...currentFunctionCalls]
                       .reverse()
                       .find(
-                        (fc) =>
+                        fc =>
                           fc.status === "pending" &&
                           !fc.id &&
                           fc.name ===
@@ -322,7 +322,7 @@ export function useChatStreaming({
                   chunk.item?.type === "function_call"
                 ) {
                   const functionCall = currentFunctionCalls.find(
-                    (fc) =>
+                    fc =>
                       fc.id === chunk.item.id ||
                       fc.name === chunk.item.tool_name ||
                       fc.name === chunk.item.name
@@ -352,7 +352,7 @@ export function useChatStreaming({
                   chunk.item?.type !== "function_call"
                 ) {
                   const functionCall = currentFunctionCalls.find(
-                    (fc) =>
+                    fc =>
                       fc.id === chunk.item.id ||
                       fc.name === chunk.item.tool_name ||
                       fc.name === chunk.item.name ||

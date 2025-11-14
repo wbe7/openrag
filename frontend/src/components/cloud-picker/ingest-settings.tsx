@@ -86,7 +86,7 @@ export const IngestSettings = ({
   // Get embedding model from API settings
   const apiEmbeddingModel =
     apiSettings.knowledge?.embedding_model ||
-    modelsData?.embedding_models?.find((m) => m.default)?.value ||
+    modelsData?.embedding_models?.find(m => m.default)?.value ||
     "text-embedding-3-small";
 
   // Default settings - use API embedding model
@@ -147,7 +147,7 @@ export const IngestSettings = ({
             <Select
               disabled={false}
               value={currentSettings.embeddingModel}
-              onValueChange={(value) =>
+              onValueChange={value =>
                 handleSettingsChange({ embeddingModel: value })
               }
             >
@@ -181,7 +181,7 @@ export const IngestSettings = ({
                 id="chunk-size"
                 label="Chunk size"
                 value={currentSettings.chunkSize}
-                onChange={(value) => handleSettingsChange({ chunkSize: value })}
+                onChange={value => handleSettingsChange({ chunkSize: value })}
                 unit="characters"
               />
             </div>
@@ -190,7 +190,7 @@ export const IngestSettings = ({
                 id="chunk-overlap"
                 label="Chunk overlap"
                 value={currentSettings.chunkOverlap}
-                onChange={(value) =>
+                onChange={value =>
                   handleSettingsChange({ chunkOverlap: value })
                 }
                 unit="characters"
@@ -223,7 +223,7 @@ export const IngestSettings = ({
             </div>
             <Switch
               checked={currentSettings.ocr}
-              onCheckedChange={(checked) =>
+              onCheckedChange={checked =>
                 handleSettingsChange({ ocr: checked })
               }
             />
@@ -240,7 +240,7 @@ export const IngestSettings = ({
             </div>
             <Switch
               checked={currentSettings.pictureDescriptions}
-              onCheckedChange={(checked) =>
+              onCheckedChange={checked =>
                 handleSettingsChange({ pictureDescriptions: checked })
               }
             />

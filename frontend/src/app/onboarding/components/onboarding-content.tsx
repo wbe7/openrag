@@ -32,7 +32,7 @@ export function OnboardingContent({
         setResponseId(newResponseId);
       }
     },
-    onError: (error) => {
+    onError: error => {
       console.error("Chat error:", error);
       setAssistantMessage({
         role: "assistant",

@@ -113,7 +113,7 @@ export function Navigation({
       ) {
         // Filter out the deleted conversation and find the next one
         const remainingConversations = conversations.filter(
-          (conv) => conv.response_id !== conversationToDelete.response_id
+          conv => conv.response_id !== conversationToDelete.response_id
         );
 
         if (remainingConversations.length > 0) {
@@ -134,7 +134,7 @@ export function Navigation({
       setDeleteModalOpen(false);
       setConversationToDelete(null);
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(`Failed to delete conversation: ${error.message}`);
     },
   });
@@ -337,7 +337,7 @@ export function Navigation({
 
     if (currentConversationId && conversations.length > 0) {
       activeConvo = conversations.find(
-        (conv) => conv.response_id === currentConversationId
+        conv => conv.response_id === currentConversationId
       );
     }
 
@@ -359,18 +359,18 @@ export function Navigation({
 
   const newConversationFiles = conversationData?.messages
     .filter(
-      (message) =>
+      message =>
         message.role === "user" &&
         (message.content.match(FILES_REGEX)?.[0] ?? null) !== null
     )
-    .map((message) => message.content.match(FILES_REGEX)?.[0] ?? null)
-    .concat(conversationDocs.map((doc) => doc.filename));
+    .map(message => message.content.match(FILES_REGEX)?.[0] ?? null)
+    .concat(conversationDocs.map(doc => doc.filename));
 
   return (
     <div className="flex flex-col h-full bg-background">
       <div className="px-4 py-2 flex-shrink-0">
         <div className="space-y-1">
-          {routes.map((route) => (
+          {routes.map(route => (
             <div key={route.href}>
               <Link
                 href={route.href}
@@ -464,7 +464,7 @@ export function Navigation({
                       No conversations yet
                     </div>
                   ) : (
-                    conversations.map((conversation) => (
+                    conversations.map(conversation => (
                       <button
                         key={conversation.response_id}
                         type="button"
@@ -502,10 +502,10 @@ export function Navigation({
                                 title="More options"
                                 role="button"
                                 tabIndex={0}
-                                onClick={(e) => {
+                                onClick={e => {
                                   e.stopPropagation();
                                 }}
-                                onKeyDown={(e) => {
+                                onKeyDown={e => {
                                   if (e.key === "Enter" || e.key === " ") {
                                     e.preventDefault();
                                     e.stopPropagation();
@@ -519,10 +519,10 @@ export function Navigation({
                               side="bottom"
                               align="end"
                               className="w-48"
-                              onClick={(e) => e.stopPropagation()}
+                              onClick={e => e.stopPropagation()}
                             >
                               <DropdownMenuItem
-                                onClick={(e) => {
+                                onClick={e => {
                                   e.stopPropagation();
                                   handleContextMenuAction(
                                     "delete",

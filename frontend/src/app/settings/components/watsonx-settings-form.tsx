@@ -64,7 +64,7 @@ export function WatsonxSettingsForm({
             rules={{ required: "API endpoint is required" }}
             render={({ field }) => (
               <ModelSelector
-                options={endpointOptions.map((option) => ({
+                options={endpointOptions.map(option => ({
                   value: option.value,
                   label: option.label,
                 }))}

@@ -127,7 +127,7 @@ export function FilterIconPopover({
       <PopoverContent className="w-80" align="start">
         <div className="space-y-4">
           <div className="grid grid-cols-7 items-center gap-2">
-            {COLORS.map((c) => (
+            {COLORS.map(c => (
               <button
                 key={c}
                 type="button"

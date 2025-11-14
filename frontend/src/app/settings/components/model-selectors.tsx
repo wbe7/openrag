@@ -32,11 +32,11 @@ export function ModelSelectors({
   const embeddingModel = watch(embeddingModelName);
 
   const defaultLlmModel =
-    languageModels?.find((model) => model.default)?.value ||
+    languageModels?.find(model => model.default)?.value ||
     languageModels?.[0]?.value ||
     "";
   const defaultEmbeddingModel =
-    embeddingModels?.find((model) => model.default)?.value ||
+    embeddingModels?.find(model => model.default)?.value ||
     embeddingModels?.[0]?.value ||
     "";
 

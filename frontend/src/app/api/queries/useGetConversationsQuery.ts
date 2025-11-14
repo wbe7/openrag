@@ -92,7 +92,7 @@ export const useGetConversationsQuery = (
   const queryResult = useQuery(
     {
       queryKey: ["conversations", endpoint, refreshTrigger],
-      placeholderData: (prev) => prev,
+      placeholderData: prev => prev,
       queryFn: getConversations,
       staleTime: 0, // Always consider data stale to ensure fresh data on trigger changes
       gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes

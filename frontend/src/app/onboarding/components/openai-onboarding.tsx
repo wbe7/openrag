@@ -131,7 +131,7 @@ export function OpenAIOnboarding({
                   : "sk-..."
               }
               value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
+              onChange={e => setApiKey(e.target.value)}
               disabled={alreadyConfigured}
             />
             {alreadyConfigured && (

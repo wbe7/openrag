@@ -190,16 +190,16 @@ function KnowledgeSourcesPage() {
       configured: settings.providers?.watsonx?.configured === true,
     },
   ]
-    .filter((provider) => provider.configured)
-    .map((provider) => ({
+    .filter(provider => provider.configured)
+    .map(provider => ({
       group: provider.group,
       icon: provider.icon,
-      options: provider.models.map((model) => ({
+      options: provider.models.map(model => ({
         ...model,
         provider: provider.provider,
       })),
     }))
-    .filter((provider) => provider.options.length > 0);
+    .filter(provider => provider.options.length > 0);
 
   // Build grouped embedding model options from all configured providers (excluding Anthropic)
   const groupedEmbeddingModels = [
@@ -225,16 +225,16 @@ function KnowledgeSourcesPage() {
       configured: settings.providers?.watsonx?.configured === true,
     },
   ]
-    .filter((provider) => provider.configured)
-    .map((provider) => ({
+    .filter(provider => provider.configured)
+    .map(provider => ({
       group: provider.group,
       icon: provider.icon,
-      options: provider.models.map((model) => ({
+      options: provider.models.map(model => ({
         ...model,
         provider: provider.provider,
       })),
     }))
-    .filter((provider) => provider.options.length > 0);
+    .filter(provider => provider.options.length > 0);
 
   const isLoadingAnyLlmModels =
     openaiLoading || anthropicLoading || ollamaLoading || watsonxLoading;
@@ -246,7 +246,7 @@ function KnowledgeSourcesPage() {
     onSuccess: () => {
       toast.success("Settings updated successfully");
     },
-    onError: (error) => {
+    onError: error => {
       toast.error("Failed to update settings", {
         description: error.message,
       });
@@ -389,8 +389,8 @@ function KnowledgeSourcesPage() {
 
       // Initialize connectors list with metadata from backend
       const initialConnectors = connectorTypes
-        .filter((type) => connectorsResult.connectors[type].available) // Only show available connectors
-        .map((type) => ({
+        .filter(type => connectorsResult.connectors[type].available) // Only show available connectors
+        .map(type => ({
           id: type,
           name: connectorsResult.connectors[type].name,
           description: connectorsResult.connectors[type].description,
@@ -414,8 +414,8 @@ function KnowledgeSourcesPage() {
           );
           const isConnected = activeConnection !== undefined;
 
-          setConnectors((prev) =>
-            prev.map((c) =>
+          setConnectors(prev =>
+            prev.map(c =>
               c.type === connectorType
                 ? {
                     ...c,
@@ -434,7 +434,7 @@ function KnowledgeSourcesPage() {
 
   const handleConnect = async (connector: Connector) => {
     setIsConnecting(connector.id);
-    setSyncResults((prev) => ({ ...prev, [connector.id]: null }));
+    setSyncResults(prev => ({ ...prev, [connector.id]: null }));
 
     try {
       // Use the shared auth callback URL, same as connectors page
@@ -580,9 +580,9 @@ function KnowledgeSourcesPage() {
   // Watch for task completions and refresh stats
   useEffect(() => {
     // Find newly completed tasks by comparing with previous state
-    const newlyCompletedTasks = tasks.filter((task) => {
+    const newlyCompletedTasks = tasks.filter(task => {
       const wasCompleted =
-        prevTasks.find((prev) => prev.task_id === task.task_id)?.status ===
+        prevTasks.find(prev => prev.task_id === task.task_id)?.status ===
         "completed";
       return task.status === "completed" && !wasCompleted;
     });
@@ -636,7 +636,7 @@ function KnowledgeSourcesPage() {
     fetch(`/api/reset-flow/retrieval`, {
       method: "POST",
     })
-      .then((response) => {
+      .then(response => {
         if (response.ok) {
           return response.json();
         }
@@ -649,7 +649,7 @@ function KnowledgeSourcesPage() {
         handleModelChange(DEFAULT_AGENT_SETTINGS.llm_model);
         closeDialog(); // Close after successful completion
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Error restoring retrieval flow:", error);
         closeDialog(); // Close even on error (could show error toast instead)
       });
@@ -659,7 +659,7 @@ function KnowledgeSourcesPage() {
     fetch(`/api/reset-flow/ingest`, {
       method: "POST",
     })
-      .then((response) => {
+      .then(response => {
         if (response.ok) {
           return response.json();
         }
@@ -674,7 +674,7 @@ function KnowledgeSourcesPage() {
         setPictureDescriptions(false);
         closeDialog(); // Close after successful completion
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Error restoring ingest flow:", error);
         closeDialog(); // Close even on error (could show error toast instead)
       });
@@ -795,7 +795,7 @@ function KnowledgeSourcesPage() {
         }
         {/* Connectors Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {connectors.map((connector) => {
+          {connectors.map(connector => {
             return (
               <Card key={connector.id} className="relative flex flex-col">
                 <CardHeader>
@@ -966,7 +966,7 @@ function KnowledgeSourcesPage() {
                 }
                 confirmText="Proceed"
                 confirmIcon={<ArrowUpRight />}
-                onConfirm={(closeDialog) =>
+                onConfirm={closeDialog =>
                   handleEditInLangflow("chat", closeDialog)
                 }
                 variant="warning"
@@ -1005,7 +1005,7 @@ function KnowledgeSourcesPage() {
                   id="system-prompt"
                   placeholder="Enter your agent instructions here..."
                   value={systemPrompt}
-                  onChange={(e) => setSystemPrompt(e.target.value)}
+                  onChange={e => setSystemPrompt(e.target.value)}
                   rows={6}
                   className={`resize-none ${
                     systemPrompt.length > MAX_SYSTEM_PROMPT_CHARS
@@ -1110,7 +1110,7 @@ function KnowledgeSourcesPage() {
                 confirmText="Proceed"
                 confirmIcon={<ArrowUpRight />}
                 variant="warning"
-                onConfirm={(closeDialog) =>
+                onConfirm={closeDialog =>
                   handleEditInLangflow("ingest", closeDialog)
                 }
               />
@@ -1151,7 +1151,7 @@ function KnowledgeSourcesPage() {
                       type="number"
                       min="1"
                       value={chunkSize}
-                      onChange={(e) => handleChunkSizeChange(e.target.value)}
+                      onChange={e => handleChunkSizeChange(e.target.value)}
                       className="w-full pr-20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center">
@@ -1194,7 +1194,7 @@ function KnowledgeSourcesPage() {
                       type="number"
                       min="0"
                       value={chunkOverlap}
-                      onChange={(e) => handleChunkOverlapChange(e.target.value)}
+                      onChange={e => handleChunkOverlapChange(e.target.value)}
                       className="w-full pr-20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center">

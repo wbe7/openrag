@@ -90,7 +90,7 @@ export function KnowledgeFilterList({
                 {searchQuery ? "No filters found" : "No saved filters"}
               </div>
             ) : (
-              filters.map((filter) => (
+              filters.map(filter => (
                 <div
                   key={filter.id}
                   onClick={() => handleFilterSelect(filter)}

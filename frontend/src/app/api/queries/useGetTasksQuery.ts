@@ -71,7 +71,7 @@ export const useGetTasksQuery = (
     {
       queryKey: ["tasks"],
       queryFn: getTasks,
-      refetchInterval: (query) => {
+      refetchInterval: query => {
         // Only poll if there are tasks with pending or running status
         const data = query.state.data;
         if (!data || data.length === 0) {

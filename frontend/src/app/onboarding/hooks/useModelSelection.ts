@@ -13,9 +13,9 @@ export function useModelSelection(
     if (modelsData) {
       const defaultLangModel = isEmbedding
         ? undefined
-        : modelsData.language_models.find((m) => m.default);
+        : modelsData.language_models.find(m => m.default);
       const defaultEmbedModel = isEmbedding
-        ? modelsData.embedding_models.find((m) => m.default)
+        ? modelsData.embedding_models.find(m => m.default)
         : undefined;
 
       // Set language model: prefer default, fallback to first available

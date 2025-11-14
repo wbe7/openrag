@@ -102,7 +102,7 @@ export function OllamaOnboarding({
               : "http://localhost:11434"
           }
           value={endpoint}
-          onChange={(e) => setEndpoint(e.target.value)}
+          onChange={e => setEndpoint(e.target.value)}
           disabled={alreadyConfigured}
         />
         {alreadyConfigured && (

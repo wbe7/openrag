@@ -20,7 +20,7 @@ export class GoogleDriveHandler {
   }
 
   async loadPickerApi(): Promise<boolean> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (typeof window !== "undefined" && window.gapi) {
         window.gapi.load("picker", {
           callback: () => resolve(true),
@@ -62,7 +62,7 @@ export class GoogleDriveHandler {
         .setOAuthToken(this.accessToken)
         .enableFeature(window.google.picker.Feature.MULTISELECT_ENABLED)
         .setTitle("Select files or folders from Google Drive")
-        .setCallback((data) => this.pickerCallback(data, onFileSelected))
+        .setCallback(data => this.pickerCallback(data, onFileSelected))
         .build();
 
       picker.setVisible(true);
@@ -72,13 +72,13 @@ export class GoogleDriveHandler {
         const pickerElements = document.querySelectorAll(
           ".picker-dialog, .goog-modalpopup"
         );
-        pickerElements.forEach((el) => {
+        pickerElements.forEach(el => {
           (el as HTMLElement).style.zIndex = "10000";
         });
         const bgElements = document.querySelectorAll(
           ".picker-dialog-bg, .goog-modalpopup-bg"
         );
-        bgElements.forEach((el) => {
+        bgElements.forEach(el => {
           (el as HTMLElement).style.zIndex = "9999";
         });
       }, 100);
@@ -107,10 +107,10 @@ export class GoogleDriveHandler {
       }));
 
       // Enrich with additional file data if needed
-      if (files.some((f) => !f.size && !f.isFolder)) {
+      if (files.some(f => !f.size && !f.isFolder)) {
         try {
           const enrichedFiles = await Promise.all(
-            files.map(async (file) => {
+            files.map(async file => {
               if (!file.size && !file.isFolder) {
                 try {
                   const response = await fetch(
@@ -172,7 +172,7 @@ export class OneDriveHandler {
   }
 
   async loadPickerApi(): Promise<boolean> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const script = document.createElement("script");
       script.src = "https://js.live.net/v7.2/OneDrive.js";
       script.onload = () => resolve(true);

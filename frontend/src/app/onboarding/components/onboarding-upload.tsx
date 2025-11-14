@@ -38,7 +38,7 @@ const OnboardingUpload = ({ onComplete }: OnboardingUploadProps) => {
 
     // Check if there are any active tasks (pending, running, or processing)
     const activeTasks = tasks.find(
-      (task) =>
+      task =>
         task.status === "pending" ||
         task.status === "running" ||
         task.status === "processing"
