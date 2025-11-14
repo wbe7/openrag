@@ -30,7 +30,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <label
         className={cn(
           "relative block h-fit w-full text-sm group",
-          icon ? className : "",
+          icon ? className : ""
         )}
       >
         {icon && (

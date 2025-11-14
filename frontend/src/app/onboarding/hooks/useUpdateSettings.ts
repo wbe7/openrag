@@ -14,7 +14,7 @@ export function useUpdateSettings(
   provider: string,
   config: ConfigValues,
   setSettings: Dispatch<SetStateAction<OnboardingVariables>>,
-  isEmbedding?: boolean,
+  isEmbedding?: boolean
 ) {
   useEffect(() => {
     setSettings((prev) => {

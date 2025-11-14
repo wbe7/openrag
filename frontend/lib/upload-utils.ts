@@ -59,8 +59,7 @@ export async function uploadFileForContext(
 
     if (!uploadResponse.ok) {
       const errorMessage =
-        (uploadJson as { error?: string }).error ||
-        "Upload failed";
+        (uploadJson as { error?: string }).error || "Upload failed";
       throw new Error(errorMessage);
     }
 
@@ -69,7 +68,8 @@ export async function uploadFileForContext(
     const filePath =
       (uploadJson as { filename?: string }).filename || file.name;
     const pages = (uploadJson as { pages?: number }).pages;
-    const contentLength = (uploadJson as { content_length?: number }).content_length;
+    const contentLength = (uploadJson as { content_length?: number })
+      .content_length;
     const confirmation = (uploadJson as { confirmation?: string }).confirmation;
 
     const result: UploadFileResult = {
@@ -107,8 +107,7 @@ export async function uploadFileForContext(
       new CustomEvent("fileUploadError", {
         detail: {
           filename: file.name,
-          error:
-            error instanceof Error ? error.message : "Upload failed",
+          error: error instanceof Error ? error.message : "Upload failed",
         },
       })
     );
@@ -122,7 +121,6 @@ export async function uploadFile(
   file: File,
   replace = false
 ): Promise<UploadFileResult> {
-
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -173,8 +171,7 @@ export async function uploadFile(
       (runJson as { status?: string }).status !== "SUCCESS"
     ) {
       const errorMsg =
-        (runJson as { error?: string }).error ||
-        "Ingestion pipeline failed";
+        (runJson as { error?: string }).error || "Ingestion pipeline failed";
       throw new Error(
         `Ingestion failed: ${errorMsg}. Try setting DISABLE_INGEST_WITH_LANGFLOW=true if you're experiencing Langflow component issues.`
       );
@@ -195,8 +192,7 @@ export async function uploadFile(
       new CustomEvent("fileUploadError", {
         detail: {
           filename: file.name,
-          error:
-            error instanceof Error ? error.message : "Upload failed",
+          error: error instanceof Error ? error.message : "Upload failed",
         },
       })
     );

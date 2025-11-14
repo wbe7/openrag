@@ -397,12 +397,12 @@ export function KnowledgeDropdown() {
                 ? fileUploading
                   ? "Uploading..."
                   : folderLoading
-                  ? "Processing Folder..."
-                  : s3Loading
-                  ? "Processing S3..."
-                  : isNavigatingToCloud
-                  ? "Loading..."
-                  : "Processing..."
+                    ? "Processing Folder..."
+                    : s3Loading
+                      ? "Processing S3..."
+                      : isNavigatingToCloud
+                        ? "Loading..."
+                        : "Processing..."
                 : "Add Knowledge"}
             </span>
             {!isLoading && (

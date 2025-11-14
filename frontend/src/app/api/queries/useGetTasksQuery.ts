@@ -58,7 +58,7 @@ export const useGetTasksQuery = (
 
   async function getTasks(): Promise<Task[]> {
     const response = await fetch("/api/tasks");
-    
+
     if (!response.ok) {
       throw new Error("Failed to fetch tasks");
     }
@@ -79,9 +79,9 @@ export const useGetTasksQuery = (
         }
 
         const hasActiveTasks = data.some(
-          (task: Task) => 
-            task.status === "pending" || 
-            task.status === "running" || 
+          (task: Task) =>
+            task.status === "pending" ||
+            task.status === "running" ||
             task.status === "processing"
         );
 
@@ -92,7 +92,7 @@ export const useGetTasksQuery = (
       gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
       ...options,
     },
-    queryClient,
+    queryClient
   );
 
   return queryResult;

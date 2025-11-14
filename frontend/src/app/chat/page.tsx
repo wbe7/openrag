@@ -214,7 +214,7 @@ function ChatPage() {
           "Upload failed with status:",
           response.status,
           "Response:",
-          errorText,
+          errorText
         );
         throw new Error("Failed to process document");
       }
@@ -244,12 +244,11 @@ function ChatPage() {
           timestamp: new Date(),
         };
 
-		const confirmationMessage: Message = {
-			role: "assistant",
-			content: `Confirmed`,
-			timestamp: new Date(),
-		  };
-  
+        const confirmationMessage: Message = {
+          role: "assistant",
+          content: `Confirmed`,
+          timestamp: new Date(),
+        };
 
         setMessages((prev) => [...prev, uploadMessage, confirmationMessage]);
 
@@ -398,7 +397,7 @@ function ChatPage() {
       console.log(
         "Loading conversation with",
         conversationData.messages.length,
-        "messages",
+        "messages"
       );
       // Convert backend message format to frontend Message interface
       const convertedMessages: Message[] = conversationData.messages.map(
@@ -526,7 +525,7 @@ function ChatPage() {
                       ) === "string"
                         ? toolCall.function?.arguments || toolCall.arguments
                         : JSON.stringify(
-                            toolCall.function?.arguments || toolCall.arguments,
+                            toolCall.function?.arguments || toolCall.arguments
                           ),
                     result: toolCall.result,
                     status: "completed",
@@ -545,7 +544,7 @@ function ChatPage() {
           }
 
           return message;
-        },
+        }
       );
 
       setMessages(convertedMessages);
@@ -616,7 +615,7 @@ function ChatPage() {
       console.log(
         "Chat page received file upload error event:",
         filename,
-        error,
+        error
       );
 
       // Replace the last message with error message
@@ -631,37 +630,37 @@ function ChatPage() {
 
     window.addEventListener(
       "fileUploadStart",
-      handleFileUploadStart as EventListener,
+      handleFileUploadStart as EventListener
     );
     window.addEventListener(
       "fileUploaded",
-      handleFileUploaded as EventListener,
+      handleFileUploaded as EventListener
     );
     window.addEventListener(
       "fileUploadComplete",
-      handleFileUploadComplete as EventListener,
+      handleFileUploadComplete as EventListener
     );
     window.addEventListener(
       "fileUploadError",
-      handleFileUploadError as EventListener,
+      handleFileUploadError as EventListener
     );
 
     return () => {
       window.removeEventListener(
         "fileUploadStart",
-        handleFileUploadStart as EventListener,
+        handleFileUploadStart as EventListener
       );
       window.removeEventListener(
         "fileUploaded",
-        handleFileUploaded as EventListener,
+        handleFileUploaded as EventListener
       );
       window.removeEventListener(
         "fileUploadComplete",
-        handleFileUploadComplete as EventListener,
+        handleFileUploadComplete as EventListener
       );
       window.removeEventListener(
         "fileUploadError",
-        handleFileUploadError as EventListener,
+        handleFileUploadError as EventListener
       );
     };
   }, [endpoint, setPreviousResponseIds, setLoading]);
@@ -677,7 +676,7 @@ function ChatPage() {
     const checkOnboarding = () => {
       if (typeof window !== "undefined") {
         setIsOnboardingComplete(
-          localStorage.getItem("onboarding-step") === null,
+          localStorage.getItem("onboarding-step") === null
         );
       }
     };
@@ -722,12 +721,12 @@ function ChatPage() {
     },
     {
       enabled: isOnboardingComplete, // Only fetch nudges after onboarding is complete
-    },
+    }
   );
 
   const handleSSEStream = async (
     userMessage: Message,
-    previousResponseId?: string,
+    previousResponseId?: string
   ) => {
     // Prepare filters
     const processedFilters = parsedFilterData?.filters
@@ -773,7 +772,7 @@ function ChatPage() {
 
   const handleSendMessage = async (
     inputMessage: string,
-    previousResponseId?: string,
+    previousResponseId?: string
   ) => {
     if (!inputMessage.trim() || loading) return;
 
@@ -923,7 +922,10 @@ function ChatPage() {
     // Only send message if there's input text
     if (input.trim() || uploadedFile) {
       // Pass the responseId from upload (if any) to handleSendMessage
-      handleSendMessage(!input.trim() ? FILE_CONFIRMATION : input, uploadedResponseId || undefined);
+      handleSendMessage(
+        !input.trim() ? FILE_CONFIRMATION : input,
+        uploadedResponseId || undefined
+      );
     }
   };
 
@@ -941,7 +943,7 @@ function ChatPage() {
 
   const handleForkConversation = (
     messageIndex: number,
-    event?: React.MouseEvent,
+    event?: React.MouseEvent
   ) => {
     // Prevent any default behavior and stop event propagation
     if (event) {
@@ -1026,7 +1028,7 @@ function ChatPage() {
 
     if (isFilterDropdownOpen) {
       const filteredFilters = availableFilters.filter((filter) =>
-        filter.name.toLowerCase().includes(filterSearchTerm.toLowerCase()),
+        filter.name.toLowerCase().includes(filterSearchTerm.toLowerCase())
       );
 
       if (e.key === "Escape") {
@@ -1044,7 +1046,7 @@ function ChatPage() {
       if (e.key === "ArrowDown") {
         e.preventDefault();
         setSelectedFilterIndex((prev) =>
-          prev < filteredFilters.length - 1 ? prev + 1 : 0,
+          prev < filteredFilters.length - 1 ? prev + 1 : 0
         );
         return;
       }
@@ -1052,7 +1054,7 @@ function ChatPage() {
       if (e.key === "ArrowUp") {
         e.preventDefault();
         setSelectedFilterIndex((prev) =>
-          prev > 0 ? prev - 1 : filteredFilters.length - 1,
+          prev > 0 ? prev - 1 : filteredFilters.length - 1
         );
         return;
       }
@@ -1149,7 +1151,7 @@ function ChatPage() {
 
       // Get button position for popover anchoring
       const button = document.querySelector(
-        "[data-filter-button]",
+        "[data-filter-button]"
       ) as HTMLElement;
       if (button) {
         const rect = button.getBoundingClientRect();
@@ -1246,15 +1248,21 @@ function ChatPage() {
                               ? message.source !== "langflow"
                               : false
                           }
-                          content={index >= 2
-							&& (messages[index - 2]?.content.match(
-								FILES_REGEX,
-							  )?.[0] ?? undefined) && message.content === FILE_CONFIRMATION ? undefined : message.content}
+                          content={
+                            index >= 2 &&
+                            (messages[index - 2]?.content.match(
+                              FILES_REGEX
+                            )?.[0] ??
+                              undefined) &&
+                            message.content === FILE_CONFIRMATION
+                              ? undefined
+                              : message.content
+                          }
                           files={
                             index >= 2
-                              ? messages[index - 2]?.content.match(
-                                  FILES_REGEX,
-                                )?.[0] ?? undefined
+                              ? (messages[index - 2]?.content.match(
+                                  FILES_REGEX
+                                )?.[0] ?? undefined)
                               : undefined
                           }
                         />
@@ -1282,7 +1290,7 @@ function ChatPage() {
                           isInactive={index < messages.length - 1}
                         />
                       </div>
-                    ),
+                    )
               )}
 
               {/* Streaming Message Display */}

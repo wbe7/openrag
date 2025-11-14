@@ -105,7 +105,7 @@ export function DotPattern({
         delay: Math.random() * 5,
         duration: Math.random() * 3 + 2,
       };
-    },
+    }
   );
 
   return (
@@ -114,7 +114,7 @@ export function DotPattern({
       aria-hidden="true"
       className={cn(
         "pointer-events-none absolute inset-0 h-full w-full text-neutral-400/80",
-        className,
+        className
       )}
       {...props}
     >

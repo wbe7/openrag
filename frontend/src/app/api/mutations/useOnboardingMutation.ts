@@ -32,18 +32,14 @@ interface OnboardingResponse {
 
 export const useOnboardingMutation = (
   options?: Omit<
-    UseMutationOptions<
-      OnboardingResponse,
-      Error,
-      OnboardingVariables
-    >,
+    UseMutationOptions<OnboardingResponse, Error, OnboardingVariables>,
     "mutationFn"
-  >,
+  >
 ) => {
   const queryClient = useQueryClient();
 
   async function submitOnboarding(
-    variables: OnboardingVariables,
+    variables: OnboardingVariables
   ): Promise<OnboardingResponse> {
     const response = await fetch("/api/onboarding", {
       method: "POST",

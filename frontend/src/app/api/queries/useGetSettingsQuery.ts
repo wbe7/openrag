@@ -62,7 +62,7 @@ export interface Settings {
 }
 
 export const useGetSettingsQuery = (
-  options?: Omit<UseQueryOptions<Settings>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<Settings>, "queryKey" | "queryFn">
 ) => {
   const queryClient = useQueryClient();
 
@@ -82,11 +82,8 @@ export const useGetSettingsQuery = (
       queryFn: getSettings,
       ...options,
     },
-    queryClient,
+    queryClient
   );
 
   return queryResult;
 };
-
-
-

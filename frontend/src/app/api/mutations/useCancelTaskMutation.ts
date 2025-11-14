@@ -22,7 +22,7 @@ export const useCancelTaskMutation = (
   const queryClient = useQueryClient();
 
   async function cancelTask(
-    variables: CancelTaskRequest,
+    variables: CancelTaskRequest
   ): Promise<CancelTaskResponse> {
     const response = await fetch(`/api/tasks/${variables.taskId}/cancel`, {
       method: "POST",

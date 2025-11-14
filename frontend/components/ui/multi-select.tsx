@@ -106,10 +106,7 @@ export function MultiSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn(
-            "w-full justify-between h-8 py-0 text-left",
-            className
-          )}
+          className={cn("w-full justify-between h-8 py-0 text-left", className)}
         >
           <span className="text-foreground text-sm">{getDisplayText()}</span>
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

@@ -11,7 +11,8 @@ import OnboardingCard from "./components/onboarding-card";
 
 function LegacyOnboardingPage() {
   const router = useRouter();
-  const { data: settingsDb, isLoading: isSettingsLoading } = useGetSettingsQuery();
+  const { data: settingsDb, isLoading: isSettingsLoading } =
+    useGetSettingsQuery();
 
   // Redirect if already completed onboarding
   useEffect(() => {
@@ -34,7 +35,7 @@ function LegacyOnboardingPage() {
         cr={1}
         className={cn(
           "[mask-image:linear-gradient(to_bottom,white,transparent,transparent)]",
-          "text-input/70",
+          "text-input/70"
         )}
       />
 

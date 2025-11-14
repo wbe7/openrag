@@ -1,53 +1,53 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 interface FileUploadAreaProps {
-  onFileSelected?: (file: File) => void
-  isLoading?: boolean
-  className?: string
+  onFileSelected?: (file: File) => void;
+  isLoading?: boolean;
+  className?: string;
 }
 
 const FileUploadArea = React.forwardRef<HTMLDivElement, FileUploadAreaProps>(
   ({ onFileSelected, isLoading = false, className }, ref) => {
-    const [isDragging, setIsDragging] = React.useState(false)
-    const fileInputRef = React.useRef<HTMLInputElement>(null)
+    const [isDragging, setIsDragging] = React.useState(false);
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     const handleDragOver = (e: React.DragEvent) => {
-      e.preventDefault()
-      setIsDragging(true)
-    }
+      e.preventDefault();
+      setIsDragging(true);
+    };
 
     const handleDragLeave = (e: React.DragEvent) => {
-      e.preventDefault()
-      setIsDragging(false)
-    }
+      e.preventDefault();
+      setIsDragging(false);
+    };
 
     const handleDrop = (e: React.DragEvent) => {
-      e.preventDefault()
-      setIsDragging(false)
+      e.preventDefault();
+      setIsDragging(false);
 
-      const files = Array.from(e.dataTransfer.files)
+      const files = Array.from(e.dataTransfer.files);
       if (files.length > 0 && onFileSelected) {
-        onFileSelected(files[0])
+        onFileSelected(files[0]);
       }
-    }
+    };
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files || [])
+      const files = Array.from(e.target.files || []);
       if (files.length > 0 && onFileSelected) {
-        onFileSelected(files[0])
+        onFileSelected(files[0]);
       }
-    }
+    };
 
     const handleClick = () => {
       if (!isLoading) {
-        fileInputRef.current?.click()
+        fileInputRef.current?.click();
       }
-    }
+    };
 
     return (
       <div
@@ -80,24 +80,24 @@ const FileUploadArea = React.forwardRef<HTMLDivElement, FileUploadAreaProps>(
 
           <div className="space-y-2">
             <h3 className="text-lg font-medium text-foreground">
-              {isLoading ? "Processing file..." : "Drop files here or click to upload"}
+              {isLoading
+                ? "Processing file..."
+                : "Drop files here or click to upload"}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {isLoading ? "Please wait while your file is being processed" : ""}
+              {isLoading
+                ? "Please wait while your file is being processed"
+                : ""}
             </p>
           </div>
 
-          {!isLoading && (
-            <Button size="sm">
-              + Upload
-            </Button>
-          )}
+          {!isLoading && <Button size="sm">+ Upload</Button>}
         </div>
       </div>
-    )
+    );
   }
-)
+);
 
-FileUploadArea.displayName = "FileUploadArea"
+FileUploadArea.displayName = "FileUploadArea";
 
-export { FileUploadArea }
+export { FileUploadArea };

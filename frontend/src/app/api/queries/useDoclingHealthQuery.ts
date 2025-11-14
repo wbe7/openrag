@@ -10,7 +10,7 @@ export interface DoclingHealthResponse {
 }
 
 export const useDoclingHealthQuery = (
-  options?: Omit<UseQueryOptions<DoclingHealthResponse>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<DoclingHealthResponse>, "queryKey" | "queryFn">
 ) => {
   const queryClient = useQueryClient();
 
@@ -57,7 +57,7 @@ export const useDoclingHealthQuery = (
       staleTime: 25000, // Consider data stale after 25 seconds
       ...options,
     },
-    queryClient,
+    queryClient
   );
 
   return queryResult;

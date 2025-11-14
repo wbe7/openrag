@@ -144,8 +144,8 @@ const OpenAISettingsDialog = ({
                 {settingsMutation.isPending
                   ? "Saving..."
                   : isValidating
-                  ? "Validating..."
-                  : "Save"}
+                    ? "Validating..."
+                    : "Save"}
               </Button>
             </DialogFooter>
           </form>

@@ -36,7 +36,7 @@ export interface IBMModelsParams {
 
 export const useGetOpenAIModelsQuery = (
   params?: OpenAIModelsParams,
-  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">
 ) => {
   const queryClient = useQueryClient();
 
@@ -63,7 +63,7 @@ export const useGetOpenAIModelsQuery = (
       retry: false,
       ...options,
     },
-    queryClient,
+    queryClient
   );
 
   return queryResult;
@@ -71,7 +71,7 @@ export const useGetOpenAIModelsQuery = (
 
 export const useGetAnthropicModelsQuery = (
   params?: AnthropicModelsParams,
-  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">
 ) => {
   const queryClient = useQueryClient();
 
@@ -98,7 +98,7 @@ export const useGetAnthropicModelsQuery = (
       retry: false,
       ...options,
     },
-    queryClient,
+    queryClient
   );
 
   return queryResult;
@@ -106,7 +106,7 @@ export const useGetAnthropicModelsQuery = (
 
 export const useGetOllamaModelsQuery = (
   params?: OllamaModelsParams,
-  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">
 ) => {
   const queryClient = useQueryClient();
 
@@ -133,7 +133,7 @@ export const useGetOllamaModelsQuery = (
       retry: false,
       ...options,
     },
-    queryClient,
+    queryClient
   );
 
   return queryResult;
@@ -141,7 +141,7 @@ export const useGetOllamaModelsQuery = (
 
 export const useGetIBMModelsQuery = (
   params?: IBMModelsParams,
-  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">
 ) => {
   const queryClient = useQueryClient();
 
@@ -174,7 +174,7 @@ export const useGetIBMModelsQuery = (
       retry: false,
       ...options,
     },
-    queryClient,
+    queryClient
   );
 
   return queryResult;
@@ -185,7 +185,7 @@ export const useGetIBMModelsQuery = (
  * based on the settings configuration
  */
 export const useGetCurrentProviderModelsQuery = (
-  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<ModelsResponse>, "queryKey" | "queryFn">
 ) => {
   const { data: settings } = useGetSettingsQuery();
   const currentProvider = settings?.agent?.llm_provider;
@@ -210,7 +210,10 @@ export const useGetCurrentProviderModelsQuery = (
   const ollamaModels = useGetOllamaModelsQuery(
     { endpoint: settings?.providers?.ollama?.endpoint },
     {
-      enabled: currentProvider === "ollama" && !!settings?.providers?.ollama?.endpoint && options?.enabled !== false,
+      enabled:
+        currentProvider === "ollama" &&
+        !!settings?.providers?.ollama?.endpoint &&
+        options?.enabled !== false,
       ...options,
     }
   );

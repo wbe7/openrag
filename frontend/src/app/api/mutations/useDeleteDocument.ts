@@ -14,7 +14,7 @@ interface DeleteDocumentResponse {
 }
 
 const deleteDocument = async (
-  data: DeleteDocumentRequest,
+  data: DeleteDocumentRequest
 ): Promise<DeleteDocumentResponse> => {
   const response = await fetch("/api/documents/delete-by-filename", {
     method: "POST",

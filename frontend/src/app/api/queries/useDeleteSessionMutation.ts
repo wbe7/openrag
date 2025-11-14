@@ -19,7 +19,7 @@ export const useDeleteSessionMutation = (
   options?: Omit<
     MutationOptions<DeleteSessionResponse, Error, DeleteSessionParams>,
     "mutationFn"
-  >,
+  >
 ) => {
   const queryClient = useQueryClient();
 
@@ -32,7 +32,7 @@ export const useDeleteSessionMutation = (
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-          errorData.error || `Failed to delete session: ${response.status}`,
+          errorData.error || `Failed to delete session: ${response.status}`
         );
       }
 

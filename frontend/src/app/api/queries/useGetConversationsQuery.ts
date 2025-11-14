@@ -47,7 +47,7 @@ export interface ConversationHistoryResponse {
 export const useGetConversationsQuery = (
   endpoint: EndpointType,
   refreshTrigger?: number,
-  options?: Omit<UseQueryOptions, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions, "queryKey" | "queryFn">
 ) => {
   const queryClient = useQueryClient();
 
@@ -72,7 +72,7 @@ export const useGetConversationsQuery = (
         (conv: RawConversation) => ({
           ...conv,
           endpoint: conv.endpoint as EndpointType,
-        }),
+        })
       );
 
       // Sort conversations by last activity (most recent first)
@@ -98,7 +98,7 @@ export const useGetConversationsQuery = (
       gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
       ...options,
     },
-    queryClient,
+    queryClient
   );
 
   return queryResult;

@@ -72,8 +72,8 @@ export const useUpdateSettingsMutation = (
   return useMutation({
     mutationFn: updateSettings,
     onSuccess: (...args) => {
-      queryClient.invalidateQueries({ 
-        queryKey: ["settings"], 
+      queryClient.invalidateQueries({
+        queryKey: ["settings"],
       });
       refetchModels(); // Refetch models for the settings page
       options?.onSuccess?.(...args);
