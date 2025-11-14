@@ -83,10 +83,10 @@ export function AssistantMessage({
             )}
             chatMessage={
               isStreaming
-                ? (content.trim()
-                    ? content +
-                      ' <span class="inline-block w-1 h-4 bg-primary ml-1 animate-pulse"></span>'
-                    : '<span class="text-muted-foreground italic">Thinking<span class="thinking-dots"></span></span>')
+                ? content.trim()
+                  ? content +
+                    ' <span class="inline-block w-1 h-4 bg-primary ml-1 animate-pulse"></span>'
+                  : '<span class="text-muted-foreground italic">Thinking<span class="thinking-dots"></span></span>'
                 : content
             }
           />

@@ -26,7 +26,9 @@ export function IBMOnboarding({
   setIsLoadingModels?: (isLoading: boolean) => void;
   alreadyConfigured?: boolean;
 }) {
-  const [endpoint, setEndpoint] = useState(alreadyConfigured ? "" : "https://us-south.ml.cloud.ibm.com");
+  const [endpoint, setEndpoint] = useState(
+    alreadyConfigured ? "" : "https://us-south.ml.cloud.ibm.com",
+  );
   const [apiKey, setApiKey] = useState("");
   const [projectId, setProjectId] = useState("");
 
@@ -77,7 +79,13 @@ export function IBMOnboarding({
       apiKey: debouncedApiKey ? debouncedApiKey : undefined,
       projectId: debouncedProjectId ? debouncedProjectId : undefined,
     },
-    { enabled: !!debouncedEndpoint || !!debouncedApiKey || !!debouncedProjectId || alreadyConfigured },
+    {
+      enabled:
+        !!debouncedEndpoint ||
+        !!debouncedApiKey ||
+        !!debouncedProjectId ||
+        alreadyConfigured,
+    },
   );
 
   // Use custom hook for model selection logic

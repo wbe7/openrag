@@ -24,7 +24,9 @@ interface DeleteConfirmationDialogProps {
   variant?: "destructive" | "default";
 }
 
-export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
+export const DeleteConfirmationDialog: React.FC<
+  DeleteConfirmationDialogProps
+> = ({
   open,
   onOpenChange,
   title = "Are you sure?",

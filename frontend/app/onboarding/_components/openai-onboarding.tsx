@@ -34,7 +34,9 @@ export function OpenAIOnboarding({
   alreadyConfigured?: boolean;
 }) {
   const [apiKey, setApiKey] = useState("");
-  const [getFromEnv, setGetFromEnv] = useState(hasEnvApiKey && !alreadyConfigured);
+  const [getFromEnv, setGetFromEnv] = useState(
+    hasEnvApiKey && !alreadyConfigured,
+  );
   const debouncedApiKey = useDebouncedValue(apiKey, 500);
 
   // Fetch models from API when API key is provided
