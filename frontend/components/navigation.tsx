@@ -248,7 +248,7 @@ export function Navigation({
       );
     }
 
-    if (isOnChatPage) {
+    if (isOnChatPage && !isConversationsLoading) {
       if (conversations.length === 0 && !placeholderConversation) {
         handleNewConversation();
       } else if (activeConvo) {
