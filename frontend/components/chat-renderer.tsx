@@ -185,9 +185,11 @@ export function ChatRenderer({
               }}
               className={cn("w-full h-full")}
             >
-              <div className={cn("w-full h-full", !showLayout && "hidden")}>
-                {children}
-              </div>
+              {showLayout && (
+                <div className={cn("w-full h-full", !showLayout && "hidden")}>
+                  {children}
+                </div>
+              )}
               {!showLayout && (
                 <OnboardingContent
                   handleStepComplete={handleStepComplete}
