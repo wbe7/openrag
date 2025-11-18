@@ -95,6 +95,8 @@ export function Navigation({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [conversationToDelete, setConversationToDelete] =
     useState<ChatConversation | null>(null);
+  const hasCompletedInitialLoad = useRef(false);
+  const mountTimeRef = useRef<number | null>(null);
 
   const { selectedFilter, setSelectedFilter } = useKnowledgeFilter();
 
@@ -210,15 +212,43 @@ export function Navigation({
   const isOnChatPage = pathname === "/" || pathname === "/chat";
   const isOnKnowledgePage = pathname.startsWith("/knowledge");
 
+  // Track mount time to prevent auto-selection right after component mounts (e.g., after onboarding)
+  useEffect(() => {
+    if (mountTimeRef.current === null) {
+      mountTimeRef.current = Date.now();
+    }
+  }, []);
+
+  // Track when initial load completes
+  useEffect(() => {
+    if (!isConversationsLoading && !hasCompletedInitialLoad.current) {
+      hasCompletedInitialLoad.current = true;
+      // Set initial count after first load completes
+      setPreviousConversationCount(conversations.length);
+    }
+  }, [isConversationsLoading, conversations.length]);
+
   // Clear placeholder when conversation count increases (new conversation was created)
   useEffect(() => {
     const currentCount = conversations.length;
+    const timeSinceMount = mountTimeRef.current
+      ? Date.now() - mountTimeRef.current
+      : Infinity;
+    const MIN_TIME_AFTER_MOUNT = 2000; // 2 seconds - prevents selection right after onboarding
 
-    // If we had a placeholder and the conversation count increased, clear the placeholder and highlight the new conversation
+    // Only select if:
+    // 1. We have a placeholder (new conversation was created)
+    // 2. Initial load has completed (prevents selection on browser refresh)
+    // 3. Count increased (new conversation appeared)
+    // 4. Not currently loading
+    // 5. Enough time has passed since mount (prevents selection after onboarding completes)
     if (
       placeholderConversation &&
+      hasCompletedInitialLoad.current &&
       currentCount > previousConversationCount &&
-      conversations.length > 0
+      conversations.length > 0 &&
+      !isConversationsLoading &&
+      timeSinceMount >= MIN_TIME_AFTER_MOUNT
     ) {
       setPlaceholderConversation(null);
       // Highlight the most recent conversation (first in sorted array) without loading its messages
@@ -228,8 +258,10 @@ export function Navigation({
       }
     }
 
-    // Update the previous count
-    setPreviousConversationCount(currentCount);
+    // Update the previous count only after initial load
+    if (hasCompletedInitialLoad.current) {
+      setPreviousConversationCount(currentCount);
+    }
   }, [
     conversations.length,
     placeholderConversation,
@@ -237,6 +269,7 @@ export function Navigation({
     previousConversationCount,
     conversations,
     setCurrentConversationId,
+    isConversationsLoading,
   ]);
 
   useEffect(() => {
