@@ -18,6 +18,8 @@ import { useChat } from "@/contexts/chat-context";
 import {
   ANIMATION_DURATION,
   HEADER_HEIGHT,
+  ONBOARDING_ASSISTANT_MESSAGE_KEY,
+  ONBOARDING_SELECTED_NUDGE_KEY,
   ONBOARDING_STEP_KEY,
   SIDEBAR_WIDTH,
   TOTAL_ONBOARDING_STEPS,
@@ -81,8 +83,16 @@ export function ChatRenderer({
       // Onboarding is complete - remove from local storage and show layout
       if (typeof window !== "undefined") {
         localStorage.removeItem(ONBOARDING_STEP_KEY);
+        localStorage.removeItem(ONBOARDING_ASSISTANT_MESSAGE_KEY);
+        localStorage.removeItem(ONBOARDING_SELECTED_NUDGE_KEY);
       }
       setShowLayout(true);
+    }
+  };
+
+  const handleStepBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -90,6 +100,8 @@ export function ChatRenderer({
     // Skip onboarding by marking it as complete
     if (typeof window !== "undefined") {
       localStorage.removeItem(ONBOARDING_STEP_KEY);
+      localStorage.removeItem(ONBOARDING_ASSISTANT_MESSAGE_KEY);
+      localStorage.removeItem(ONBOARDING_SELECTED_NUDGE_KEY);
     }
     setShowLayout(true);
   };
@@ -193,6 +205,7 @@ export function ChatRenderer({
               {!showLayout && (
                 <OnboardingContent
                   handleStepComplete={handleStepComplete}
+                  handleStepBack={handleStepBack}
                   currentStep={currentStep}
                 />
               )}
