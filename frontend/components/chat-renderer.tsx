@@ -19,8 +19,10 @@ import {
   ANIMATION_DURATION,
   HEADER_HEIGHT,
   ONBOARDING_ASSISTANT_MESSAGE_KEY,
+  ONBOARDING_CARD_STEPS_KEY,
   ONBOARDING_SELECTED_NUDGE_KEY,
   ONBOARDING_STEP_KEY,
+  ONBOARDING_UPLOAD_STEPS_KEY,
   SIDEBAR_WIDTH,
   TOTAL_ONBOARDING_STEPS,
 } from "@/lib/constants";
@@ -85,6 +87,8 @@ export function ChatRenderer({
         localStorage.removeItem(ONBOARDING_STEP_KEY);
         localStorage.removeItem(ONBOARDING_ASSISTANT_MESSAGE_KEY);
         localStorage.removeItem(ONBOARDING_SELECTED_NUDGE_KEY);
+        localStorage.removeItem(ONBOARDING_CARD_STEPS_KEY);
+        localStorage.removeItem(ONBOARDING_UPLOAD_STEPS_KEY);
       }
       setShowLayout(true);
     }
@@ -102,6 +106,8 @@ export function ChatRenderer({
       localStorage.removeItem(ONBOARDING_STEP_KEY);
       localStorage.removeItem(ONBOARDING_ASSISTANT_MESSAGE_KEY);
       localStorage.removeItem(ONBOARDING_SELECTED_NUDGE_KEY);
+      localStorage.removeItem(ONBOARDING_CARD_STEPS_KEY);
+      localStorage.removeItem(ONBOARDING_UPLOAD_STEPS_KEY);
     }
     setShowLayout(true);
   };

@@ -36,6 +36,8 @@ export const TOTAL_ONBOARDING_STEPS = 5;
 export const ONBOARDING_STEP_KEY = "onboarding_current_step";
 export const ONBOARDING_ASSISTANT_MESSAGE_KEY = "onboarding_assistant_message";
 export const ONBOARDING_SELECTED_NUDGE_KEY = "onboarding_selected_nudge";
+export const ONBOARDING_CARD_STEPS_KEY = "onboarding_card_steps";
+export const ONBOARDING_UPLOAD_STEPS_KEY = "onboarding_upload_steps";
 
 export const FILES_REGEX =
   /(?<=I'm uploading a document called ['"])[^'"]+\.[^.]+(?=['"]\. Here is its content:)/;
