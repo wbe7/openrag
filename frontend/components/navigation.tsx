@@ -83,7 +83,6 @@ export function Navigation({
     startNewConversation,
     conversationDocs,
     conversationData,
-    addConversationDoc,
     refreshConversations,
     placeholderConversation,
     setPlaceholderConversation,
@@ -92,12 +91,10 @@ export function Navigation({
 
   const { loading } = useLoadingStore();
 
-  const [loadingNewConversation, setLoadingNewConversation] = useState(false);
   const [previousConversationCount, setPreviousConversationCount] = useState(0);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [conversationToDelete, setConversationToDelete] =
     useState<ChatConversation | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { selectedFilter, setSelectedFilter } = useKnowledgeFilter();
 
@@ -140,8 +137,6 @@ export function Navigation({
   });
 
   const handleNewConversation = () => {
-    setLoadingNewConversation(true);
-
     // Use the prop callback if provided, otherwise use the context method
     if (onNewConversation) {
       onNewConversation();
@@ -153,96 +148,8 @@ export function Navigation({
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("newConversation"));
     }
-    // Clear loading state after a short delay to show the new conversation is created
-    setTimeout(() => {
-      setLoadingNewConversation(false);
-    }, 300);
   };
 
-  const handleFileUpload = async (file: File) => {
-    console.log("Navigation file upload:", file.name);
-
-    // Trigger loading start event for chat page
-    window.dispatchEvent(
-      new CustomEvent("fileUploadStart", {
-        detail: { filename: file.name },
-      }),
-    );
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("endpoint", endpoint);
-
-      const response = await fetch("/api/upload_context", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Upload failed:", errorText);
-
-        // Trigger error event for chat page to handle
-        window.dispatchEvent(
-          new CustomEvent("fileUploadError", {
-            detail: {
-              filename: file.name,
-              error: "Failed to process document",
-            },
-          }),
-        );
-
-        // Trigger loading end event
-        window.dispatchEvent(new CustomEvent("fileUploadComplete"));
-        return;
-      }
-
-      const result = await response.json();
-      console.log("Upload result:", result);
-
-      // Add the file to conversation docs
-      if (result.filename) {
-        addConversationDoc(result.filename);
-      }
-
-      // Trigger file upload event for chat page to handle
-      window.dispatchEvent(
-        new CustomEvent("fileUploaded", {
-          detail: { file, result },
-        }),
-      );
-
-      // Trigger loading end event
-      window.dispatchEvent(new CustomEvent("fileUploadComplete"));
-    } catch (error) {
-      console.error("Upload failed:", error);
-      // Trigger loading end event even on error
-      window.dispatchEvent(new CustomEvent("fileUploadComplete"));
-
-      // Trigger error event for chat page to handle
-      window.dispatchEvent(
-        new CustomEvent("fileUploadError", {
-          detail: { filename: file.name, error: "Failed to process document" },
-        }),
-      );
-    }
-  };
-
-  const handleFilePickerClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFilePickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFileUpload(files[0]);
-    }
-    // Reset the input so the same file can be selected again
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
 
   const handleDeleteConversation = (
     conversation: ChatConversation,
@@ -344,7 +251,7 @@ export function Navigation({
     if (isOnChatPage) {
       if (conversations.length === 0 && !placeholderConversation) {
         handleNewConversation();
-      } else if (activeConvo && !conversationLoaded) {
+      } else if (activeConvo) {
         loadConversation(activeConvo);
         refreshConversations();
       } else if (
