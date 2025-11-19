@@ -32,7 +32,7 @@ const OpenAISettingsDialog = ({
   const [isValidating, setIsValidating] = useState(false);
   const [validationError, setValidationError] = useState<Error | null>(null);
   const router = useRouter();
-  
+
   const methods = useForm<OpenAISettingsFormData>({
     mode: "onSubmit",
     defaultValues: {

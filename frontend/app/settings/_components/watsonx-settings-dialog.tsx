@@ -32,7 +32,7 @@ const WatsonxSettingsDialog = ({
   const [isValidating, setIsValidating] = useState(false);
   const [validationError, setValidationError] = useState<Error | null>(null);
   const router = useRouter();
-  
+
   const methods = useForm<WatsonxSettingsFormData>({
     mode: "onSubmit",
     defaultValues: {
@@ -67,7 +67,7 @@ const WatsonxSettingsDialog = ({
         provider: "watsonx",
       };
       queryClient.setQueryData(["provider", "health"], healthData);
-      
+
       toast.message("IBM watsonx.ai successfully configured", {
         description:
           "You can now access the provided language and embedding models.",

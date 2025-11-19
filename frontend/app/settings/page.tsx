@@ -785,7 +785,12 @@ function KnowledgeSourcesPage() {
                     <div className="flex flex-col gap-3">
                       <div className="mb-1">
                         <div
-                          className={cn("w-8 h-8 rounded flex items-center justify-center border", connector?.available ? "bg-white" : "bg-muted grayscale")}
+                          className={cn(
+                            "w-8 h-8 rounded flex items-center justify-center border",
+                            connector?.available
+                              ? "bg-white"
+                              : "bg-muted grayscale",
+                          )}
                         >
                           {connector.icon}
                         </div>
@@ -794,7 +799,9 @@ function KnowledgeSourcesPage() {
                         {connector.name}
                       </CardTitle>
                       <CardDescription className="text-sm">
-                        {connector?.available ? `${connector.name} is configured.` : "Not configured."}
+                        {connector?.available
+                          ? `${connector.name} is configured.`
+                          : "Not configured."}
                       </CardDescription>
                     </div>
                   </div>

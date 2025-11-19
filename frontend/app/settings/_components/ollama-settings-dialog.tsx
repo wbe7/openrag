@@ -35,7 +35,7 @@ const OllamaSettingsDialog = ({
   const [isValidating, setIsValidating] = useState(false);
   const [validationError, setValidationError] = useState<Error | null>(null);
   const router = useRouter();
-  
+
   const { data: settings = {} } = useGetSettingsQuery({
     enabled: isAuthenticated || isNoAuthMode,
   });
