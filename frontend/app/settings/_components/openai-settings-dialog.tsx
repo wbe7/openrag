@@ -19,6 +19,7 @@ import {
   OpenAISettingsForm,
   type OpenAISettingsFormData,
 } from "./openai-settings-form";
+import { useRouter } from "next/navigation";
 
 const OpenAISettingsDialog = ({
   open,
@@ -30,7 +31,8 @@ const OpenAISettingsDialog = ({
   const queryClient = useQueryClient();
   const [isValidating, setIsValidating] = useState(false);
   const [validationError, setValidationError] = useState<Error | null>(null);
-
+  const router = useRouter();
+  
   const methods = useForm<OpenAISettingsFormData>({
     mode: "onSubmit",
     defaultValues: {
@@ -60,9 +62,19 @@ const OpenAISettingsDialog = ({
       };
       queryClient.setQueryData(["provider", "health"], healthData);
 
-      toast.success(
-        "OpenAI credentials saved. Configure models in the Settings page.",
-      );
+      toast.message("OpenAI successfully configured", {
+        description:
+          "You can now access the provided language and embedding models.",
+        duration: Infinity,
+        closeButton: true,
+        icon: <OpenAILogo className="w-4 h-4" />,
+        action: {
+          label: "Settings",
+          onClick: () => {
+            router.push("/settings");
+          },
+        },
+      });
       setOpen(false);
     },
   });
