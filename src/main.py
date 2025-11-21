@@ -446,6 +446,29 @@ async def startup_tasks(services):
     # Configure alerting security
     await configure_alerting_security()
 
+    # Check if flows were reset and reapply settings if config is edited
+    try:
+        config = get_openrag_config()
+        if config.edited:
+            logger.info("Checking if Langflow flows were reset")
+            flows_service = services["flows_service"]
+            reset_flows = await flows_service.check_flows_reset()
+            
+            if reset_flows:
+                logger.info(
+                    f"Detected reset flows: {', '.join(reset_flows)}. Reapplying all settings."
+                )
+                from api.settings import reapply_all_settings
+                await reapply_all_settings()
+                logger.info("Successfully reapplied settings after detecting flow resets")
+            else:
+                logger.info("No flows detected as reset, skipping settings reapplication")
+        else:
+            logger.debug("Configuration not yet edited, skipping flow reset check")
+    except Exception as e:
+        logger.error(f"Failed to check flows reset or reapply settings: {str(e)}")
+        # Don't fail startup if this check fails
+
 
 async def initialize_services():
     """Initialize all services and their dependencies"""

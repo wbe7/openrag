@@ -24,7 +24,9 @@ from config.settings import (
 import json
 import os
 import re
+import copy
 from utils.logging_config import get_logger
+from utils.container_utils import transform_localhost_url
 
 logger = get_logger(__name__)
 
@@ -673,6 +675,140 @@ class FlowsService:
                 nodes[i] = new_node
                 return True
         return False
+
+    def _normalize_flow_structure(self, flow_data):
+        """
+        Normalize flow structure for comparison by removing dynamic fields.
+        Keeps only structural elements: nodes (types, display names), edges (connections).
+        Removes: template values, IDs, timestamps, positions, etc.
+        """
+        normalized = {
+            "data": {
+                "nodes": [],
+                "edges": []
+            }
+        }
+
+        # Normalize nodes - keep only structural info
+        nodes = flow_data.get("data", {}).get("nodes", [])
+        for node in nodes:
+            node_data = node.get("data", {})
+            node_template = node_data.get("node", {})
+            
+            normalized_node = {
+                "id": node.get("id"),  # Keep ID for edge matching
+                "type": node.get("type"),
+                "data": {
+                    "node": {
+                        "display_name": node_template.get("display_name"),
+                        "name": node_template.get("name"),
+                        "base_classes": node_template.get("base_classes", []),
+                    }
+                }
+            }
+            normalized["data"]["nodes"].append(normalized_node)
+
+        # Normalize edges - keep only connections
+        edges = flow_data.get("data", {}).get("edges", [])
+        for edge in edges:
+            normalized_edge = {
+                "source": edge.get("source"),
+                "target": edge.get("target"),
+                "sourceHandle": edge.get("sourceHandle"),
+                "targetHandle": edge.get("targetHandle"),
+            }
+            normalized["data"]["edges"].append(normalized_edge)
+
+        return normalized
+
+    async def _compare_flow_with_file(self, flow_id: str):
+        """
+        Compare a Langflow flow with its JSON file.
+        Returns True if flows match (indicating a reset), False otherwise.
+        """
+        try:
+            # Get flow from Langflow API
+            response = await clients.langflow_request("GET", f"/api/v1/flows/{flow_id}")
+            if response.status_code != 200:
+                logger.warning(f"Failed to get flow {flow_id} from Langflow: HTTP {response.status_code}")
+                return False
+
+            langflow_flow = response.json()
+
+            # Find and load the corresponding JSON file
+            flow_path = self._find_flow_file_by_id(flow_id)
+            if not flow_path:
+                logger.warning(f"Flow file not found for flow ID: {flow_id}")
+                return False
+
+            with open(flow_path, "r") as f:
+                file_flow = json.load(f)
+
+            # Normalize both flows for comparison
+            normalized_langflow = self._normalize_flow_structure(langflow_flow)
+            normalized_file = self._normalize_flow_structure(file_flow)
+
+            # Compare node structures
+            langflow_nodes = sorted(normalized_langflow["data"]["nodes"], key=lambda x: x.get("id", ""))
+            file_nodes = sorted(normalized_file["data"]["nodes"], key=lambda x: x.get("id", ""))
+
+            if len(langflow_nodes) != len(file_nodes):
+                return False
+
+            # Compare each node's structural properties
+            for lf_node, file_node in zip(langflow_nodes, file_nodes):
+                lf_display_name = lf_node.get("data", {}).get("node", {}).get("display_name")
+                file_display_name = file_node.get("data", {}).get("node", {}).get("display_name")
+                
+                if lf_display_name != file_display_name:
+                    return False
+
+            # Compare edges (connections)
+            langflow_edges = sorted(normalized_langflow["data"]["edges"], key=lambda x: (x.get("source", ""), x.get("target", "")))
+            file_edges = sorted(normalized_file["data"]["edges"], key=lambda x: (x.get("source", ""), x.get("target", "")))
+
+            if len(langflow_edges) != len(file_edges):
+                return False
+
+            for lf_edge, file_edge in zip(langflow_edges, file_edges):
+                if (lf_edge.get("source") != file_edge.get("source") or
+                    lf_edge.get("target") != file_edge.get("target")):
+                    return False
+
+            return True
+
+        except Exception as e:
+            logger.error(f"Error comparing flow {flow_id} with file: {str(e)}")
+            return False
+
+    async def check_flows_reset(self):
+        """
+        Check if any flows have been reset by comparing with JSON files.
+        Returns list of flow types that were reset.
+        """
+        reset_flows = []
+
+        flow_configs = [
+            ("nudges", NUDGES_FLOW_ID),
+            ("retrieval", LANGFLOW_CHAT_FLOW_ID),
+            ("ingest", LANGFLOW_INGEST_FLOW_ID),
+            ("url_ingest", LANGFLOW_URL_INGEST_FLOW_ID),
+        ]
+
+        for flow_type, flow_id in flow_configs:
+            if not flow_id:
+                continue
+
+            logger.info(f"Checking if {flow_type} flow (ID: {flow_id}) was reset")
+            is_reset = await self._compare_flow_with_file(flow_id)
+            
+            if is_reset:
+                logger.info(f"Flow {flow_type} (ID: {flow_id}) appears to have been reset")
+                reset_flows.append(flow_type)
+            else:
+                logger.info(f"Flow {flow_type} (ID: {flow_id}) does not match reset state")
+
+        return reset_flows
 
     async def change_langflow_model_value(
         self,
