@@ -31,7 +31,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { DeleteConfirmationDialog } from "../../components/delete-confirmation-dialog";
+import {
+  DeleteConfirmationDialog,
+  formatFilesToDelete,
+} from "../../components/delete-confirmation-dialog";
 import GoogleDriveIcon from "../../components/icons/google-drive-logo";
 import OneDriveIcon from "../../components/icons/one-drive-logo";
 import SharePointIcon from "../../components/icons/share-point-logo";
@@ -391,7 +394,7 @@ function SearchPage() {
       <DeleteConfirmationDialog
         open={showBulkDeleteDialog}
         onOpenChange={setShowBulkDeleteDialog}
-        title="Delete Documents"
+        title={selectedRows.length > 1 ? "Delete Documents" : "Delete Document"}
         description={`Are you sure you want to delete ${
           selectedRows.length
         } document${
@@ -399,8 +402,8 @@ function SearchPage() {
         }? This will remove all chunks and data associated with these documents. This action cannot be undone.
 
 Documents to be deleted:
-${selectedRows.map((row) => `• ${row.filename}`).join("\n")}`}
-        confirmText="Delete All"
+${formatFilesToDelete(selectedRows)}`}
+        confirmText={selectedRows.length > 1 ? "Delete All" : "Delete"}
         onConfirm={handleBulkDelete}
         isLoading={deleteDocumentMutation.isPending}
       />
