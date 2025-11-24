@@ -1155,6 +1155,38 @@ async def create_app():
         app.state.background_tasks.add(t1)
         t1.add_done_callback(app.state.background_tasks.discard)
 
+        # Start periodic flow backup task (every 5 minutes)
+        async def periodic_backup():
+            """Periodic backup task that runs every 15 minutes"""
+            while True:
+                try:
+                    await asyncio.sleep(5 * 60)  # Wait 5 minutes
+                    flows_service = services.get("flows_service")
+                    if flows_service:
+                        logger.info("Running periodic flow backup")
+                        backup_results = await flows_service.backup_all_flows(only_if_changed=True)
+                        if backup_results["backed_up"]:
+                            logger.info(
+                                "Periodic backup completed",
+                                backed_up=len(backup_results["backed_up"]),
+                                skipped=len(backup_results["skipped"]),
+                            )
+                        else:
+                            logger.debug(
+                                "Periodic backup: no flows changed",
+                                skipped=len(backup_results["skipped"]),
+                            )
+                except asyncio.CancelledError:
+                    logger.info("Periodic backup task cancelled")
+                    break
+                except Exception as e:
+                    logger.error(f"Error in periodic backup task: {str(e)}")
+                    # Continue running even if one backup fails
+
+        backup_task = asyncio.create_task(periodic_backup())
+        app.state.background_tasks.add(backup_task)
+        backup_task.add_done_callback(app.state.background_tasks.discard)
+
     # Add shutdown event handler
     @app.on_event("shutdown")
     async def shutdown_event():
