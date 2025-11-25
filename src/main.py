@@ -1161,6 +1161,13 @@ async def create_app():
             while True:
                 try:
                     await asyncio.sleep(5 * 60)  # Wait 5 minutes
+                    
+                    # Check if onboarding has been completed
+                    config = get_openrag_config()
+                    if not config.edited:
+                        logger.debug("Onboarding not completed yet, skipping periodic backup")
+                        continue
+                    
                     flows_service = services.get("flows_service")
                     if flows_service:
                         logger.info("Running periodic flow backup")
