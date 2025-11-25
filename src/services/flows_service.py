@@ -155,29 +155,45 @@ class FlowsService:
 
                 current_flow = response.json()
 
+                # Check if flow is locked and if we should skip backup
+                flow_locked = current_flow.get("locked", False)
+                latest_backup_path = self._get_latest_backup_path(flow_id, flow_type)
+                has_backups = latest_backup_path is not None
+                
+                # If flow is locked and no backups exist, skip backup
+                if flow_locked and not has_backups:
+                    logger.debug(
+                        f"Flow {flow_type} (ID: {flow_id}) is locked and has no backups, skipping backup"
+                    )
+                    backup_results["skipped"].append({
+                        "flow_type": flow_type,
+                        "flow_id": flow_id,
+                        "reason": "locked_without_backups",
+                    })
+                    continue
+                
                 # Check if we need to backup (only if changed)
-                if only_if_changed:
-                    latest_backup_path = self._get_latest_backup_path(flow_id, flow_type)
-                    if latest_backup_path:
-                        try:
-                            with open(latest_backup_path, "r") as f:
-                                latest_backup = json.load(f)
-                            
-                            # Compare flows
-                            if not self._compare_flows(current_flow, latest_backup):
-                                logger.debug(
-                                    f"Flow {flow_type} (ID: {flow_id}) unchanged, skipping backup"
-                                )
-                                backup_results["skipped"].append({
-                                    "flow_type": flow_type,
-                                    "flow_id": flow_id,
-                                })
-                                continue
-                        except Exception as e:
-                            logger.warning(
-                                f"Failed to read latest backup for {flow_type} (ID: {flow_id}): {str(e)}"
+                if only_if_changed and has_backups:
+                    try:
+                        with open(latest_backup_path, "r") as f:
+                            latest_backup = json.load(f)
+                        
+                        # Compare flows
+                        if not self._compare_flows(current_flow, latest_backup):
+                            logger.debug(
+                                f"Flow {flow_type} (ID: {flow_id}) unchanged, skipping backup"
                             )
-                            # Continue with backup if we can't read the latest backup
+                            backup_results["skipped"].append({
+                                "flow_type": flow_type,
+                                "flow_id": flow_id,
+                                "reason": "unchanged",
+                            })
+                            continue
+                    except Exception as e:
+                        logger.warning(
+                            f"Failed to read latest backup for {flow_type} (ID: {flow_id}): {str(e)}"
+                        )
+                        # Continue with backup if we can't read the latest backup
 
                 # Backup the flow
                 backup_path = await self._backup_flow(flow_id, flow_type, current_flow)
