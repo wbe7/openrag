@@ -50,55 +50,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # backend
-          - image: backend
-            file: ./Dockerfile.backend
-            tag: langflowai/openrag-backend
-            platform: linux/amd64
-            arch: amd64
-            runs-on: ubuntu-latest-16-cores
-          - image: backend
-            file: ./Dockerfile.backend
-            tag: langflowai/openrag-backend
-            platform: linux/arm64
-            arch: arm64
-            runs-on: [self-hosted, linux, ARM64, langflow-ai-arm64-2]
-
-          # frontend
-          - image: frontend
-            file: ./Dockerfile.frontend
-            tag: langflowai/openrag-frontend
-            platform: linux/amd64
-            arch: amd64
-            runs-on: ubuntu-latest-16-cores
-          - image: frontend
-            file: ./Dockerfile.frontend
-            tag: langflowai/openrag-frontend
-            platform: linux/arm64
-            arch: arm64
-            runs-on: [self-hosted, linux, ARM64, langflow-ai-arm64-2]
-
-          # langflow
-          - image: langflow
-            file: ./Dockerfile.langflow
-            tag: langflowai/openrag-langflow
-            platform: linux/amd64
-            arch: amd64
-            runs-on: ubuntu-latest-16-cores
-          - image: langflow
-            file: ./Dockerfile.langflow
-            tag: langflowai/openrag-langflow
-            platform: linux/arm64
-            arch: arm64
-            runs-on: self-hosted
-
-          # opensearch
-          - image: opensearch
-            file: ./Dockerfile
-            tag: langflowai/openrag-opensearch
-            platform: linux/amd64
-            arch: amd64
-            runs-on: ubuntu-latest-16-cores
           - image: opensearch
             file: ./Dockerfile
             tag: langflowai/openrag-opensearch
