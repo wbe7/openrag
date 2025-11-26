@@ -65,9 +65,13 @@ async def auth_callback(request: Request, auth_service, session_manager):
 
 
 async def auth_me(request: Request, auth_service, session_manager):
-    """Get current user information"""
+    """Get current user information and system health status"""
     result = await auth_service.get_user_info(request)
-    return JSONResponse(result)
+
+    # Return 503 if OpenSearch is not ready
+    status_code = 503 if not result.get("opensearch_ready", False) else 200
+
+    return JSONResponse(result, status_code=status_code)
 
 
 async def auth_logout(request: Request, auth_service, session_manager):

@@ -16,6 +16,9 @@ from connectors.sharepoint.oauth import SharePointOAuth
 from connectors.google_drive import GoogleDriveConnector
 from connectors.onedrive import OneDriveConnector
 from connectors.sharepoint import SharePointConnector
+from utils.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class AuthService:
@@ -373,11 +376,19 @@ class AuthService:
             "connector_type": connection_config.connector_type,
         }
 
-    async def get_user_info(self, request) -> Optional[dict]:
+    async def get_user_info(self, request) -> dict:
         """Get current user information from request"""
+        # Check OpenSearch health
+        opensearch_ready = await self._check_opensearch_health()
+
         # In no-auth mode, return a consistent response
         if is_no_auth_mode():
-            return {"authenticated": False, "user": None, "no_auth_mode": True}
+            return {
+                "authenticated": False,
+                "user": None,
+                "no_auth_mode": True,
+                "opensearch_ready": opensearch_ready,
+            }
 
         user = getattr(request.state, "user", None)
 
@@ -394,8 +405,27 @@ class AuthService:
                     if user.last_login
                     else None,
                 },
+                "opensearch_ready": opensearch_ready,
             }
-            
+
             return user_data
         else:
-            return {"authenticated": False, "user": None}
+            return {
+                "authenticated": False,
+                "user": None,
+                "opensearch_ready": opensearch_ready,
+            }
+
+    async def _check_opensearch_health(self) -> bool:
+        """Check if OpenSearch is healthy using admin credentials"""
+        try:
+            from config.settings import clients
+
+            if clients.opensearch is not None:
+                # Try to ping OpenSearch
+                response = await clients.opensearch.info()
+                return response is not None
+            return False
+        except Exception as e:
+            logger.warning("OpenSearch health check failed", error=str(e))
+            return False
