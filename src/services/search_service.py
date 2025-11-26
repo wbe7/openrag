@@ -156,26 +156,72 @@ class SearchService:
                         return model_name, resp.data[0].embedding
                     except Exception as e:
                         last_exception = e
+                        error_str = str(e).lower()
+                        
+                        # Check if it's a rate limit error (429)
+                        is_rate_limit = "429" in error_str or "rate" in error_str or "too many requests" in error_str
+                        
                         if attempts >= MAX_EMBED_RETRIES:
                             logger.error(
                                 "Failed to embed with model after retries",
                                 model=model_name,
                                 attempts=attempts,
                                 error=str(e),
+                                is_rate_limit=is_rate_limit,
                             )
                             raise RuntimeError(
                                 f"Failed to embed with model {model_name}"
                             ) from e
 
-                        logger.warning(
-                            "Retrying embedding generation",
-                            model=model_name,
-                            attempt=attempts,
-                            max_attempts=MAX_EMBED_RETRIES,
-                            error=str(e),
-                        )
-                        await asyncio.sleep(delay)
-                        delay = min(delay * 2, EMBED_RETRY_MAX_DELAY)
+                        # For rate limit errors, use longer delays
+                        if is_rate_limit:
+                            # Extract Retry-After header if available
+                            retry_after = None
+                            if hasattr(e, 'response') and hasattr(e.response, 'headers'):
+                                retry_after = e.response.headers.get('Retry-After')
+                            
+                            if retry_after:
+                                try:
+                                    wait_time = float(retry_after)
+                                    logger.warning(
+                                        "Rate limited - respecting Retry-After header",
+                                        model=model_name,
+                                        attempt=attempts,
+                                        max_attempts=MAX_EMBED_RETRIES,
+                                        retry_after=wait_time,
+                                    )
+                                    await asyncio.sleep(wait_time)
+                                    continue
+                                except (ValueError, TypeError):
+                                    pass
+                            
+                            # Use exponential backoff with jitter for rate limits
+                            wait_time = min(delay * 2, EMBED_RETRY_MAX_DELAY)
+                            # Add jitter to avoid thundering herd
+                            import random
+                            jitter = random.uniform(0, 0.5 * wait_time)
+                            wait_time += jitter
+                            
+                            logger.warning(
+                                "Rate limited - backing off with exponential delay",
+                                model=model_name,
+                                attempt=attempts,
+                                max_attempts=MAX_EMBED_RETRIES,
+                                wait_time=wait_time,
+                            )
+                            await asyncio.sleep(wait_time)
+                            delay = wait_time
+                        else:
+                            # Regular retry for other errors
+                            logger.warning(
+                                "Retrying embedding generation",
+                                model=model_name,
+                                attempt=attempts,
+                                max_attempts=MAX_EMBED_RETRIES,
+                                error=str(e),
+                            )
+                            await asyncio.sleep(delay)
+                            delay = min(delay * 2, EMBED_RETRY_MAX_DELAY)
 
                 # Should not reach here, but guard in case
                 raise RuntimeError(

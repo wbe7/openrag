@@ -2,6 +2,7 @@ import asyncio
 import os
 import tempfile
 from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import pytest_asyncio
@@ -20,8 +21,68 @@ from src.session_manager import SessionManager
 from src.main import generate_jwt_keys
 
 
+# Mock embeddings for CI environment to avoid rate limits
+@pytest.fixture(scope="session", autouse=True)
+def mock_openai_embeddings():
+    """Mock OpenAI embeddings API calls in CI environment to avoid rate limits."""
+    # Only mock in CI environment
+    if os.getenv("CI") or os.getenv("MOCK_EMBEDDINGS", "false").lower() in ("true", "1", "yes"):
+        print("[DEBUG] Mocking OpenAI embeddings for CI environment")
+        
+        def create_mock_embedding(texts, model="text-embedding-3-small", **kwargs):
+            """Create mock embeddings with proper dimensions based on model."""
+            # Get dimensions based on model
+            from src.config.settings import OPENAI_EMBEDDING_DIMENSIONS, WATSONX_EMBEDDING_DIMENSIONS
+            
+            dimensions = OPENAI_EMBEDDING_DIMENSIONS.get(
+                model, 
+                WATSONX_EMBEDDING_DIMENSIONS.get(model, 1536)
+            )
+            
+            # Handle both single string and list of strings
+            if isinstance(texts, str):
+                texts = [texts]
+            
+            # Create mock response
+            mock_data = []
+            for idx, text in enumerate(texts):
+                # Create deterministic embeddings based on text hash for consistency
+                import hashlib
+                text_hash = int(hashlib.md5(text.encode()).hexdigest(), 16)
+                # Use hash to seed pseudo-random values
+                embedding = [(text_hash % 1000) / 1000.0 + i / dimensions for i in range(dimensions)]
+                mock_data.append(MagicMock(embedding=embedding, index=idx))
+            
+            mock_response = MagicMock()
+            mock_response.data = mock_data
+            return mock_response
+        
+        async def async_create_mock_embedding(model, input, **kwargs):
+            """Async version of mock embedding creation."""
+            return create_mock_embedding(input, model, **kwargs)
+        
+        # Patch the OpenAI client's embeddings.create method
+        with patch('openai.AsyncOpenAI') as mock_async_openai:
+            # Create a mock client instance
+            mock_client_instance = MagicMock()
+            mock_embeddings = MagicMock()
+            mock_embeddings.create = AsyncMock(side_effect=async_create_mock_embedding)
+            mock_client_instance.embeddings = mock_embeddings
+            mock_client_instance.close = AsyncMock()
+            
+            # Make AsyncOpenAI() return our mock instance
+            mock_async_openai.return_value = mock_client_instance
+            
+            # Also patch the agentd patch function to return the mock
+            with patch('agentd.patch.patch_openai_with_mcp', return_value=mock_client_instance):
+                yield mock_client_instance
+    else:
+        # In non-CI environments, don't mock - use real API
+        yield None
+
+
 @pytest_asyncio.fixture(scope="session", autouse=True)
-async def onboard_system():
+async def onboard_system(mock_openai_embeddings):
     """Perform initial onboarding once for all tests in the session.
 
     This ensures the OpenRAG config is marked as edited and properly initialized
@@ -44,6 +105,12 @@ async def onboard_system():
         except Exception as e:
             print(f"[DEBUG] Could not clean OpenSearch data directory: {e}")
 
+    # If we're using mocks, patch the clients to use mock embeddings
+    if mock_openai_embeddings is not None:
+        print("[DEBUG] Using mock OpenAI embeddings client")
+        # Replace the client's patched_async_client with our mock
+        clients._patched_async_client = mock_openai_embeddings
+    
     # Initialize clients
     await clients.initialize()
 

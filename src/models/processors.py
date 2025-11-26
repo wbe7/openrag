@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any
 from .tasks import UploadTask, FileTask
 from utils.logging_config import get_logger
@@ -208,11 +209,76 @@ class TaskProcessor:
         text_batches = chunk_texts_for_embeddings(texts, max_tokens=8000)
         embeddings = []
 
-        for batch in text_batches:
-            resp = await clients.patched_async_client.embeddings.create(
-                model=embedding_model, input=batch
-            )
-            embeddings.extend([d.embedding for d in resp.data])
+        # Embed batches with retry logic for rate limits
+        for batch_idx, batch in enumerate(text_batches):
+            max_retries = 3
+            retry_delay = 1.0
+            last_error = None
+            
+            for attempt in range(max_retries):
+                try:
+                    resp = await clients.patched_async_client.embeddings.create(
+                        model=embedding_model, input=batch
+                    )
+                    embeddings.extend([d.embedding for d in resp.data])
+                    break  # Success, exit retry loop
+                except Exception as e:
+                    last_error = e
+                    error_str = str(e).lower()
+                    is_rate_limit = "429" in error_str or "rate" in error_str or "too many requests" in error_str
+                    
+                    if attempt < max_retries - 1:
+                        # Extract Retry-After header if available
+                        retry_after = None
+                        if hasattr(e, 'response') and hasattr(e.response, 'headers'):
+                            retry_after = e.response.headers.get('Retry-After')
+                        
+                        if retry_after and is_rate_limit:
+                            try:
+                                wait_time = float(retry_after)
+                                logger.warning(
+                                    "Rate limited during document processing - respecting Retry-After",
+                                    batch_idx=batch_idx,
+                                    attempt=attempt + 1,
+                                    retry_after=wait_time,
+                                )
+                                await asyncio.sleep(wait_time)
+                                continue
+                            except (ValueError, TypeError):
+                                pass
+                        
+                        # Use exponential backoff with jitter
+                        wait_time = retry_delay * (2 ** attempt)
+                        if is_rate_limit:
+                            # Longer delays for rate limits
+                            wait_time = min(wait_time * 2, 16.0)
+                        else:
+                            wait_time = min(wait_time, 8.0)
+                        
+                        # Add jitter
+                        import random
+                        jitter = random.uniform(0, 0.3 * wait_time)
+                        wait_time += jitter
+                        
+                        logger.warning(
+                            "Retrying embedding generation for batch",
+                            batch_idx=batch_idx,
+                            attempt=attempt + 1,
+                            max_retries=max_retries,
+                            wait_time=wait_time,
+                            is_rate_limit=is_rate_limit,
+                            error=str(e),
+                        )
+                        await asyncio.sleep(wait_time)
+                    else:
+                        # Final attempt failed
+                        logger.error(
+                            "Failed to embed batch after retries",
+                            batch_idx=batch_idx,
+                            attempts=max_retries,
+                            error=str(e),
+                        )
+                        raise
 
         # Index each chunk as a separate document
         for i, (chunk, vect) in enumerate(zip(slim_doc["chunks"], embeddings)):

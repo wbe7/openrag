@@ -190,6 +190,7 @@ test:
 test-integration:
 	@echo "🧪 Running integration tests (requires infrastructure)..."
 	@echo "💡 Make sure to run 'make infra' first!"
+	@echo "💡 Set MOCK_EMBEDDINGS=true to avoid hitting real API"
 	uv run pytest tests/integration/ -v
 
 # CI-friendly integration test target: brings up infra, waits, runs tests, tears down
@@ -207,6 +208,7 @@ test-ci:
 	fi; \
 	echo "Cleaning up old containers and volumes..."; \
 	docker compose -f docker-compose-cpu.yml down -v 2>/dev/null || true; \
+	export MOCK_EMBEDDINGS=true; \
 	echo "Pulling latest images..."; \
 	docker compose -f docker-compose-cpu.yml pull; \
 	echo "Building OpenSearch image override..."; \
@@ -247,8 +249,9 @@ test-ci:
 	for i in $$(seq 1 60); do \
 		curl -s $${DOCLING_ENDPOINT}/health >/dev/null 2>&1 && break || sleep 2; \
 	done; \
-	echo "Running integration tests"; \
+	echo "Running integration tests with mocked embeddings"; \
 	LOG_LEVEL=$${LOG_LEVEL:-DEBUG} \
+	MOCK_EMBEDDINGS=true \
 	GOOGLE_OAUTH_CLIENT_ID="" \
 	GOOGLE_OAUTH_CLIENT_SECRET="" \
 	OPENSEARCH_HOST=localhost OPENSEARCH_PORT=9200 \
@@ -328,8 +331,9 @@ test-ci-local:
 	for i in $$(seq 1 60); do \
 		curl -s $${DOCLING_ENDPOINT}/health >/dev/null 2>&1 && break || sleep 2; \
 	done; \
-	echo "Running integration tests"; \
+	echo "Running integration tests with mocked embeddings"; \
 	LOG_LEVEL=$${LOG_LEVEL:-DEBUG} \
+	MOCK_EMBEDDINGS=true \
 	GOOGLE_OAUTH_CLIENT_ID="" \
 	GOOGLE_OAUTH_CLIENT_SECRET="" \
 	OPENSEARCH_HOST=localhost OPENSEARCH_PORT=9200 \
