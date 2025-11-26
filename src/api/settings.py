@@ -14,6 +14,7 @@ from config.settings import (
     clients,
     get_openrag_config,
     config_manager,
+    is_no_auth_mode,
 )
 from api.provider_validation import validate_provider_setup
 
@@ -560,6 +561,9 @@ async def update_settings(request, session_manager):
                 
                 # Update global variables
                 await _update_langflow_global_variables(current_config)
+
+                if "embedding_provider" in body or "embedding_model" in body:
+                    await _update_mcp_servers_with_provider_credentials(current_config)
                 
                 # Update model values if provider or model changed
                 if "llm_provider" in body or "llm_model" in body or "embedding_provider" in body or "embedding_model" in body:
@@ -582,7 +586,7 @@ async def update_settings(request, session_manager):
         )
 
 
-async def onboarding(request, flows_service):
+async def onboarding(request, flows_service, session_manager=None):
     """Handle onboarding configuration setup"""
     try:
         # Get current configuration
@@ -828,6 +832,9 @@ async def onboarding(request, flows_service):
                 current_config.providers.openai.api_key != "" or 
                 current_config.providers.anthropic.api_key != ""):
                 await _update_langflow_global_variables(current_config)
+            
+            if "embedding_provider" in body or "embedding_model" in body:
+                await _update_mcp_servers_with_provider_credentials(current_config, session_manager)
 
             # Update model values if provider or model fields were provided
             if "llm_provider" in body or "llm_model" in body or "embedding_provider" in body or "embedding_model" in body:
@@ -973,9 +980,54 @@ async def _update_langflow_global_variables(config):
             )
             logger.info("Set OLLAMA_BASE_URL global variable in Langflow")
 
+        if config.knowledge.embedding_model:
+            await clients._create_langflow_global_variable(
+                "SELECTED_EMBEDDING_MODEL", config.knowledge.embedding_model, modify=True
+            )
+            logger.info(
+                f"Set SELECTED_EMBEDDING_MODEL global variable to {config.knowledge.embedding_model}"
+            )
+
     except Exception as e:
         logger.error(f"Failed to update Langflow global variables: {str(e)}")
         raise
+
+
+async def _update_mcp_servers_with_provider_credentials(config, session_manager = None):
+    # Update MCP servers with provider credentials
+    try:
+        from services.langflow_mcp_service import LangflowMCPService
+        from utils.langflow_headers import build_mcp_global_vars_from_config
+        
+        mcp_service = LangflowMCPService()
+        
+        # Build global vars using utility function
+        mcp_global_vars = build_mcp_global_vars_from_config(config)
+        
+        # In no-auth mode, add the anonymous JWT token and user details
+        if is_no_auth_mode() and session_manager:
+            from session_manager import AnonymousUser
+            
+            # Create/get anonymous JWT for no-auth mode
+            anonymous_jwt = session_manager.get_effective_jwt_token(None, None)
+            if anonymous_jwt:
+                mcp_global_vars["JWT"] = anonymous_jwt
+            
+            # Add anonymous user details
+            anonymous_user = AnonymousUser()
+            mcp_global_vars["OWNER"] = anonymous_user.user_id  # "anonymous"
+            mcp_global_vars["OWNER_NAME"] = f'"{anonymous_user.name}"'  # "Anonymous User" (quoted)
+            mcp_global_vars["OWNER_EMAIL"] = anonymous_user.email  # "anonymous@localhost"
+            
+            logger.debug("Added anonymous JWT and user details to MCP servers for no-auth mode")
+        
+        if mcp_global_vars:
+            result = await mcp_service.update_mcp_servers_with_global_vars(mcp_global_vars)
+            logger.info("Updated MCP servers with provider credentials after settings change", **result)
+        
+    except Exception as mcp_error:
+        logger.warning(f"Failed to update MCP servers after settings change: {str(mcp_error)}")
+        # Don't fail the entire settings update if MCP update fails
 
 
 async def _update_langflow_model_values(config, flows_service):
@@ -1055,7 +1107,7 @@ async def _update_langflow_chunk_settings(config, flows_service):
         raise
 
 
-async def reapply_all_settings():
+async def reapply_all_settings(session_manager = None):
     """
     Reapply all current configuration settings to Langflow flows and global variables.
     This is called when flows are detected to have been reset.
@@ -1065,6 +1117,11 @@ async def reapply_all_settings():
         flows_service = _get_flows_service()
 
         logger.info("Reapplying all settings to Langflow flows and global variables")
+
+        if config.knowledge.embedding_model or config.knowledge.embedding_provider:
+            await _update_mcp_servers_with_provider_credentials(config, session_manager)
+        else:
+            logger.info("No embedding model or provider configured, skipping MCP server update")
 
         # Update all Langflow settings using helper functions
         try:
