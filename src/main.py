@@ -511,7 +511,7 @@ async def startup_tasks(services):
                     f"Detected reset flows: {', '.join(reset_flows)}. Reapplying all settings."
                 )
                 from api.settings import reapply_all_settings
-                await reapply_all_settings()
+                await reapply_all_settings(session_manager=services["session_manager"])
                 logger.info("Successfully reapplied settings after detecting flow resets")
             else:
                 logger.info("No flows detected as reset, skipping settings reapplication")
