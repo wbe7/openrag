@@ -1,6 +1,6 @@
 services:
   opensearch:
-    image: phact/openrag-opensearch:${OPENRAG_VERSION:-latest}
+    image: langflowai/openrag-opensearch:${OPENRAG_VERSION:-latest}
     #build:
     #context: .
     #dockerfile: Dockerfile
@@ -44,7 +44,7 @@ services:
       - "5601:5601"
 
   openrag-backend:
-    image: phact/openrag-backend:${OPENRAG_VERSION:-latest}
+    image: langflowai/openrag-backend:${OPENRAG_VERSION:-latest}
     # build:
     #   context: .
     #   dockerfile: Dockerfile.backend
@@ -72,8 +72,6 @@ services:
       - WATSONX_ENDPOINT=${WATSONX_ENDPOINT}
       - WATSONX_PROJECT_ID=${WATSONX_PROJECT_ID}
       - OLLAMA_ENDPOINT=${OLLAMA_ENDPOINT}
-      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-      - NVIDIA_VISIBLE_DEVICES=all
       - GOOGLE_OAUTH_CLIENT_ID=${GOOGLE_OAUTH_CLIENT_ID}
       - GOOGLE_OAUTH_CLIENT_SECRET=${GOOGLE_OAUTH_CLIENT_SECRET}
       - MICROSOFT_GRAPH_OAUTH_CLIENT_ID=${MICROSOFT_GRAPH_OAUTH_CLIENT_ID}
@@ -86,10 +84,9 @@ services:
       - ./keys:/app/keys:Z
       - ./flows:/app/flows:U,z
       - ./config:/app/config:Z
-    gpus: all
 
   openrag-frontend:
-    image: phact/openrag-frontend:${OPENRAG_VERSION:-latest}
+    image: langflowai/openrag-frontend:${OPENRAG_VERSION:-latest}
     # build:
     #   context: .
     #   dockerfile: Dockerfile.frontend
@@ -104,7 +101,7 @@ services:
   langflow:
     volumes:
       - ./flows:/app/flows:U,z
-    image: phact/openrag-langflow:${LANGFLOW_VERSION:-latest}
+    image: langflowai/openrag-langflow:${LANGFLOW_VERSION:-latest}
     # build:
     #   context: .
     #   dockerfile: Dockerfile.langflow
@@ -128,10 +125,10 @@ services:
       - CONNECTOR_TYPE=system
       - CONNECTOR_TYPE_URL=url
       - OPENRAG-QUERY-FILTER="{}"
+      - OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD}
       - FILENAME=None
       - MIMETYPE=None
       - FILESIZE=0
-      - OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD}
       - LANGFLOW_VARIABLES_TO_GET_FROM_ENVIRONMENT=JWT,OPENRAG-QUERY-FILTER,OPENSEARCH_PASSWORD,OWNER,OWNER_NAME,OWNER_EMAIL,CONNECTOR_TYPE,FILENAME,MIMETYPE,FILESIZE
       - LANGFLOW_LOG_LEVEL=DEBUG
       - LANGFLOW_AUTO_LOGIN=${LANGFLOW_AUTO_LOGIN}
