@@ -76,6 +76,8 @@ def _get_http_client() -> Optional[httpx.AsyncClient]:
                 timeout=httpx.Timeout(
                     connect=HTTP_CONNECT_TIMEOUT,
                     read=HTTP_REQUEST_TIMEOUT,
+                    write=HTTP_REQUEST_TIMEOUT,
+                    pool=HTTP_CONNECT_TIMEOUT,
                 ),
                 headers={
                     "User-Agent": f"OpenRAG-Backend/{OPENRAG_VERSION}",
