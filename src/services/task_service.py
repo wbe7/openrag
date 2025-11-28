@@ -7,6 +7,7 @@ from models.tasks import FileTask, TaskStatus, UploadTask
 from session_manager import AnonymousUser
 from utils.gpu_detection import get_worker_count
 from utils.logging_config import get_logger
+from utils.telemetry import TelemetryClient, Category, MessageId
 
 
 logger = get_logger(__name__)
@@ -130,6 +131,11 @@ class TaskService:
 
         # Store reference to background task for cancellation
         upload_task.background_task = background_task
+
+        # Send telemetry event for task creation
+        asyncio.create_task(
+            TelemetryClient.send_event(Category.TASK_OPERATIONS, MessageId.ORBTA0090I)
+        )
 
         return task_id
 
