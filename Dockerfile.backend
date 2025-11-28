@@ -40,6 +40,9 @@ PY
 
 #ENV EASYOCR_MODULE_PATH=~/.cache/docling/models/EasyOcr/
 
+# Copy default documents
+COPY openrag-documents/ ./openrag-documents/
+
 # Copy Python source and flows
 COPY src/ ./src/
 COPY flows/ ./flows/
