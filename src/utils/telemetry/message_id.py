@@ -130,10 +130,14 @@ class MessageId:
     
     # Message: Task created successfully
     ORBTA0090I = "ORBTA0090I"
+    # Message: Task completed successfully
+    ORBTA0091I = "ORBTA0091I"
     # Message: Task failed
-    ORBTA0091E = "ORBTA0091E"
+    ORBTA0092E = "ORBTA0092E"
     # Message: Task cancelled
-    ORBTA0092I = "ORBTA0092I"
+    ORBTA0093I = "ORBTA0093I"
+    # Message: Task cancellation failed
+    ORBTA0094E = "ORBTA0094E"
     
     # Category: CHAT_OPERATIONS ------------------------------------------------>
     
