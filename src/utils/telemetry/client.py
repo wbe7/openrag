@@ -121,6 +121,61 @@ def _get_os() -> str:
         return "unknown"
 
 
+def _get_os_version() -> str:
+    """Get the operating system version."""
+    try:
+        system = platform.system().lower()
+        if system == "darwin":
+            # macOS version
+            return platform.mac_ver()[0] if platform.mac_ver()[0] else "unknown"
+        elif system == "windows":
+            # Windows version
+            return platform.win32_ver()[0] if platform.win32_ver()[0] else "unknown"
+        elif system == "linux":
+            # Linux - try to get distribution info
+            try:
+                import distro
+                return f"{distro.name()} {distro.version()}".strip() or platform.release()
+            except ImportError:
+                # Fallback to platform.release() if distro not available
+                return platform.release()
+        else:
+            return platform.release()
+    except Exception:
+        return "unknown"
+
+
+def _get_gpu_info() -> dict:
+    """Get GPU information for telemetry."""
+    gpu_info = {
+        "gpu_available": False,
+        "gpu_count": 0,
+        "cuda_available": False,
+        "cuda_version": None,
+    }
+    
+    try:
+        # Try to use the existing GPU detection utility
+        from utils.gpu_detection import detect_gpu_devices
+        
+        has_gpu, gpu_count = detect_gpu_devices()
+        gpu_info["gpu_available"] = has_gpu
+        gpu_info["gpu_count"] = gpu_count if isinstance(gpu_count, int) else 0
+        
+        # Also check CUDA availability via torch
+        try:
+            import torch
+            gpu_info["cuda_available"] = torch.cuda.is_available()
+            if torch.cuda.is_available():
+                gpu_info["cuda_version"] = torch.version.cuda or "unknown"
+        except ImportError:
+            pass
+    except Exception as e:
+        logger.debug(f"Failed to detect GPU info: {e}")
+    
+    return gpu_info
+
+
 def _get_current_utc() -> str:
     """Get current UTC time as RFC 3339 formatted string."""
     now = datetime.now(timezone.utc)
@@ -171,6 +226,8 @@ async def _send_scarf_event(
         return
     
     os_name = _get_os()
+    os_version = _get_os_version()
+    gpu_info = _get_gpu_info()
     timestamp = _get_current_utc()
     effective_base_url = _get_effective_base_url()
     # Build URL with format: /openrag/{platform}.{version}
@@ -182,10 +239,18 @@ async def _send_scarf_event(
         "openrag_version": OPENRAG_VERSION,
         "platform": PLATFORM_TYPE,
         "os": os_name,
+        "os_version": os_version,
+        "gpu_available": str(gpu_info["gpu_available"]).lower(),
+        "gpu_count": str(gpu_info["gpu_count"]),
+        "cuda_available": str(gpu_info["cuda_available"]).lower(),
         "category": category,
         "message_id": message_id,
         "timestamp": timestamp,
     }
+    
+    # Add CUDA version if available
+    if gpu_info["cuda_version"]:
+        params["cuda_version"] = str(gpu_info["cuda_version"])
     
     # Add metadata if provided
     if metadata:
