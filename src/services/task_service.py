@@ -136,7 +136,7 @@ class TaskService:
         asyncio.create_task(
             TelemetryClient.send_event(
                 Category.TASK_OPERATIONS,
-                MessageId.ORBTA0090I,
+                MessageId.ORB_TASK_CREATED,
                 metadata={
                     "total_files": len(items),
                     "processor_type": processor.__class__.__name__,
@@ -192,7 +192,7 @@ class TaskService:
                 asyncio.create_task(
                     TelemetryClient.send_event(
                         Category.TASK_OPERATIONS,
-                        MessageId.ORBTA0091I,
+                        MessageId.ORB_TASK_COMPLETE,
                         metadata={
                             "total_files": upload_task.total_files,
                             "successful_files": upload_task.successful_files,
@@ -217,7 +217,7 @@ class TaskService:
                 asyncio.create_task(
                     TelemetryClient.send_event(
                         Category.TASK_OPERATIONS,
-                        MessageId.ORBTA0092E,
+                        MessageId.ORB_TASK_FAILED,
                         metadata={
                             "total_files": failed_task.total_files,
                             "processed_files": failed_task.processed_files,
@@ -277,7 +277,7 @@ class TaskService:
             asyncio.create_task(
                 TelemetryClient.send_event(
                     Category.TASK_OPERATIONS,
-                    MessageId.ORBTA0091I,
+                    MessageId.ORB_TASK_COMPLETE,
                     metadata={
                         "total_files": upload_task.total_files,
                         "successful_files": upload_task.successful_files,
@@ -308,7 +308,7 @@ class TaskService:
                 asyncio.create_task(
                     TelemetryClient.send_event(
                         Category.TASK_OPERATIONS,
-                        MessageId.ORBTA0092E,
+                        MessageId.ORB_TASK_FAILED,
                         metadata={
                             "total_files": failed_task.total_files,
                             "processed_files": failed_task.processed_files,

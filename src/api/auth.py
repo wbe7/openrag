@@ -41,11 +41,11 @@ async def auth_callback(request: Request, auth_service, session_manager):
             connection_id, authorization_code, state, request
         )
 
-        await TelemetryClient.send_event(Category.AUTHENTICATION, MessageId.ORBTA0063I)
+        await TelemetryClient.send_event(Category.AUTHENTICATION, MessageId.ORB_AUTH_OAUTH_CALLBACK)
 
         # If this is app auth, set JWT cookie
         if result.get("purpose") == "app_auth" and result.get("jwt_token"):
-            await TelemetryClient.send_event(Category.AUTHENTICATION, MessageId.ORBTA0060I)
+            await TelemetryClient.send_event(Category.AUTHENTICATION, MessageId.ORB_AUTH_SUCCESS)
             response = JSONResponse(
                 {k: v for k, v in result.items() if k != "jwt_token"}
             )
@@ -65,7 +65,7 @@ async def auth_callback(request: Request, auth_service, session_manager):
         import traceback
 
         traceback.print_exc()
-        await TelemetryClient.send_event(Category.AUTHENTICATION, MessageId.ORBTA0064E)
+        await TelemetryClient.send_event(Category.AUTHENTICATION, MessageId.ORB_AUTH_OAUTH_FAILED)
         return JSONResponse({"error": f"Callback failed: {str(e)}"}, status_code=500)
 
 
@@ -77,7 +77,7 @@ async def auth_me(request: Request, auth_service, session_manager):
 
 async def auth_logout(request: Request, auth_service, session_manager):
     """Logout user by clearing auth cookie"""
-    await TelemetryClient.send_event(Category.AUTHENTICATION, MessageId.ORBTA0062I)
+    await TelemetryClient.send_event(Category.AUTHENTICATION, MessageId.ORB_AUTH_LOGOUT)
     response = JSONResponse(
         {"status": "logged_out", "message": "Successfully logged out"}
     )

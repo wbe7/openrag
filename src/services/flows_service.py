@@ -231,9 +231,9 @@ class FlowsService:
 
         # Send telemetry event
         if backup_results["failed"]:
-            await TelemetryClient.send_event(Category.FLOW_OPERATIONS, MessageId.ORBTA0081E)
+            await TelemetryClient.send_event(Category.FLOW_OPERATIONS, MessageId.ORB_FLOW_BACKUP_FAILED)
         else:
-            await TelemetryClient.send_event(Category.FLOW_OPERATIONS, MessageId.ORBTA0080I)
+            await TelemetryClient.send_event(Category.FLOW_OPERATIONS, MessageId.ORB_FLOW_BACKUP_COMPLETE)
 
         return backup_results
 

@@ -415,7 +415,7 @@ async def update_settings(request, session_manager):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0123I
+                MessageId.ORB_SETTINGS_LLM_MODEL
             )
             logger.info(f"LLM model changed from {old_model} to {body['llm_model']}")
 
@@ -425,7 +425,7 @@ async def update_settings(request, session_manager):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0122I
+                MessageId.ORB_SETTINGS_LLM_PROVIDER
             )
             logger.info(f"LLM provider changed from {old_provider} to {body['llm_provider']}")
 
@@ -434,7 +434,7 @@ async def update_settings(request, session_manager):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0126I
+                MessageId.ORB_SETTINGS_SYSTEM_PROMPT
             )
 
             # Also update the chat flow with the new system prompt
@@ -454,7 +454,7 @@ async def update_settings(request, session_manager):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0125I
+                MessageId.ORB_SETTINGS_EMBED_MODEL
             )
             logger.info(f"Embedding model changed from {old_model} to {new_embedding_model}")
 
@@ -464,7 +464,7 @@ async def update_settings(request, session_manager):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0124I
+                MessageId.ORB_SETTINGS_EMBED_PROVIDER
             )
             logger.info(f"Embedding provider changed from {old_provider} to {body['embedding_provider']}")
 
@@ -473,7 +473,7 @@ async def update_settings(request, session_manager):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0128I
+                MessageId.ORB_SETTINGS_DOCLING_UPDATED
             )
 
             # Also update the flow with the new docling settings
@@ -488,7 +488,7 @@ async def update_settings(request, session_manager):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0128I
+                MessageId.ORB_SETTINGS_DOCLING_UPDATED
             )
 
             # Also update the flow with the new docling settings
@@ -503,7 +503,7 @@ async def update_settings(request, session_manager):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0128I
+                MessageId.ORB_SETTINGS_DOCLING_UPDATED
             )
 
             # Also update the flow with the new docling settings
@@ -518,7 +518,7 @@ async def update_settings(request, session_manager):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0127I
+                MessageId.ORB_SETTINGS_CHUNK_UPDATED
             )
 
             # Also update the ingest flow with the new chunk size
@@ -538,7 +538,7 @@ async def update_settings(request, session_manager):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0127I
+                MessageId.ORB_SETTINGS_CHUNK_UPDATED
             )
 
             # Also update the ingest flow with the new chunk overlap
@@ -596,7 +596,7 @@ async def update_settings(request, session_manager):
         if provider_updated:
             await TelemetryClient.send_event(
                 Category.SETTINGS_OPERATIONS, 
-                MessageId.ORBTA0129I
+                MessageId.ORB_SETTINGS_PROVIDER_CREDS
             )
 
         if not config_updated:
@@ -641,7 +641,7 @@ async def update_settings(request, session_manager):
         )
         await TelemetryClient.send_event(
             Category.SETTINGS_OPERATIONS, 
-            MessageId.ORBTA0120I
+            MessageId.ORB_SETTINGS_UPDATED
         )
         return JSONResponse({"message": "Configuration updated successfully"})
 
@@ -649,7 +649,7 @@ async def update_settings(request, session_manager):
         logger.error("Failed to update settings", error=str(e))
         await TelemetryClient.send_event(
             Category.SETTINGS_OPERATIONS, 
-            MessageId.ORBTA0121E
+            MessageId.ORB_SETTINGS_UPDATE_FAILED
         )
         return JSONResponse(
             {"error": f"Failed to update settings: {str(e)}"}, status_code=500
@@ -659,7 +659,7 @@ async def update_settings(request, session_manager):
 async def onboarding(request, flows_service, session_manager=None):
     """Handle onboarding configuration setup"""
     try:
-        await TelemetryClient.send_event(Category.ONBOARDING, MessageId.ORBTA0130I)
+        await TelemetryClient.send_event(Category.ONBOARDING, MessageId.ORB_ONBOARD_START)
         
         # Get current configuration
         current_config = get_openrag_config()
@@ -716,7 +716,7 @@ async def onboarding(request, flows_service, session_manager=None):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.ONBOARDING, 
-                MessageId.ORBTA0134I,
+                MessageId.ORB_ONBOARD_LLM_MODEL,
                 metadata={"llm_model": llm_model_selected}
             )
             logger.info(f"LLM model selected during onboarding: {llm_model_selected}")
@@ -740,7 +740,7 @@ async def onboarding(request, flows_service, session_manager=None):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.ONBOARDING, 
-                MessageId.ORBTA0133I,
+                MessageId.ORB_ONBOARD_LLM_PROVIDER,
                 metadata={"llm_provider": llm_provider_selected}
             )
             logger.info(f"LLM provider selected during onboarding: {llm_provider_selected}")
@@ -763,7 +763,7 @@ async def onboarding(request, flows_service, session_manager=None):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.ONBOARDING, 
-                MessageId.ORBTA0136I,
+                MessageId.ORB_ONBOARD_EMBED_MODEL,
                 metadata={"embedding_model": embedding_model_selected}
             )
             logger.info(f"Embedding model selected during onboarding: {embedding_model_selected}")
@@ -788,7 +788,7 @@ async def onboarding(request, flows_service, session_manager=None):
             config_updated = True
             await TelemetryClient.send_event(
                 Category.ONBOARDING, 
-                MessageId.ORBTA0135I,
+                MessageId.ORB_ONBOARD_EMBED_PROVIDER,
                 metadata={"embedding_provider": embedding_provider_selected}
             )
             logger.info(f"Embedding provider selected during onboarding: {embedding_provider_selected}")
@@ -880,7 +880,7 @@ async def onboarding(request, flows_service, session_manager=None):
             if should_ingest_sample_data:
                 await TelemetryClient.send_event(
                     Category.ONBOARDING, 
-                    MessageId.ORBTA0137I
+                    MessageId.ORB_ONBOARD_SAMPLE_DATA
                 )
                 logger.info("Sample data ingestion requested during onboarding")
 
@@ -1042,12 +1042,12 @@ async def onboarding(request, flows_service, session_manager=None):
             
             await TelemetryClient.send_event(
                 Category.ONBOARDING, 
-                MessageId.ORBTA0138I,
+                MessageId.ORB_ONBOARD_CONFIG_EDITED,
                 metadata=onboarding_metadata
             )
             await TelemetryClient.send_event(
                 Category.ONBOARDING, 
-                MessageId.ORBTA0131I,
+                MessageId.ORB_ONBOARD_COMPLETE,
                 metadata=onboarding_metadata
             )
             logger.info("Configuration marked as edited after onboarding")
@@ -1055,7 +1055,7 @@ async def onboarding(request, flows_service, session_manager=None):
         else:
             await TelemetryClient.send_event(
                 Category.ONBOARDING, 
-                MessageId.ORBTA0132E
+                MessageId.ORB_ONBOARD_FAILED
             )
             return JSONResponse(
                 {"error": "Failed to save configuration"}, status_code=500
@@ -1073,7 +1073,7 @@ async def onboarding(request, flows_service, session_manager=None):
         logger.error("Failed to update onboarding settings", error=str(e))
         await TelemetryClient.send_event(
             Category.ONBOARDING, 
-            MessageId.ORBTA0132E
+            MessageId.ORB_ONBOARD_FAILED
         )
         return JSONResponse(
             {"error": str(e)},

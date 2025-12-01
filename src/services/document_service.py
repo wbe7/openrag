@@ -99,7 +99,7 @@ class DocumentService:
         """Recreate the process pool if it's broken"""
         if self._process_pool_broken and self.process_pool:
             logger.warning("Attempting to recreate broken process pool")
-            TelemetryClient.send_event_sync(Category.DOCUMENT_PROCESSING, MessageId.ORBTA0053W)
+            TelemetryClient.send_event_sync(Category.DOCUMENT_PROCESSING, MessageId.ORB_DOC_POOL_RECREATE)
             try:
                 # Shutdown the old pool
                 self.process_pool.shutdown(wait=False)

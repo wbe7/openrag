@@ -1,6 +1,7 @@
 """Telemetry message IDs for OpenRAG backend.
 
-All message IDs start with ORBTA (OpenRAG Backend Telemetry Analytics).
+All message IDs start with ORB_ (OpenRAG Backend) followed by descriptive text.
+Format: ORB_<CATEGORY>_<ACTION>[_<STATUS>]
 """
 
 
@@ -10,192 +11,191 @@ class MessageId:
     # Category: APPLICATION_STARTUP ------------------------------------------->
     
     # Message: Application started successfully
-    ORBTA0001I = "ORBTA0001I"
+    ORB_APP_STARTED = "ORB_APP_STARTED"
     # Message: Application startup initiated
-    ORBTA0002I = "ORBTA0002I"
+    ORB_APP_START_INIT = "ORB_APP_START_INIT"
     # Message: Application shutdown initiated
-    ORBTA0003I = "ORBTA0003I"
+    ORB_APP_SHUTDOWN = "ORB_APP_SHUTDOWN"
     
     # Category: SERVICE_INITIALIZATION ----------------------------------------->
     
     # Message: Services initialized successfully
-    ORBTA0010I = "ORBTA0010I"
+    ORB_SVC_INIT_SUCCESS = "ORB_SVC_INIT_SUCCESS"
     # Message: Service initialization started
-    ORBTA0011I = "ORBTA0011I"
+    ORB_SVC_INIT_START = "ORB_SVC_INIT_START"
     # Message: Failed to initialize services
-    ORBTA0012E = "ORBTA0012E"
+    ORB_SVC_INIT_FAILED = "ORB_SVC_INIT_FAILED"
     # Message: Failed to initialize OpenSearch client
-    ORBTA0013E = "ORBTA0013E"
+    ORB_SVC_OS_CLIENT_FAIL = "ORB_SVC_OS_CLIENT_FAIL"
     # Message: Failed to generate JWT keys
-    ORBTA0014E = "ORBTA0014E"
+    ORB_SVC_JWT_KEY_FAIL = "ORB_SVC_JWT_KEY_FAIL"
     
     # Category: OPENSEARCH_SETUP ---------------------------------------------->
     
     # Message: OpenSearch connection established
-    ORBTA0020I = "ORBTA0020I"
+    ORB_OS_CONN_ESTABLISHED = "ORB_OS_CONN_ESTABLISHED"
     # Message: OpenSearch connection failed
-    ORBTA0021E = "ORBTA0021E"
+    ORB_OS_CONN_FAILED = "ORB_OS_CONN_FAILED"
     # Message: Waiting for OpenSearch to be ready
-    ORBTA0022W = "ORBTA0022W"
+    ORB_OS_WAITING = "ORB_OS_WAITING"
     # Message: OpenSearch ready check timeout
-    ORBTA0023E = "ORBTA0023E"
+    ORB_OS_TIMEOUT = "ORB_OS_TIMEOUT"
     
     # Category: OPENSEARCH_INDEX ---------------------------------------------->
     
     # Message: OpenSearch index created successfully
-    ORBTA0030I = "ORBTA0030I"
+    ORB_OS_INDEX_CREATED = "ORB_OS_INDEX_CREATED"
     # Message: OpenSearch index already exists
-    ORBTA0031I = "ORBTA0031I"
+    ORB_OS_INDEX_EXISTS = "ORB_OS_INDEX_EXISTS"
     # Message: Failed to create OpenSearch index
-    ORBTA0032E = "ORBTA0032E"
+    ORB_OS_INDEX_CREATE_FAIL = "ORB_OS_INDEX_CREATE_FAIL"
     # Message: Failed to initialize index
-    ORBTA0033E = "ORBTA0033E"
+    ORB_OS_INDEX_INIT_FAIL = "ORB_OS_INDEX_INIT_FAIL"
     # Message: Knowledge filters index created
-    ORBTA0034I = "ORBTA0034I"
+    ORB_OS_KF_INDEX_CREATED = "ORB_OS_KF_INDEX_CREATED"
     # Message: Failed to create knowledge filters index
-    ORBTA0035E = "ORBTA0035E"
+    ORB_OS_KF_INDEX_FAIL = "ORB_OS_KF_INDEX_FAIL"
     
     # Category: DOCUMENT_INGESTION -------------------------------------------->
     
     # Message: Document ingestion started
-    ORBTA0040I = "ORBTA0040I"
+    ORB_DOC_INGEST_START = "ORB_DOC_INGEST_START"
     # Message: Document ingestion completed successfully
-    ORBTA0041I = "ORBTA0041I"
+    ORB_DOC_INGEST_COMPLETE = "ORB_DOC_INGEST_COMPLETE"
     # Message: Document ingestion failed
-    ORBTA0042E = "ORBTA0042E"
+    ORB_DOC_INGEST_FAILED = "ORB_DOC_INGEST_FAILED"
     # Message: Default documents ingestion started
-    ORBTA0043I = "ORBTA0043I"
+    ORB_DOC_DEFAULT_START = "ORB_DOC_DEFAULT_START"
     # Message: Default documents ingestion completed
-    ORBTA0044I = "ORBTA0044I"
+    ORB_DOC_DEFAULT_COMPLETE = "ORB_DOC_DEFAULT_COMPLETE"
     # Message: Default documents ingestion failed
-    ORBTA0045E = "ORBTA0045E"
+    ORB_DOC_DEFAULT_FAILED = "ORB_DOC_DEFAULT_FAILED"
     
     # Category: DOCUMENT_PROCESSING -------------------------------------------->
     
     # Message: Document processing started
-    ORBTA0050I = "ORBTA0050I"
+    ORB_DOC_PROCESS_START = "ORB_DOC_PROCESS_START"
     # Message: Document processing completed
-    ORBTA0051I = "ORBTA0051I"
+    ORB_DOC_PROCESS_COMPLETE = "ORB_DOC_PROCESS_COMPLETE"
     # Message: Document processing failed
-    ORBTA0052E = "ORBTA0052E"
+    ORB_DOC_PROCESS_FAILED = "ORB_DOC_PROCESS_FAILED"
     # Message: Process pool recreation attempted
-    ORBTA0053W = "ORBTA0053W"
+    ORB_DOC_POOL_RECREATE = "ORB_DOC_POOL_RECREATE"
     
     # Category: AUTHENTICATION ------------------------------------------------>
     
     # Message: Authentication successful
-    ORBTA0060I = "ORBTA0060I"
+    ORB_AUTH_SUCCESS = "ORB_AUTH_SUCCESS"
     # Message: Authentication failed
-    ORBTA0061E = "ORBTA0061E"
+    ORB_AUTH_FAILED = "ORB_AUTH_FAILED"
     # Message: User logged out
-    ORBTA0062I = "ORBTA0062I"
+    ORB_AUTH_LOGOUT = "ORB_AUTH_LOGOUT"
     # Message: OAuth callback received
-    ORBTA0063I = "ORBTA0063I"
+    ORB_AUTH_OAUTH_CALLBACK = "ORB_AUTH_OAUTH_CALLBACK"
     # Message: OAuth callback failed
-    ORBTA0064E = "ORBTA0064E"
+    ORB_AUTH_OAUTH_FAILED = "ORB_AUTH_OAUTH_FAILED"
     
     # Category: CONNECTOR_OPERATIONS ------------------------------------------->
     
     # Message: Connector connection established
-    ORBTA0070I = "ORBTA0070I"
+    ORB_CONN_CONNECTED = "ORB_CONN_CONNECTED"
     # Message: Connector connection failed
-    ORBTA0071E = "ORBTA0071E"
+    ORB_CONN_CONNECT_FAILED = "ORB_CONN_CONNECT_FAILED"
     # Message: Connector sync started
-    ORBTA0072I = "ORBTA0072I"
+    ORB_CONN_SYNC_START = "ORB_CONN_SYNC_START"
     # Message: Connector sync completed
-    ORBTA0073I = "ORBTA0073I"
+    ORB_CONN_SYNC_COMPLETE = "ORB_CONN_SYNC_COMPLETE"
     # Message: Connector sync failed
-    ORBTA0074E = "ORBTA0074E"
+    ORB_CONN_SYNC_FAILED = "ORB_CONN_SYNC_FAILED"
     # Message: Connector webhook received
-    ORBTA0075I = "ORBTA0075I"
+    ORB_CONN_WEBHOOK_RECV = "ORB_CONN_WEBHOOK_RECV"
     # Message: Connector webhook failed
-    ORBTA0076E = "ORBTA0076E"
+    ORB_CONN_WEBHOOK_FAILED = "ORB_CONN_WEBHOOK_FAILED"
     # Message: Failed to load persisted connections
-    ORBTA0077W = "ORBTA0077W"
+    ORB_CONN_LOAD_FAILED = "ORB_CONN_LOAD_FAILED"
     
     # Category: FLOW_OPERATIONS ------------------------------------------------>
     
     # Message: Flow backup completed
-    ORBTA0080I = "ORBTA0080I"
+    ORB_FLOW_BACKUP_COMPLETE = "ORB_FLOW_BACKUP_COMPLETE"
     # Message: Flow backup failed
-    ORBTA0081E = "ORBTA0081E"
+    ORB_FLOW_BACKUP_FAILED = "ORB_FLOW_BACKUP_FAILED"
     # Message: Flow reset detected
-    ORBTA0082W = "ORBTA0082W"
+    ORB_FLOW_RESET_DETECTED = "ORB_FLOW_RESET_DETECTED"
     # Message: Flow reset check failed
-    ORBTA0083E = "ORBTA0083E"
+    ORB_FLOW_RESET_CHECK_FAIL = "ORB_FLOW_RESET_CHECK_FAIL"
     # Message: Settings reapplied after flow reset
-    ORBTA0084I = "ORBTA0084I"
+    ORB_FLOW_SETTINGS_REAPPLIED = "ORB_FLOW_SETTINGS_REAPPLIED"
     
     # Category: TASK_OPERATIONS ------------------------------------------------>
     
     # Message: Task created successfully
-    ORBTA0090I = "ORBTA0090I"
+    ORB_TASK_CREATED = "ORB_TASK_CREATED"
     # Message: Task completed successfully
-    ORBTA0091I = "ORBTA0091I"
+    ORB_TASK_COMPLETE = "ORB_TASK_COMPLETE"
     # Message: Task failed
-    ORBTA0092E = "ORBTA0092E"
+    ORB_TASK_FAILED = "ORB_TASK_FAILED"
     # Message: Task cancelled
-    ORBTA0093I = "ORBTA0093I"
+    ORB_TASK_CANCELLED = "ORB_TASK_CANCELLED"
     # Message: Task cancellation failed
-    ORBTA0094E = "ORBTA0094E"
+    ORB_TASK_CANCEL_FAILED = "ORB_TASK_CANCEL_FAILED"
     
     # Category: CHAT_OPERATIONS ------------------------------------------------>
     
     # Message: Chat request received
-    ORBTA0100I = "ORBTA0100I"
+    ORB_CHAT_REQUEST_RECV = "ORB_CHAT_REQUEST_RECV"
     # Message: Chat request completed
-    ORBTA0101I = "ORBTA0101I"
+    ORB_CHAT_REQUEST_COMPLETE = "ORB_CHAT_REQUEST_COMPLETE"
     # Message: Chat request failed
-    ORBTA0102E = "ORBTA0102E"
+    ORB_CHAT_REQUEST_FAILED = "ORB_CHAT_REQUEST_FAILED"
     
     # Category: ERROR_CONDITIONS ----------------------------------------------->
     
     # Message: Critical error occurred
-    ORBTA0110E = "ORBTA0110E"
+    ORB_ERROR_CRITICAL = "ORB_ERROR_CRITICAL"
     # Message: Warning condition
-    ORBTA0111W = "ORBTA0111W"
+    ORB_ERROR_WARNING = "ORB_ERROR_WARNING"
     
     # Category: SETTINGS_OPERATIONS -------------------------------------------->
     
     # Message: Settings updated successfully
-    ORBTA0120I = "ORBTA0120I"
+    ORB_SETTINGS_UPDATED = "ORB_SETTINGS_UPDATED"
     # Message: Settings update failed
-    ORBTA0121E = "ORBTA0121E"
+    ORB_SETTINGS_UPDATE_FAILED = "ORB_SETTINGS_UPDATE_FAILED"
     # Message: LLM provider changed
-    ORBTA0122I = "ORBTA0122I"
+    ORB_SETTINGS_LLM_PROVIDER = "ORB_SETTINGS_LLM_PROVIDER"
     # Message: LLM model changed
-    ORBTA0123I = "ORBTA0123I"
+    ORB_SETTINGS_LLM_MODEL = "ORB_SETTINGS_LLM_MODEL"
     # Message: Embedding provider changed
-    ORBTA0124I = "ORBTA0124I"
+    ORB_SETTINGS_EMBED_PROVIDER = "ORB_SETTINGS_EMBED_PROVIDER"
     # Message: Embedding model changed
-    ORBTA0125I = "ORBTA0125I"
+    ORB_SETTINGS_EMBED_MODEL = "ORB_SETTINGS_EMBED_MODEL"
     # Message: System prompt updated
-    ORBTA0126I = "ORBTA0126I"
+    ORB_SETTINGS_SYSTEM_PROMPT = "ORB_SETTINGS_SYSTEM_PROMPT"
     # Message: Chunk settings updated
-    ORBTA0127I = "ORBTA0127I"
+    ORB_SETTINGS_CHUNK_UPDATED = "ORB_SETTINGS_CHUNK_UPDATED"
     # Message: Docling settings updated
-    ORBTA0128I = "ORBTA0128I"
+    ORB_SETTINGS_DOCLING_UPDATED = "ORB_SETTINGS_DOCLING_UPDATED"
     # Message: Provider credentials updated
-    ORBTA0129I = "ORBTA0129I"
+    ORB_SETTINGS_PROVIDER_CREDS = "ORB_SETTINGS_PROVIDER_CREDS"
     
     # Category: ONBOARDING ----------------------------------------------------->
     
     # Message: Onboarding started
-    ORBTA0130I = "ORBTA0130I"
+    ORB_ONBOARD_START = "ORB_ONBOARD_START"
     # Message: Onboarding completed successfully
-    ORBTA0131I = "ORBTA0131I"
+    ORB_ONBOARD_COMPLETE = "ORB_ONBOARD_COMPLETE"
     # Message: Onboarding failed
-    ORBTA0132E = "ORBTA0132E"
+    ORB_ONBOARD_FAILED = "ORB_ONBOARD_FAILED"
     # Message: LLM provider selected during onboarding
-    ORBTA0133I = "ORBTA0133I"
+    ORB_ONBOARD_LLM_PROVIDER = "ORB_ONBOARD_LLM_PROVIDER"
     # Message: LLM model selected during onboarding
-    ORBTA0134I = "ORBTA0134I"
+    ORB_ONBOARD_LLM_MODEL = "ORB_ONBOARD_LLM_MODEL"
     # Message: Embedding provider selected during onboarding
-    ORBTA0135I = "ORBTA0135I"
+    ORB_ONBOARD_EMBED_PROVIDER = "ORB_ONBOARD_EMBED_PROVIDER"
     # Message: Embedding model selected during onboarding
-    ORBTA0136I = "ORBTA0136I"
+    ORB_ONBOARD_EMBED_MODEL = "ORB_ONBOARD_EMBED_MODEL"
     # Message: Sample data ingestion requested
-    ORBTA0137I = "ORBTA0137I"
+    ORB_ONBOARD_SAMPLE_DATA = "ORB_ONBOARD_SAMPLE_DATA"
     # Message: Configuration marked as edited
-    ORBTA0138I = "ORBTA0138I"
-
+    ORB_ONBOARD_CONFIG_EDITED = "ORB_ONBOARD_CONFIG_EDITED"
