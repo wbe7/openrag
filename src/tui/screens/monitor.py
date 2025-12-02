@@ -163,7 +163,7 @@ class MonitorScreen(Screen):
         # Clean up docling manager
         if hasattr(self, "docling_manager"):
             self.docling_manager.cleanup()
-        super().on_unmount()
+        # Reset follow state (already done in _stop_follow, but ensure clean state)
         self._follow_service = None
         self._logs_buffer = []
 
