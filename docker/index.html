@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Install OpenRAG containers | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/docker"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Install OpenRAG containers | OpenRAG"><meta data-rh="true" name="description" content="OpenRAG has two Docker Compose files. Both files deploy the same applications and containers locally, but they are for different environments:"><meta data-rh="true" property="og:description" content="OpenRAG has two Docker Compose files. Both files deploy the same applications and containers locally, but they are for different environments:"><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/docker"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/docker" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/docker" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Install OpenRAG containers","item":"https://docs.openr.ag/docker"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.f46e5be3.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.a3cb74e9.js" defer="defer"></script>
 <script src="/assets/js/main.86159c47.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -213,15 +213,141 @@ These commands are also available in the TUI&#x27;s <a class="" href="/install#s
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="upgrade-containers">Upgrade containers<a href="#upgrade-containers" class="hash-link" aria-label="Direct link to Upgrade containers" title="Direct link to Upgrade containers" translate="no">​</a></h3>
 <p>Upgrade your containers to the latest version while preserving your data.</p>
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker compose pull</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">docker compose up -d --force-recreate</span><br></span></code></pre></div></div>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="rebuild-containers-destructive">Rebuild containers (destructive)<a href="#rebuild-containers-destructive" class="hash-link" aria-label="Direct link to Rebuild containers (destructive)" title="Direct link to Rebuild containers (destructive)" translate="no">​</a></h3>
-<p>Reset state by rebuilding all of your containers.
-Your OpenSearch and Langflow databases will be lost.
-Documents stored in the <code>./openrag-documents</code> directory will persist, since the directory is mounted as a volume in the OpenRAG backend container.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="reset-containers">Reset containers (destructive)<a href="#reset-containers" class="hash-link" aria-label="Direct link to Reset containers (destructive)" title="Direct link to Reset containers (destructive)" translate="no">​</a></h3>
+<div class="theme-admonition theme-admonition-warning admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg></span>warning</div><div class="admonitionContent_BuS1"><p>These are destructive operations that reset your OpenRAG deployment to an initial state.
+Be aware that data is lost and cannot be recovered after running these commands.</p></div></div>
+<div class="theme-tabs-container tabs-container tabList__CuJ"><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active">Docker Compose</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Podman Compose</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Docker</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Podman</li></ul><div class="margin-top--md"><div role="tabpanel" class="tabItem_Ymn6"><ul>
+<li class="">
+<p>Rebuild containers: This command destroys and recreates the containers. Data stored exclusively on the containers is lost, such as Langflow flows.
+The <code>.env</code> file, <code>config</code> directory, <code>./openrag-documents</code> directory, <code>./opensearch-data</code> directory, and the <code>conversations.json</code> file are preserved.</p>
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker compose up --build --force-recreate --remove-orphans</span><br></span></code></pre></div></div>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="remove-all-containers-and-data-destructive">Remove all containers and data (destructive)<a href="#remove-all-containers-and-data-destructive" class="hash-link" aria-label="Direct link to Remove all containers and data (destructive)" title="Direct link to Remove all containers and data (destructive)" translate="no">​</a></h3>
-<p>Completely remove your OpenRAG installation and delete all data.
-This deletes all of your data, including OpenSearch data, uploaded documents, and authentication.</p>
-<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker compose down --volumes --remove-orphans --rmi local</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">docker system prune -f</span><br></span></code></pre></div></div></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/openrag/openrag/tree/main/docs/docs/get-started/docker.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/install"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Install OpenRAG with TUI</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/agents"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Flows</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#prerequisites" class="table-of-contents__link toc-highlight">Prerequisites</a></li><li><a href="#install-openrag-with-docker-compose" class="table-of-contents__link toc-highlight">Install OpenRAG with Docker Compose</a></li><li><a href="#application-onboarding" class="table-of-contents__link toc-highlight">Application onboarding</a></li><li><a href="#container-management-commands" class="table-of-contents__link toc-highlight">Container management commands</a><ul><li><a href="#upgrade-containers" class="table-of-contents__link toc-highlight">Upgrade containers</a></li><li><a href="#rebuild-containers-destructive" class="table-of-contents__link toc-highlight">Rebuild containers (destructive)</a></li><li><a href="#remove-all-containers-and-data-destructive" class="table-of-contents__link toc-highlight">Remove all containers and data (destructive)</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title"></div><ul class="footer__items clean-list"><li class="footer__item"><div class="footer-links">
+</li>
+<li class="">
+<p>Destroy and recreate containers with the option for additional data removal: These commands destroy the containers, and then recreate them.
+This allows you to delete other OpenRAG data before recreating the containers.</p>
+<ol>
+<li class="">
+<p>Destroy the containers, volumes, and local images, and then remove (prune) any additional Docker objects:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker compose down --volumes --remove-orphans --rmi local</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">docker system prune -f</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Optional: Remove data that wasn&#x27;t deleted by the previous commands:</p>
+<ul>
+<li class="">OpenRAG&#x27;s <code>.env</code> file</li>
+<li class="">The contents of OpenRAG&#x27;s <code>config</code> directory</li>
+<li class="">The contents of the <code>./openrag-documents</code> directory</li>
+<li class="">The contents of the <code>./opensearch-data</code> directory</li>
+<li class="">The <code>conversations.json</code> file</li>
+</ul>
+</li>
+<li class="">
+<p>Recreate the containers:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker compose up -d</span><br></span></code></pre></div></div>
+</li>
+</ol>
+</li>
+</ul></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><ul>
+<li class="">
+<p>Rebuild containers: This command destroys and recreates the containers. Data stored exclusively on the containers is lost, such as Langflow flows.
+The <code>.env</code> file, <code>config</code> directory, <code>./openrag-documents</code> directory, <code>./opensearch-data</code> directory, and the <code>conversations.json</code> file are preserved.</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">podman-compose up --build --force-recreate --remove-orphans</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Destroy and recreate containers with the option for additional data removal: These commands destroy the containers, and then recreate them.
+This allows you to delete other OpenRAG data before recreating the containers.</p>
+<ol>
+<li class="">
+<p>Destroy the containers, volumes, and local images, and then remove (prune) any additional Podman objects:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">podman-compose down --volumes --remove-orphans --rmi local</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">podman system prune -f</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Optional: Remove data that wasn&#x27;t deleted by the previous commands:</p>
+<ul>
+<li class="">OpenRAG&#x27;s <code>.env</code> file</li>
+<li class="">The contents of OpenRAG&#x27;s <code>config</code> directory</li>
+<li class="">The contents of the <code>./openrag-documents</code> directory</li>
+<li class="">The contents of the <code>./opensearch-data</code> directory</li>
+<li class="">The <code>conversations.json</code> file</li>
+</ul>
+</li>
+<li class="">
+<p>Recreate the containers:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">podman-compose up -d</span><br></span></code></pre></div></div>
+</li>
+</ol>
+</li>
+</ul></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><ol>
+<li class="">
+<p>Stop all running containers:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker stop $(docker ps -q)</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Remove all containers, including stopped containers:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker rm --force $(docker ps -aq)</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Remove all images:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker rmi --force $(docker images -q)</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Remove all volumes:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker volume prune --force</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Remove all networks except the default network:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker network prune --force</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Clean up any leftover data:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker system prune --all --force --volumes</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Optional: Remove data that wasn&#x27;t deleted by the previous commands:</p>
+<ul>
+<li class="">OpenRAG&#x27;s <code>.env</code> file</li>
+<li class="">The contents of OpenRAG&#x27;s <code>config</code> directory</li>
+<li class="">The contents of the <code>./openrag-documents</code> directory</li>
+<li class="">The contents of the <code>./opensearch-data</code> directory</li>
+<li class="">The <code>conversations.json</code> file</li>
+</ul>
+</li>
+</ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><ol>
+<li class="">
+<p>Stop all running containers:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">podman stop --all</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Remove all containers, including stopped containers:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">podman rm --all --force</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Remove all images:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">podman rmi --all --force</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Remove all volumes:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">podman volume prune --force</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Remove all networks except the default network:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">podman network prune --force</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Clean up any leftover data:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">podman system prune --all --force --volumes</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Optional: Remove data that wasn&#x27;t deleted by the previous commands:</p>
+<ul>
+<li class="">OpenRAG&#x27;s <code>.env</code> file</li>
+<li class="">The contents of OpenRAG&#x27;s <code>config</code> directory</li>
+<li class="">The contents of the <code>./openrag-documents</code> directory</li>
+<li class="">The contents of the <code>./opensearch-data</code> directory</li>
+<li class="">The <code>conversations.json</code> file</li>
+</ul>
+</li>
+</ol></div></div></div>
+<p>After resetting your containers, you must repeat <a href="#application-onboarding" class="">application onboarding</a>.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/openrag/openrag/tree/main/docs/docs/get-started/docker.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/install"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Install OpenRAG with TUI</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/agents"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Flows</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#prerequisites" class="table-of-contents__link toc-highlight">Prerequisites</a></li><li><a href="#install-openrag-with-docker-compose" class="table-of-contents__link toc-highlight">Install OpenRAG with Docker Compose</a></li><li><a href="#application-onboarding" class="table-of-contents__link toc-highlight">Application onboarding</a></li><li><a href="#container-management-commands" class="table-of-contents__link toc-highlight">Container management commands</a><ul><li><a href="#upgrade-containers" class="table-of-contents__link toc-highlight">Upgrade containers</a></li><li><a href="#reset-containers" class="table-of-contents__link toc-highlight">Reset containers (destructive)</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title"></div><ul class="footer__items clean-list"><li class="footer__item"><div class="footer-links">
                   <span>© 2025 OpenRAG</span>
                   </div></li></ul></div></div></div></footer></div>
 </body>

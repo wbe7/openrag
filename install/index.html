@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Install OpenRAG with TUI | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/install"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Install OpenRAG with TUI | OpenRAG"><meta data-rh="true" name="description" content="Install OpenRAG and then run the OpenRAG Terminal User Interface(TUI) to start your OpenRAG deployment with a guided setup process."><meta data-rh="true" property="og:description" content="Install OpenRAG and then run the OpenRAG Terminal User Interface(TUI) to start your OpenRAG deployment with a guided setup process."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/install"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/install" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/install" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Install OpenRAG with TUI","item":"https://docs.openr.ag/install"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.f46e5be3.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.a3cb74e9.js" defer="defer"></script>
 <script src="/assets/js/main.86159c47.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -337,23 +337,35 @@ To copy the logs, click <strong>Copy to Clipboard</strong>.</p>
 <p><strong>Upgrade</strong>: Check for updates. For more information, see <a href="#upgrade" class="">upgrade OpenRAG</a>.</p>
 </li>
 <li class="">
-<p><strong>Reset</strong>: This is a destructive action that <a href="#reset-containers" class="">resets your containers</a>.</p>
+<p><strong>Factory Reset</strong>: This is a destructive action that <a href="#reset-containers" class="">resets your containers</a>.</p>
 </li>
 <li class="">
-<p><strong>Native services</strong>: From the <strong>Status</strong> menu, you can view the status, port, and process ID (PID) of the OpenRAG native services.
-You can also click <strong>Stop</strong> or <strong>Restart</strong> to stop and start OpenRAG native services.</p>
-<p>A <em>native service</em> in OpenRAG is a service that runs locally on your machine, not within a container. For example, the <code>docling serve</code> process is an OpenRAG native service because this document processing service runs on your local machine, separate from the OpenRAG containers.</p>
+<p><strong>Native services</strong>: <a href="#start-all-services" class="">View and manage OpenRAG services</a> that run directly on your local machine instead of a container.</p>
 </li>
 </ul>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="reset-containers">Reset containers<a href="#reset-containers" class="hash-link" aria-label="Direct link to Reset containers" title="Direct link to Reset containers" translate="no">​</a></h3>
-<div class="theme-admonition theme-admonition-warning admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg></span>warning</div><div class="admonitionContent_BuS1"><p>This is a destructive action that destroys and recreates all of your OpenRAG containers.</p></div></div>
-<p>To destroy and recreate your OpenRAG containers, go to the TUI <a href="#status" class=""><strong>Status</strong> menu</a>, and then click <strong>Reset</strong>.</p>
-<p>The <strong>Reset</strong> function runs two commands. First, it stops and removes all containers, volumes, and local images:</p>
-<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker compose down --volumes --remove-orphans --rmi local</span><br></span></code></pre></div></div>
-<p>Then, it removes any additional Docker objects with <code>docker system prune -f</code>.</p>
-<p>If you reset your containers as part of reinstalling OpenRAG, continue the <a href="#reinstall" class="">reinstallation process</a> after resetting the containers.</p>
+<p>Reset your OpenRAG deployment by recreating the containers and removing some related data.</p>
+<div class="theme-admonition theme-admonition-warning admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg></span>warning</div><div class="admonitionContent_BuS1"><p>This is a destructive action that destroys the following:</p><ul>
+<li class="">All OpenRAG containers, volumes, and local images</li>
+<li class="">Any additional Docker objects</li>
+<li class="">The contents of OpenRAG&#x27;s <code>config</code> and <code>./opensearch-data</code> directories</li>
+<li class="">The <code>conversations.json</code> file</li>
+</ul><p>This operation <em>doesn&#x27;t</em> remove the <code>.env</code> file or the contents of the <code>./openrag-documents</code> directory.</p></div></div>
+<ol>
+<li class="">
+<p>To destroy and recreate your OpenRAG containers, go to the TUI <a href="#status" class=""><strong>Status</strong> menu</a>, and then click <strong>Factory Reset</strong>.</p>
+<p>This function runs the following commands <em>and</em> deletes the contents of OpenRAG&#x27;s <code>config</code> and <code>./opensearch-data</code> directories.</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">docker compose down --volumes --remove-orphans --rmi local</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">docker system prune -f</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>If you reset your containers as part of reinstalling OpenRAG, continue the <a href="#reinstall" class="">reinstallation process</a> after resetting the containers.
+Otherwise, in the TUI <strong>Setup</strong> menu, repeat the <a href="#setup" class="">setup process</a> to start the services and launch the OpenRAG app. Your OpenRAG passwords, OAuth credentials (if previously set), and onboarding configuration are restored from the <code>.env</code> file.</p>
+</li>
+</ol>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="start-all-services">Start all services<a href="#start-all-services" class="hash-link" aria-label="Direct link to Start all services" title="Direct link to Start all services" translate="no">​</a></h3>
-<p>On the TUI main page, click <strong>Start All Services</strong> to start the OpenRAG containers and launch OpenRAG itself.</p>
+<p>Through the TUI, you can view and manage OpenRAG services that run in containers and directly on your local machine.</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="start-containers">Start containers<a href="#start-containers" class="hash-link" aria-label="Direct link to Start containers" title="Direct link to Start containers" translate="no">​</a></h4>
+<p>On the TUI main page or the <strong>Setup</strong> menu, click <strong>Start All Services</strong> to start the OpenRAG containers and launch OpenRAG itself.</p>
 <p>When you start all services, the following processes happen:</p>
 <ol>
 <li class="">
@@ -366,6 +378,10 @@ You can also click <strong>Stop</strong> or <strong>Restart</strong> to stop and
 <p>OpenRAG deploys the containers with <code>docker compose up -d</code>.</p>
 </li>
 </ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="start-native-services-docling">Start native services (Docling)<a href="#start-native-services-docling" class="hash-link" aria-label="Direct link to Start native services (Docling)" title="Direct link to Start native services (Docling)" translate="no">​</a></h4>
+<p>A <em>native service</em> in OpenRAG is a service that runs locally on your machine, not within a container. For example, the <code>docling serve</code> process is an OpenRAG native service because this document processing service runs on your local machine, separate from the OpenRAG containers.</p>
+<p>From the <strong>Status</strong> menu, you can view the status, port, and process ID (PID) of the OpenRAG native services.
+You can also click <strong>Stop</strong> or <strong>Restart</strong> to stop and start OpenRAG native services.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="upgrade">Upgrade OpenRAG<a href="#upgrade" class="hash-link" aria-label="Direct link to Upgrade OpenRAG" title="Direct link to Upgrade OpenRAG" translate="no">​</a></h2>
 <p>To upgrade OpenRAG, upgrade the OpenRAG Python package, and then upgrade the OpenRAG containers.</p>
 <p>This is a two part process because upgrading the OpenRAG Python package updates the TUI and Python code, but the container versions are controlled by environment variables in your <code>.env</code> file.</p>
@@ -432,30 +448,29 @@ The TUI warns you if it detects a version mismatch.</p>
 </li>
 </ol>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="reinstall">Reinstall OpenRAG<a href="#reinstall" class="hash-link" aria-label="Direct link to Reinstall OpenRAG" title="Direct link to Reinstall OpenRAG" translate="no">​</a></h2>
-<p>To reinstall OpenRAG with a completely fresh setup:</p>
+<p>Reset your OpenRAG deployment by recreating the containers and, optionally, removing related data:</p>
 <ol>
 <li class="">
-<p>In the TUI <strong>Status</strong> menu, <a href="#reset-containers" class="">reset your containers</a> to destroy the existing OpenRAG containers and their data.</p>
+<p>In the TUI, <a href="#reset-containers" class="">reset your containers</a> to destroy the following:</p>
+<ul>
+<li class="">All existing OpenRAG containers, volumes, and local images</li>
+<li class="">Any additional Docker objects</li>
+<li class="">The contents of OpenRAG&#x27;s <code>config</code> and <code>./opensearch-data</code> directories</li>
+<li class="">The <code>conversations.json</code> file</li>
+</ul>
 </li>
 <li class="">
-<p>Optional: Delete your project&#x27;s <code>.env</code> file.</p>
-<p>The Reset operation doesn&#x27;t remove your project&#x27;s <code>.env</code> file, so your passwords, API keys, and OAuth settings can be preserved.
-If you delete the <code>.env</code> file, you must run the <a href="#setup" class="">Set up OpenRAG with the TUI</a> process again to create a new configuration file.</p>
+<p>Optional: Remove data that wasn&#x27;t deleted by the <strong>Factory Reset</strong> operation. For a completely fresh installation, delete all of this data.</p>
+<ul>
+<li class=""><strong>OpenRAG&#x27;s <code>.env</code> file</strong>: Contains your OpenRAG configuration, including OpenRAG passwords, API keys, OAuth settings, and other <a class="" href="/reference/configuration">environment variables</a>. If you delete this file, you must either repeat the <a href="#setup" class="">setup process</a> to create a new <code>.env</code> file, or add a populated <code>.env</code> file to your OpenRAG installation directory before restarting OpenRAG.</li>
+<li class=""><strong>The contents of the <code>./openrag-documents</code> directory</strong>: Contains documents that you uploaded to OpenRAG. Delete these files to prevent documents from being reingested to your knowledge base after restarting OpenRAG. However, you might want to preserve OpenRAG&#x27;s <a href="https://github.com/langflow-ai/openrag/tree/main/openrag-documents" target="_blank" rel="noopener noreferrer" class="">default documents</a>.</li>
+</ul>
 </li>
 <li class="">
-<p>Optional: Delete your OpenSearch knowledge base by deleting the contents of the <code>./opensearch-data</code> folder in your OpenRAG installation directory.</p>
+<p>In the TUI <strong>Setup</strong> menu, repeat the <a href="#setup" class="">setup process</a> to configure OpenRAG, restart the services, and launch the OpenRAG app, and repeat <a href="#application-onboarding" class="">application onboarding</a>.
+If OpenRAG detects a <code>.env</code> file, it automatically populates any OpenRAG passwords, OAuth credentials, and onboarding configuration set in that file.</p>
 </li>
-<li class="">
-<p>In the TUI <strong>Setup</strong> menu, repeat the <a href="#setup" class="">Basic Setup</a> process:</p>
-<ol>
-<li class="">Click <strong>Start All Services</strong> to pull container images and start them.</li>
-<li class="">Under <strong>Native Services</strong>, click <strong>Start</strong> to start the Docling service.</li>
-<li class="">Click <strong>Open App</strong> to open the OpenRAG application.</li>
-<li class="">Continue with <a href="#application-onboarding" class="">application onboarding</a>.</li>
-</ol>
-</li>
-</ol>
-<p>If reinstalling OpenRAG and deleting the <code>.env</code> file doesn&#x27;t reset setup or onboarding, see <a class="" href="/support/troubleshoot#reinstalling-openrag-doesnt-reset-onboarding">Reinstalling OpenRAG doesn&#x27;t reset onboarding</a>.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/openrag/openrag/tree/main/docs/docs/get-started/install.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/quickstart"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Quickstart</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/docker"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Install OpenRAG containers</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#prerequisites" class="table-of-contents__link toc-highlight">Prerequisites</a></li><li><a href="#install" class="table-of-contents__link toc-highlight">Install OpenRAG</a></li><li><a href="#setup" class="table-of-contents__link toc-highlight">Set up OpenRAG with the TUI</a></li><li><a href="#application-onboarding" class="table-of-contents__link toc-highlight">Application onboarding</a></li><li><a href="#exit-the-openrag-tui" class="table-of-contents__link toc-highlight">Exit the OpenRAG TUI</a></li><li><a href="#tui-container-management" class="table-of-contents__link toc-highlight">Manage OpenRAG containers with the TUI</a><ul><li><a href="#diagnostics" class="table-of-contents__link toc-highlight">Diagnostics</a></li><li><a href="#status" class="table-of-contents__link toc-highlight">Status</a></li><li><a href="#reset-containers" class="table-of-contents__link toc-highlight">Reset containers</a></li><li><a href="#start-all-services" class="table-of-contents__link toc-highlight">Start all services</a></li></ul></li><li><a href="#upgrade" class="table-of-contents__link toc-highlight">Upgrade OpenRAG</a></li><li><a href="#reinstall" class="table-of-contents__link toc-highlight">Reinstall OpenRAG</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title"></div><ul class="footer__items clean-list"><li class="footer__item"><div class="footer-links">
+</ol></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/openrag/openrag/tree/main/docs/docs/get-started/install.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/quickstart"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Quickstart</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/docker"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Install OpenRAG containers</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#prerequisites" class="table-of-contents__link toc-highlight">Prerequisites</a></li><li><a href="#install" class="table-of-contents__link toc-highlight">Install OpenRAG</a></li><li><a href="#setup" class="table-of-contents__link toc-highlight">Set up OpenRAG with the TUI</a></li><li><a href="#application-onboarding" class="table-of-contents__link toc-highlight">Application onboarding</a></li><li><a href="#exit-the-openrag-tui" class="table-of-contents__link toc-highlight">Exit the OpenRAG TUI</a></li><li><a href="#tui-container-management" class="table-of-contents__link toc-highlight">Manage OpenRAG containers with the TUI</a><ul><li><a href="#diagnostics" class="table-of-contents__link toc-highlight">Diagnostics</a></li><li><a href="#status" class="table-of-contents__link toc-highlight">Status</a></li><li><a href="#reset-containers" class="table-of-contents__link toc-highlight">Reset containers</a></li><li><a href="#start-all-services" class="table-of-contents__link toc-highlight">Start all services</a></li></ul></li><li><a href="#upgrade" class="table-of-contents__link toc-highlight">Upgrade OpenRAG</a></li><li><a href="#reinstall" class="table-of-contents__link toc-highlight">Reinstall OpenRAG</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title"></div><ul class="footer__items clean-list"><li class="footer__item"><div class="footer-links">
                   <span>© 2025 OpenRAG</span>
                   </div></li></ul></div></div></div></footer></div>
 </body>
