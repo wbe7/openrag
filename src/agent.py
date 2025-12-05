@@ -672,8 +672,8 @@ async def async_langflow_chat_stream(
             )
 
 
-def delete_user_conversation(user_id: str, response_id: str) -> bool:
-    """Delete a conversation for a user from both memory and persistent storage"""
+async def delete_user_conversation(user_id: str, response_id: str) -> bool:
+    """Delete a conversation for a user from both memory and persistent storage (async, non-blocking)"""
     deleted = False
 
     try:
