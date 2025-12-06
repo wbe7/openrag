@@ -1,15 +1,4 @@
-# Configure structured logging early
-from connectors.langflow_connector_service import LangflowConnectorService
-from connectors.service import ConnectorService
-from services.flows_service import FlowsService
-from utils.container_utils import detect_container_environment
-from utils.embeddings import create_dynamic_index_body
-from utils.logging_config import configure_from_env, get_logger
-from utils.telemetry import TelemetryClient, Category, MessageId
-
-configure_from_env()
-logger = get_logger(__name__)
-
+# Configure structured logging early - must happen before other imports
 import asyncio
 import atexit
 import multiprocessing
@@ -20,14 +9,6 @@ from functools import partial
 from starlette.applications import Starlette
 from starlette.routing import Route
 
-# Set multiprocessing start method to 'spawn' for CUDA compatibility
-multiprocessing.set_start_method("spawn", force=True)
-
-# Create process pool FIRST, before any torch/CUDA imports
-from utils.process_pool import process_pool  # isort: skip
-import torch
-
-# API endpoints
 from api import (
     auth,
     chat,
@@ -47,12 +28,8 @@ from api import (
     tasks,
     upload,
 )
-
-# Existing services
 from api.connector_router import ConnectorRouter
 from auth_middleware import optional_auth, require_auth
-
-# Configuration and setup
 from config.settings import (
     DISABLE_INGEST_WITH_LANGFLOW,
     INDEX_BODY,
@@ -63,22 +40,33 @@ from config.settings import (
     is_no_auth_mode,
     get_openrag_config,
 )
+from connectors.langflow_connector_service import LangflowConnectorService
+from connectors.service import ConnectorService
 from services.auth_service import AuthService
-from services.langflow_mcp_service import LangflowMCPService
 from services.chat_service import ChatService
-
-# Services
 from services.document_service import DocumentService
+from services.flows_service import FlowsService
 from services.knowledge_filter_service import KnowledgeFilterService
-
-# Configuration and setup
-# Services
 from services.langflow_file_service import LangflowFileService
+from services.langflow_mcp_service import LangflowMCPService
 from services.models_service import ModelsService
 from services.monitor_service import MonitorService
 from services.search_service import SearchService
 from services.task_service import TaskService
 from session_manager import SessionManager
+from utils.container_utils import detect_container_environment
+from utils.embeddings import create_dynamic_index_body
+from utils.logging_config import configure_from_env, get_logger
+from utils.process_pool import process_pool
+from utils.telemetry import TelemetryClient, Category, MessageId
+
+import torch
+
+configure_from_env()
+logger = get_logger(__name__)
+
+# Set multiprocessing start method to 'spawn' for CUDA compatibility
+multiprocessing.set_start_method("spawn", force=True)
 
 logger.info(
     "CUDA device information",

@@ -7,17 +7,17 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, AsyncIterator
-from utils.logging_config import get_logger
 
 try:
     from importlib.resources import files
 except ImportError:
     from importlib_resources import files
 
-logger = get_logger(__name__)
-
-from ..utils.platform import PlatformDetector, RuntimeInfo, RuntimeType
+from tui.utils.platform import PlatformDetector, RuntimeInfo, RuntimeType
 from utils.gpu_detection import detect_gpu_devices
+from utils.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class ServiceStatus(Enum):
@@ -572,7 +572,7 @@ class ContainerManager:
             Tuple of (has_mismatch, container_version, tui_version)
         """
         try:
-            from ..utils.version_check import get_current_version
+            from tui.utils.version_check import get_current_version
 
             tui_version = get_current_version()
             if tui_version == "unknown":
@@ -585,7 +585,7 @@ class ContainerManager:
                 return False, None, tui_version
 
             # Compare versions
-            from ..utils.version_check import compare_versions
+            from tui.utils.version_check import compare_versions
 
             comparison = compare_versions(container_version, tui_version)
             has_mismatch = comparison != 0
@@ -891,7 +891,7 @@ class ContainerManager:
 
         # Ensure OPENRAG_VERSION is set in .env file
         try:
-            from ..managers.env_manager import EnvManager
+            from tui.managers.env_manager import EnvManager
 
             env_manager = EnvManager()
             env_manager.ensure_openrag_version()

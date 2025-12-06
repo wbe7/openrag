@@ -1,5 +1,6 @@
 """Environment configuration manager for OpenRAG TUI."""
 
+import os
 import secrets
 import string
 from dataclasses import dataclass, field
@@ -7,11 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from utils.logging_config import get_logger
-
-logger = get_logger(__name__)
-
-from ..utils.validation import (
+from tui.utils.validation import (
     sanitize_env_value,
     validate_documents_paths,
     validate_google_oauth_client_id,
@@ -19,6 +16,9 @@ from ..utils.validation import (
     validate_openai_api_key,
     validate_url,
 )
+from utils.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -201,7 +201,7 @@ class EnvManager:
         # Set OPENRAG_VERSION to TUI version if not already set
         if not self.config.openrag_version:
             try:
-                from ..utils.version_check import get_current_version
+                from tui.utils.version_check import get_current_version
 
                 current_version = get_current_version()
                 if current_version != "unknown":
@@ -241,7 +241,7 @@ class EnvManager:
             )
 
         # Import validation functions for new provider fields
-        from ..utils.validation import validate_anthropic_api_key
+        from tui.utils.validation import validate_anthropic_api_key
 
         # Validate Anthropic API key format if provided
         if self.config.anthropic_api_key:
@@ -382,7 +382,7 @@ class EnvManager:
                 else:
                     # Fallback: try to get current version
                     try:
-                        from ..utils.version_check import get_current_version
+                        from tui.utils.version_check import get_current_version
 
                         current_version = get_current_version()
                         if current_version != "unknown":
@@ -578,7 +578,7 @@ class EnvManager:
     def ensure_openrag_version(self) -> None:
         """Ensure OPENRAG_VERSION is set in .env file to match TUI version."""
         try:
-            from ..utils.version_check import get_current_version
+            from tui.utils.version_check import get_current_version
 
             current_version = get_current_version()
             if current_version == "unknown":

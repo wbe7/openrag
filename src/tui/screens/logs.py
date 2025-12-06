@@ -7,9 +7,9 @@ from textual.screen import Screen
 from textual.widgets import Footer, Static, Button, TextArea
 from rich.text import Text
 
-from ..managers.container_manager import ContainerManager
-from ..managers.docling_manager import DoclingManager
-from ..utils.clipboard import copy_text_to_clipboard
+from tui.managers.container_manager import ContainerManager
+from tui.managers.docling_manager import DoclingManager
+from tui.utils.clipboard import copy_text_to_clipboard
 
 
 class LogsScreen(Screen):

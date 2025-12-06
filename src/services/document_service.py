@@ -1,14 +1,15 @@
 import os
-from docling_core.types.io import DocumentStream
 from typing import List
-import tiktoken
-from utils.logging_config import get_logger
 
-logger = get_logger(__name__)
+import tiktoken
+from docling_core.types.io import DocumentStream
 
 from config.settings import clients, INDEX_NAME, get_embedding_model
 from utils.document_processing import extract_relevant
+from utils.logging_config import get_logger
 from utils.telemetry import TelemetryClient, Category, MessageId
+
+logger = get_logger(__name__)
 
 
 def get_token_count(text: str, model: str = None) -> int:

@@ -1,10 +1,7 @@
-
+from services.conversation_persistence_service import conversation_persistence
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
-
-# Import persistent storage
-from services.conversation_persistence_service import conversation_persistence
 
 # In-memory storage for active conversation threads (preserves function calls)
 active_conversations = {}
@@ -447,7 +444,7 @@ async def async_chat_stream(
                 response_id = chunk_data["id"]
             elif "response_id" in chunk_data:
                 response_id = chunk_data["response_id"]
-        except:
+        except Exception:
             pass
         yield chunk
 
@@ -641,7 +638,7 @@ async def async_langflow_chat_stream(
                 response_id = chunk_data["id"]
             elif "response_id" in chunk_data:
                 response_id = chunk_data["response_id"]
-        except:
+        except Exception:
             pass
         yield chunk
 

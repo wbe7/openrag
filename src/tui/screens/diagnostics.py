@@ -12,9 +12,9 @@ from textual.screen import Screen
 from textual.widgets import Header, Footer, Static, Button, Log
 from rich.text import Text
 
-from ..managers.container_manager import ContainerManager
-from ..utils.clipboard import copy_text_to_clipboard
-from ..utils.platform import PlatformDetector
+from tui.managers.container_manager import ContainerManager
+from tui.utils.clipboard import copy_text_to_clipboard
+from tui.utils.platform import PlatformDetector
 
 
 class DiagnosticsScreen(Screen):
@@ -435,7 +435,7 @@ class DiagnosticsScreen(Screen):
                             log.write(
                                 f"  OpenSearch version: {info['version']['number']}"
                             )
-                    except:
+                    except Exception:
                         pass
                 else:
                     log.write(
@@ -483,7 +483,7 @@ class DiagnosticsScreen(Screen):
                         if "tenants" in user_info:
                             tenants = list(user_info["tenants"].keys())
                             log.write(f"  Tenants: {', '.join(tenants)}")
-                    except:
+                    except Exception:
                         log.write("  Account info retrieved but couldn't parse JSON")
                 else:
                     log.write(
@@ -527,7 +527,7 @@ class DiagnosticsScreen(Screen):
                             if admin_user.get("reserved"):
                                 log.write("  Admin user is reserved (protected)")
                         log.write(f"  Total internal users: {len(users)}")
-                    except:
+                    except Exception:
                         log.write("[green]✓ Internal users endpoint accessible[/green]")
                 else:
                     log.write(

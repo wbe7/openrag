@@ -5,14 +5,14 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 from dataclasses import dataclass, asdict
 from pathlib import Path
+
+from connectors.base import BaseConnector
+from connectors.google_drive import GoogleDriveConnector
+from connectors.onedrive import OneDriveConnector
+from connectors.sharepoint import SharePointConnector
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
-
-from .base import BaseConnector
-from .google_drive import GoogleDriveConnector
-from .sharepoint import SharePointConnector
-from .onedrive import OneDriveConnector
 
 
 @dataclass
@@ -290,7 +290,7 @@ class ConnectionManager:
                     and connector.webhook_channel_id
                 ):
                     await connector.cleanup_subscription(connector.webhook_channel_id)
-            except:
+            except Exception:
                 pass  # Best effort cleanup
 
             del self.active_connectors[connection_id]

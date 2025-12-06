@@ -11,8 +11,8 @@ from googleapiclient.http import MediaIoBaseDownload
 
 from utils.logging_config import get_logger
 
-from ..base import BaseConnector, ConnectorDocument, DocumentACL
-from .oauth import GoogleDriveOAuth
+from connectors.base import BaseConnector, ConnectorDocument, DocumentACL
+from connectors.google_drive.oauth import GoogleDriveOAuth
 
 logger = get_logger(__name__)
 

@@ -404,7 +404,7 @@ class FlowsService:
             )
 
             if response.status_code == 200:
-                result = response.json()
+                response.json()
                 logger.info(
                     f"Successfully reset {flow_type} flow",
                     flow_id=flow_id,
@@ -427,7 +427,7 @@ class FlowsService:
 
                         # Get provider-specific endpoint if needed
                         llm_provider_config = config.get_llm_provider_config()
-                        endpoint = getattr(llm_provider_config, "endpoint", None)
+                        _ = getattr(llm_provider_config, "endpoint", None)
 
                         # Step 2: Update model values for the specific flow being reset
                         single_flow_config = [

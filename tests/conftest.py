@@ -15,9 +15,9 @@ load_dotenv()
 os.environ["GOOGLE_OAUTH_CLIENT_ID"] = ""
 os.environ["GOOGLE_OAUTH_CLIENT_SECRET"] = ""
 
-from src.config.settings import clients
-from src.session_manager import SessionManager
-from src.main import generate_jwt_keys
+from src.config.settings import clients  # noqa: E402
+from src.session_manager import SessionManager  # noqa: E402
+from src.main import generate_jwt_keys  # noqa: E402
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)

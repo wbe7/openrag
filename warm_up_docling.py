@@ -7,7 +7,7 @@ src_path = os.path.join(repo_root, "src")
 if src_path not in sys.path:
     sys.path.insert(0, src_path)
 
-from utils.document_processing import create_document_converter
+from utils.document_processing import create_document_converter  # noqa: E402
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

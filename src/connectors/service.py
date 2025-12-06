@@ -2,8 +2,8 @@ from typing import Any, Dict, List, Optional
 
 from utils.logging_config import get_logger
 
-from .base import BaseConnector, ConnectorDocument
-from .connection_manager import ConnectionManager
+from connectors.base import BaseConnector, ConnectorDocument
+from connectors.connection_manager import ConnectionManager
 
 
 logger = get_logger(__name__)

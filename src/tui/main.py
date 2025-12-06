@@ -3,22 +3,23 @@
 import sys
 from pathlib import Path
 from typing import Iterable, Optional
+
 from textual.app import App
-from utils.logging_config import get_logger
 
 try:
     from importlib.resources import files
 except ImportError:
     from importlib_resources import files
 
-logger = get_logger(__name__)
+from tui.managers.container_manager import ContainerManager
+from tui.managers.docling_manager import DoclingManager
+from tui.managers.env_manager import EnvManager
+from tui.screens.welcome import WelcomeScreen
+from tui.utils.platform import PlatformDetector
+from tui.widgets.diagnostics_notification import notify_with_diagnostics
+from utils.logging_config import get_logger
 
-from .screens.welcome import WelcomeScreen
-from .managers.env_manager import EnvManager
-from .managers.container_manager import ContainerManager
-from .managers.docling_manager import DoclingManager
-from .utils.platform import PlatformDetector
-from .widgets.diagnostics_notification import notify_with_diagnostics
+logger = get_logger(__name__)
 
 
 class OpenRAGTUI(App):
@@ -392,7 +393,7 @@ class OpenRAGTUI(App):
             )
 
         # Load existing config if available
-        config_exists = self.env_manager.load_existing_env()
+        self.env_manager.load_existing_env()
 
         # Start with welcome screen
         self.push_screen(WelcomeScreen())
@@ -526,7 +527,7 @@ def copy_compose_files(*, force: bool = False) -> None:
 def run_tui():
     """Run the OpenRAG TUI application."""
     # Check for native Windows before launching TUI
-    from .utils.platform import PlatformDetector
+    from tui.utils.platform import PlatformDetector
 
     platform_detector = PlatformDetector()
 

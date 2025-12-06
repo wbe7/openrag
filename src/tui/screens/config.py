@@ -16,8 +16,8 @@ from textual.validation import ValidationResult, Validator
 from rich.text import Text
 from pathlib import Path
 
-from ..managers.env_manager import EnvManager
-from ..utils.validation import (
+from tui.managers.env_manager import EnvManager
+from tui.utils.validation import (
     validate_openai_api_key,
     validate_anthropic_api_key,
     validate_ollama_endpoint,
@@ -235,9 +235,6 @@ class ConfigScreen(Screen):
         yield Static(" ")
 
         # Langflow Admin Username - conditionally displayed based on password
-        current_password = getattr(
-            self.env_manager.config, "langflow_superuser_password", ""
-        )
         yield Label("Langflow Admin Username *", id="langflow-username-label")
         current_value = getattr(self.env_manager.config, "langflow_superuser", "")
         input_widget = Input(

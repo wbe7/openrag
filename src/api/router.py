@@ -7,7 +7,7 @@ from config.settings import DISABLE_INGEST_WITH_LANGFLOW
 from utils.logging_config import get_logger
 
 # Import the actual endpoint implementations
-from .upload import upload as traditional_upload
+from api.upload import upload as traditional_upload
 
 logger = get_logger(__name__)
 

@@ -20,7 +20,7 @@ load_dotenv("../", override=False)
 logger = get_logger(__name__)
 
 # Import configuration manager
-from .config_manager import config_manager
+from config.config_manager import config_manager
 
 # Environment variables
 OPENSEARCH_HOST = os.getenv("OPENSEARCH_HOST", "localhost")

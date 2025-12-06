@@ -24,7 +24,7 @@ def notify_with_diagnostics(
 
     # Then add a button to open diagnostics screen
     def open_diagnostics() -> None:
-        from ..screens.diagnostics import DiagnosticsScreen
+        from tui.screens.diagnostics import DiagnosticsScreen
 
         app.push_screen(DiagnosticsScreen())
 

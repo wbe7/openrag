@@ -5,8 +5,8 @@ from urllib.parse import urlparse
 from datetime import datetime
 import httpx
 
-from ..base import BaseConnector, ConnectorDocument, DocumentACL
-from .oauth import SharePointOAuth
+from connectors.base import BaseConnector, ConnectorDocument, DocumentACL
+from connectors.sharepoint.oauth import SharePointOAuth
 
 logger = logging.getLogger(__name__)
 

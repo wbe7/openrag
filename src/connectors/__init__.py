@@ -1,7 +1,7 @@
-from .base import BaseConnector
-from .google_drive import GoogleDriveConnector
-from .sharepoint import SharePointConnector
-from .onedrive import OneDriveConnector
+from connectors.base import BaseConnector
+from connectors.google_drive import GoogleDriveConnector
+from connectors.onedrive import OneDriveConnector
+from connectors.sharepoint import SharePointConnector
 
 __all__ = [
     "BaseConnector",

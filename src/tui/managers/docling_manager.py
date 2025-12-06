@@ -332,7 +332,7 @@ class DoclingManager:
                         # Service is now running, clear starting flag
                         self._starting = False
                         break
-                except:
+                except Exception:
                     pass
 
                 self._add_log_entry(f"Waiting for startup... ({i + 1}/10)")
@@ -555,7 +555,7 @@ class DoclingManager:
         """Follow logs from the docling-serve process in real-time."""
         # First yield status message and any existing logs
         display_host = "localhost" if self._host == "0.0.0.0" else self._host
-        status_msg = f"Docling serve is running on http://{display_host}:{self._port}"
+        _ = f"Docling serve is running on http://{display_host}:{self._port}"
 
         with self._log_lock:
             if self._log_buffer:

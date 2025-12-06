@@ -5,8 +5,8 @@ from models.processors import LangflowConnectorFileProcessor
 from services.langflow_file_service import LangflowFileService
 from utils.logging_config import get_logger
 
-from .base import BaseConnector, ConnectorDocument
-from .connection_manager import ConnectionManager
+from connectors.base import BaseConnector, ConnectorDocument
+from connectors.connection_manager import ConnectionManager
 
 logger = get_logger(__name__)
 

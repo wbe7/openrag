@@ -6,24 +6,24 @@ import shutil
 from pathlib import Path
 from typing import Literal, Optional, AsyncIterator
 
-# Define button variant type
-ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
-
+from rich.text import Text
 from textual.app import ComposeResult
 from textual.containers import Horizontal, ScrollableContainer
 from textual.screen import Screen
 from textual.widgets import Footer, Static, Button, DataTable
-from rich.text import Text
 
-from ..managers.container_manager import ContainerManager, ServiceStatus, ServiceInfo
-from ..managers.docling_manager import DoclingManager
-from ..utils.platform import RuntimeType
-from ..widgets.command_modal import CommandOutputModal
-from ..widgets.flow_backup_warning_modal import FlowBackupWarningModal
-from ..widgets.factory_reset_warning_modal import FactoryResetWarningModal
-from ..widgets.version_mismatch_warning_modal import VersionMismatchWarningModal
-from ..widgets.upgrade_instructions_modal import UpgradeInstructionsModal
-from ..widgets.diagnostics_notification import notify_with_diagnostics
+from tui.managers.container_manager import ContainerManager, ServiceStatus, ServiceInfo
+from tui.managers.docling_manager import DoclingManager
+from tui.utils.platform import RuntimeType
+from tui.widgets.command_modal import CommandOutputModal
+from tui.widgets.diagnostics_notification import notify_with_diagnostics
+from tui.widgets.factory_reset_warning_modal import FactoryResetWarningModal
+from tui.widgets.flow_backup_warning_modal import FlowBackupWarningModal
+from tui.widgets.upgrade_instructions_modal import UpgradeInstructionsModal
+from tui.widgets.version_mismatch_warning_modal import VersionMismatchWarningModal
+
+# Define button variant type
+ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 
 
 class MonitorScreen(Screen):
@@ -280,7 +280,6 @@ class MonitorScreen(Screen):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""
         button_id = event.button.id or ""
-        button_label = event.button.label or ""
 
         # Use button ID prefixes to determine action, ignoring any random suffix
         if button_id.startswith("start-btn"):
@@ -369,7 +368,7 @@ class MonitorScreen(Screen):
                 # Ensure OPENRAG_VERSION is set in .env BEFORE starting services
                 # This ensures docker compose reads the correct version
                 try:
-                    from ..managers.env_manager import EnvManager
+                    from tui.managers.env_manager import EnvManager
 
                     env_manager = EnvManager()
                     env_manager.ensure_openrag_version()
@@ -430,7 +429,7 @@ class MonitorScreen(Screen):
         """Check TUI version and show upgrade instructions."""
         self.operation_in_progress = True
         try:
-            from ..utils.version_check import check_if_latest
+            from tui.utils.version_check import check_if_latest
 
             # Check if current version is latest
             is_latest, latest_version, current_version = await check_if_latest()
@@ -646,7 +645,7 @@ class MonitorScreen(Screen):
 
     def _view_docling_logs(self) -> None:
         """View docling serve logs."""
-        from .logs import LogsScreen
+        from tui.screens.logs import LogsScreen
 
         self.app.push_screen(LogsScreen(initial_service="docling-serve"))
 
@@ -931,7 +930,7 @@ class MonitorScreen(Screen):
             selected_service = self._get_selected_service()
             if selected_service:
                 # Push the logs screen with the selected service
-                from .logs import LogsScreen
+                from tui.screens.logs import LogsScreen
 
                 logs_screen = LogsScreen(initial_service=selected_service)
                 self.app.push_screen(logs_screen)

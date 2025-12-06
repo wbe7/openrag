@@ -1,7 +1,8 @@
 import os
 import sys
 from collections import defaultdict
-from .gpu_detection import detect_gpu_devices
+
+from utils.gpu_detection import detect_gpu_devices
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -360,7 +361,7 @@ def process_document_sync(file_path: str):
                 system=f"{platform.system()} {platform.release()}",
                 architecture=platform.machine(),
             )
-        except:
+        except Exception:
             pass
 
         # Re-raise to trigger BrokenProcessPool in main process

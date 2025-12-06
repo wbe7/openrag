@@ -4,8 +4,8 @@ from typing import List, Dict, Any, Optional
 from datetime import datetime
 import httpx
 
-from ..base import BaseConnector, ConnectorDocument, DocumentACL
-from .oauth import OneDriveOAuth
+from connectors.base import BaseConnector, ConnectorDocument, DocumentACL
+from connectors.onedrive.oauth import OneDriveOAuth
 
 logger = logging.getLogger(__name__)
 

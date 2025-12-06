@@ -378,7 +378,7 @@ async def cancel_knowledge_filter_subscription(
         return JSONResponse({"error": "Subscription not found"}, status_code=404)
 
     # Delete the monitor
-    monitor_result = await monitor_service.delete_monitor(
+    await monitor_service.delete_monitor(
         subscription["monitor_id"], user.user_id, jwt_token
     )
 

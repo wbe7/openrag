@@ -9,12 +9,12 @@ from textual.widgets import Footer, Static, Button
 from rich.text import Text
 from dotenv import load_dotenv
 
-from .. import __version__
-from ..managers.container_manager import ContainerManager, ServiceStatus
-from ..managers.env_manager import EnvManager
-from ..managers.docling_manager import DoclingManager
-from ..widgets.command_modal import CommandOutputModal
-from ..widgets.version_mismatch_warning_modal import VersionMismatchWarningModal
+from tui import __version__
+from tui.managers.container_manager import ContainerManager, ServiceStatus
+from tui.managers.docling_manager import DoclingManager
+from tui.managers.env_manager import EnvManager
+from tui.widgets.command_modal import CommandOutputModal
+from tui.widgets.version_mismatch_warning_modal import VersionMismatchWarningModal
 
 
 class WelcomeScreen(Screen):
@@ -280,7 +280,7 @@ class WelcomeScreen(Screen):
         try:
             welcome_widget = self.query_one("#welcome-text")
             welcome_widget.update(self._create_welcome_text())
-        except:
+        except Exception:
             pass  # Widget might not be mounted yet
 
         # Focus the appropriate button (the buttons are created correctly in compose,
@@ -296,7 +296,7 @@ class WelcomeScreen(Screen):
                 self.query_one("#advanced-setup-btn").focus()
             else:
                 self.query_one("#basic-setup-btn").focus()
-        except:
+        except Exception:
             pass  # Button might not exist
 
     async def on_screen_resume(self) -> None:
@@ -346,25 +346,25 @@ class WelcomeScreen(Screen):
 
     def action_no_auth_setup(self) -> None:
         """Switch to basic configuration screen."""
-        from .config import ConfigScreen
+        from tui.screens.config import ConfigScreen
 
         self.app.push_screen(ConfigScreen(mode="no_auth"))
 
     def action_full_setup(self) -> None:
         """Switch to advanced configuration screen."""
-        from .config import ConfigScreen
+        from tui.screens.config import ConfigScreen
 
         self.app.push_screen(ConfigScreen(mode="full"))
 
     def action_monitor(self) -> None:
         """Switch to monitoring screen."""
-        from .monitor import MonitorScreen
+        from tui.screens.monitor import MonitorScreen
 
         self.app.push_screen(MonitorScreen())
 
     def action_diagnostics(self) -> None:
         """Switch to diagnostics screen."""
-        from .diagnostics import DiagnosticsScreen
+        from tui.screens.diagnostics import DiagnosticsScreen
 
         self.app.push_screen(DiagnosticsScreen())
 
@@ -471,7 +471,7 @@ class WelcomeScreen(Screen):
                 # Ensure OPENRAG_VERSION is set in .env BEFORE starting services
                 # This ensures docker compose reads the correct version
                 try:
-                    from ..managers.env_manager import EnvManager
+                    from tui.managers.env_manager import EnvManager
 
                     env_manager = EnvManager()
                     env_manager.ensure_openrag_version()

@@ -51,7 +51,7 @@ def configure_logging(
             pathname = event_dict.pop("pathname", "")
             filename = event_dict.pop("filename", "")
             lineno = event_dict.pop("lineno", "")
-            level = event_dict.pop("level", "")
+            _ = event_dict.pop("level", "")
 
             # Build file location - prefer pathname for full path, fallback to filename
             if pathname and lineno:

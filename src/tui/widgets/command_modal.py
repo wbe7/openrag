@@ -10,8 +10,8 @@ from textual.containers import Container
 from textual.screen import ModalScreen
 from textual.widgets import Button, Static, Label, TextArea, Footer
 
-from ..utils.clipboard import copy_text_to_clipboard
-from .waves import Waves
+from tui.utils.clipboard import copy_text_to_clipboard
+from tui.widgets.waves import Waves
 
 
 class CommandOutputModal(ModalScreen):
