@@ -21,7 +21,9 @@ def copy_text_to_clipboard(text: str) -> Tuple[bool, str]:
     except ImportError:
         # Fall back to platform-specific commands
         pass
-    except Exception as exc:  # pragma: no cover - defensive catch for pyperclip edge cases
+    except (
+        Exception
+    ) as exc:  # pragma: no cover - defensive catch for pyperclip edge cases
         return False, f"Clipboard error: {exc}"
 
     system = platform.system()
@@ -36,9 +38,14 @@ def copy_text_to_clipboard(text: str) -> Tuple[bool, str]:
             process.communicate(input=text)
             return True, "Copied to clipboard"
         if system == "Linux":
-            for command in (["xclip", "-selection", "clipboard"], ["xsel", "--clipboard", "--input"]):
+            for command in (
+                ["xclip", "-selection", "clipboard"],
+                ["xsel", "--clipboard", "--input"],
+            ):
                 try:
-                    process = subprocess.Popen(command, stdin=subprocess.PIPE, text=True)
+                    process = subprocess.Popen(
+                        command, stdin=subprocess.PIPE, text=True
+                    )
                     process.communicate(input=text)
                     return True, "Copied to clipboard"
                 except FileNotFoundError:
@@ -47,4 +54,3 @@ def copy_text_to_clipboard(text: str) -> Tuple[bool, str]:
         return False, "Clipboard not supported on this platform"
     except Exception as exc:  # pragma: no cover - subprocess errors
         return False, f"Clipboard error: {exc}"
-

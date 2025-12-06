@@ -21,7 +21,9 @@ class RuntimeInfo:
     compose_command: list[str]
     runtime_command: list[str]
     version: Optional[str] = None
-    has_runtime_without_compose: bool = False  # True if docker/podman exists but compose missing
+    has_runtime_without_compose: bool = (
+        False  # True if docker/podman exists but compose missing
+    )
 
 
 class PlatformDetector:
@@ -50,8 +52,9 @@ class PlatformDetector:
             docker_version = self._get_docker_version()
             if docker_version and podman_version in docker_version:
                 # This is podman masquerading as docker
-                if self._check_command(["docker", "compose", "--help"]) and \
-                   self._check_command(["docker", "compose", "version"]):
+                if self._check_command(
+                    ["docker", "compose", "--help"]
+                ) and self._check_command(["docker", "compose", "version"]):
                     return RuntimeInfo(
                         RuntimeType.PODMAN,
                         ["docker", "compose"],
@@ -67,8 +70,9 @@ class PlatformDetector:
                     )
 
             # Check for native podman compose
-            if self._check_command(["podman", "compose", "--help"]) and \
-               self._check_command(["podman", "compose", "version"]):
+            if self._check_command(
+                ["podman", "compose", "--help"]
+            ) and self._check_command(["podman", "compose", "version"]):
                 return RuntimeInfo(
                     RuntimeType.PODMAN,
                     ["podman", "compose"],
@@ -78,8 +82,9 @@ class PlatformDetector:
 
         # Check for actual docker - try docker compose (new) first, then docker-compose (old)
         # Check both --help and version to ensure compose subcommand actually works
-        if self._check_command(["docker", "compose", "--help"]) and \
-           self._check_command(["docker", "compose", "version"]):
+        if self._check_command(["docker", "compose", "--help"]) and self._check_command(
+            ["docker", "compose", "version"]
+        ):
             version = self._get_docker_version()
             return RuntimeInfo(
                 RuntimeType.DOCKER, ["docker", "compose"], ["docker"], version
@@ -98,7 +103,7 @@ class PlatformDetector:
                 [],
                 ["docker"],
                 docker_version,
-                has_runtime_without_compose=True
+                has_runtime_without_compose=True,
             )
 
         podman_version = self._get_podman_version()
@@ -108,7 +113,7 @@ class PlatformDetector:
                 [],
                 ["podman"],
                 podman_version,
-                has_runtime_without_compose=True
+                has_runtime_without_compose=True,
             )
 
         return RuntimeInfo(RuntimeType.NONE, [], [])
@@ -146,7 +151,9 @@ class PlatformDetector:
                 return False
             # Check both stdout and stderr for error indicators
             combined = (result.stdout + result.stderr).lower()
-            if "unknown" in combined and ("command" in combined or "flag" in combined or "shorthand" in combined):
+            if "unknown" in combined and (
+                "command" in combined or "flag" in combined or "shorthand" in combined
+            ):
                 return False
             return True
         except (subprocess.TimeoutExpired, FileNotFoundError):

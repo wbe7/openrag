@@ -1,5 +1,9 @@
 import httpx
-from config.settings import OPENAI_EMBEDDING_DIMENSIONS, VECTOR_DIM, WATSONX_EMBEDDING_DIMENSIONS
+from config.settings import (
+    OPENAI_EMBEDDING_DIMENSIONS,
+    VECTOR_DIM,
+    WATSONX_EMBEDDING_DIMENSIONS,
+)
 from utils.container_utils import transform_localhost_url
 from utils.logging_config import get_logger
 
@@ -100,9 +104,9 @@ async def _probe_ollama_embedding_dimension(endpoint: str, model_name: str) -> i
                 error=str(legacy_error),
             )
             errors.append(str(legacy_error))
-    
+
     # remove the first instance of this error to show either it or the actual error from any of the two methods
-    errors.remove("All connection attempts failed") 
+    errors.remove("All connection attempts failed")
 
     raise ValueError(
         f"Failed to determine embedding dimensions for Ollama model '{model_name}'. "
@@ -111,7 +115,9 @@ async def _probe_ollama_embedding_dimension(endpoint: str, model_name: str) -> i
     )
 
 
-async def get_embedding_dimensions(model_name: str, provider: str = None, endpoint: str = None) -> int:
+async def get_embedding_dimensions(
+    model_name: str, provider: str = None, endpoint: str = None
+) -> int:
     """Get the embedding dimensions for a given model name."""
 
     if provider and provider.lower() == "ollama":
@@ -138,17 +144,15 @@ async def get_embedding_dimensions(model_name: str, provider: str = None, endpoi
 
 
 async def create_dynamic_index_body(
-    embedding_model: str,
-    provider: str = None,
-    endpoint: str = None
+    embedding_model: str, provider: str = None, endpoint: str = None
 ) -> dict:
     """Create a dynamic index body configuration based on the embedding model.
-    
+
     Args:
         embedding_model: Name of the embedding model
         provider: Provider name (e.g., "ollama", "openai", "watsonx")
         endpoint: Endpoint URL for the provider (used for Ollama probing)
-        
+
     Returns:
         OpenSearch index body configuration
     """

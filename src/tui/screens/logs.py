@@ -4,8 +4,7 @@ import asyncio
 from textual.app import ComposeResult
 from textual.containers import Container, Vertical, Horizontal
 from textual.screen import Screen
-from textual.widgets import Header, Footer, Static, Button, Select, TextArea
-from textual.timer import Timer
+from textual.widgets import Footer, Static, Button, TextArea
 from rich.text import Text
 
 from ..managers.container_manager import ContainerManager
@@ -111,7 +110,7 @@ class LogsScreen(Screen):
                 "dashboards",
             ]:
                 select.value = self.current_service
-        except Exception as e:
+        except Exception:
             # If setting the service fails, just use the default
             pass
 
@@ -147,7 +146,7 @@ class LogsScreen(Screen):
             else:
                 self.logs_area.text = f"Failed to load logs: {logs}"
             return
-            
+
         # Regular container services
         if not self.container_manager.is_available():
             self.logs_area.text = "No container runtime available"
@@ -181,17 +180,19 @@ class LogsScreen(Screen):
                 async for log_lines in self.docling_manager.follow_logs():
                     if not self.following:
                         break
-                    
+
                     # Update logs area with new content
                     current_text = self.logs_area.text
-                    new_text = current_text + "\n" + log_lines if current_text else log_lines
-                    
+                    new_text = (
+                        current_text + "\n" + log_lines if current_text else log_lines
+                    )
+
                     # Keep only last 1000 lines to prevent memory issues
                     lines = new_text.split("\n")
                     if len(lines) > 1000:
                         lines = lines[-1000:]
                         new_text = "\n".join(lines)
-                    
+
                     self.logs_area.text = new_text
                     # Scroll to bottom if auto scroll is enabled
                     if self.auto_scroll:
@@ -199,12 +200,14 @@ class LogsScreen(Screen):
             except asyncio.CancelledError:
                 pass
             except Exception as e:
-                if self.following:  # Only show error if we're still supposed to be following
+                if (
+                    self.following
+                ):  # Only show error if we're still supposed to be following
                     self.notify(f"Error following docling logs: {e}", severity="error")
             finally:
                 self.following = False
             return
-            
+
         # Regular container services
         if not self.container_manager.is_available():
             return

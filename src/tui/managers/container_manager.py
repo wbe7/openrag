@@ -2,13 +2,13 @@
 
 import asyncio
 import json
-import subprocess
 import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, AsyncIterator
 from utils.logging_config import get_logger
+
 try:
     from importlib.resources import files
 except ImportError:
@@ -56,7 +56,9 @@ class ContainerManager:
     def __init__(self, compose_file: Optional[Path] = None):
         self.platform_detector = PlatformDetector()
         self.runtime_info = self.platform_detector.detect_runtime()
-        self.compose_file = compose_file or self._find_compose_file("docker-compose.yml")
+        self.compose_file = compose_file or self._find_compose_file(
+            "docker-compose.yml"
+        )
         self.gpu_compose_file = self._find_compose_file("docker-compose.gpu.yml")
         self.services_cache: Dict[str, ServiceInfo] = {}
         self.last_status_update = 0
@@ -99,20 +101,20 @@ class ContainerManager:
             self._compose_search_log += " ✗ NOT FOUND"
 
         # Then check package resources
-        self._compose_search_log += f"\n  2. Package resources: "
+        self._compose_search_log += "\n  2. Package resources: "
         try:
             pkg_files = files("tui._assets")
             self._compose_search_log += f"{pkg_files}"
             compose_resource = pkg_files / filename
 
             if compose_resource.is_file():
-                self._compose_search_log += f" ✓ FOUND, copying to current directory"
+                self._compose_search_log += " ✓ FOUND, copying to current directory"
                 # Copy to cwd for compose command to work
                 content = compose_resource.read_text()
                 cwd_path.write_text(content)
                 return cwd_path
             else:
-                self._compose_search_log += f" ✗ NOT FOUND"
+                self._compose_search_log += " ✗ NOT FOUND"
         except Exception as e:
             self._compose_search_log += f" ✗ SKIPPED ({e})"
             # Don't log this as an error since it's expected when running from source
@@ -123,8 +125,10 @@ class ContainerManager:
 
     def is_available(self) -> bool:
         """Check if container runtime with compose is available."""
-        return (self.runtime_info.runtime_type != RuntimeType.NONE and
-                len(self.runtime_info.compose_command) > 0)
+        return (
+            self.runtime_info.runtime_type != RuntimeType.NONE
+            and len(self.runtime_info.compose_command) > 0
+        )
 
     def get_runtime_info(self) -> RuntimeInfo:
         """Get container runtime information."""
@@ -138,45 +142,50 @@ class ContainerManager:
 
     def _extract_ports_from_compose(self) -> Dict[str, List[int]]:
         """Extract port mappings from compose files.
-        
+
         Returns:
             Dict mapping service name to list of host ports
         """
         service_ports: Dict[str, List[int]] = {}
-        
+
         compose_files = [self.compose_file]
-        if hasattr(self, 'cpu_compose_file') and self.cpu_compose_file and self.cpu_compose_file.exists():
+        if (
+            hasattr(self, "cpu_compose_file")
+            and self.cpu_compose_file
+            and self.cpu_compose_file.exists()
+        ):
             compose_files.append(self.cpu_compose_file)
-        
+
         for compose_file in compose_files:
             if not compose_file.exists():
                 continue
-                
+
             try:
                 import re
+
                 content = compose_file.read_text()
                 current_service = None
                 in_ports_section = False
-                
+
                 for line in content.splitlines():
                     # Detect service names
-                    service_match = re.match(r'^  (\w[\w-]*):$', line)
+                    service_match = re.match(r"^  (\w[\w-]*):$", line)
                     if service_match:
                         current_service = service_match.group(1)
                         in_ports_section = False
                         if current_service not in service_ports:
                             service_ports[current_service] = []
                         continue
-                    
+
                     # Detect ports section
-                    if current_service and re.match(r'^    ports:$', line):
+                    if current_service and re.match(r"^    ports:$", line):
                         in_ports_section = True
                         continue
-                    
+
                     # Exit ports section on new top-level key
-                    if in_ports_section and re.match(r'^    \w+:', line):
+                    if in_ports_section and re.match(r"^    \w+:", line):
                         in_ports_section = False
-                    
+
                     # Extract port mappings
                     if in_ports_section and current_service:
                         # Match patterns like: - "3000:3000", - "9200:9200", - 7860:7860
@@ -185,45 +194,43 @@ class ContainerManager:
                             host_port = int(port_match.group(1))
                             if host_port not in service_ports[current_service]:
                                 service_ports[current_service].append(host_port)
-                                
+
             except Exception as e:
                 logger.debug(f"Error parsing {compose_file} for ports: {e}")
                 continue
-        
+
         return service_ports
 
     async def check_ports_available(self) -> tuple[bool, List[tuple[str, int, str]]]:
         """Check if required ports are available.
-        
+
         Returns:
             Tuple of (all_available, conflicts) where conflicts is a list of
             (service_name, port, error_message) tuples
         """
         import socket
-        
+
         service_ports = self._extract_ports_from_compose()
         conflicts: List[tuple[str, int, str]] = []
-        
+
         for service_name, ports in service_ports.items():
             for port in ports:
                 try:
                     # Try to bind to the port to check if it's available
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     sock.settimeout(0.5)
-                    result = sock.connect_ex(('127.0.0.1', port))
+                    result = sock.connect_ex(("127.0.0.1", port))
                     sock.close()
-                    
+
                     if result == 0:
                         # Port is in use
-                        conflicts.append((
-                            service_name,
-                            port,
-                            f"Port {port} is already in use"
-                        ))
+                        conflicts.append(
+                            (service_name, port, f"Port {port} is already in use")
+                        )
                 except Exception as e:
                     logger.debug(f"Error checking port {port}: {e}")
                     continue
-        
+
         return (len(conflicts) == 0, conflicts)
 
     async def _run_compose_command(
@@ -237,7 +244,7 @@ class ContainerManager:
             use_gpu = self.use_gpu_compose
         else:
             use_gpu = not cpu_mode
-        
+
         # Build compose command with override pattern
         cmd = self.runtime_info.compose_command + ["-f", str(self.compose_file)]
         if use_gpu and self.gpu_compose_file.exists():
@@ -279,7 +286,7 @@ class ContainerManager:
             use_gpu = self.use_gpu_compose
         else:
             use_gpu = not cpu_mode
-        
+
         # Build compose command with override pattern
         cmd = self.runtime_info.compose_command + ["-f", str(self.compose_file)]
         if use_gpu and self.gpu_compose_file.exists():
@@ -311,12 +318,12 @@ class ContainerManager:
 
                         if cr_pos != -1 and (nl_pos == -1 or cr_pos < nl_pos):
                             line = buffer[:cr_pos]
-                            buffer = buffer[cr_pos + 1:]
+                            buffer = buffer[cr_pos + 1 :]
                             if line.strip():
                                 yield (line.strip(), True)
                         elif nl_pos != -1:
                             line = buffer[:nl_pos]
-                            buffer = buffer[nl_pos + 1:]
+                            buffer = buffer[nl_pos + 1 :]
                             if line.strip():
                                 yield (line.strip(), False)
                         else:
@@ -348,7 +355,7 @@ class ContainerManager:
             use_gpu = self.use_gpu_compose
         else:
             use_gpu = not cpu_mode
-        
+
         # Build compose command with override pattern
         cmd = self.runtime_info.compose_command + ["-f", str(self.compose_file)]
         if use_gpu and self.gpu_compose_file.exists():
@@ -391,16 +398,22 @@ class ContainerManager:
                     if cr_pos != -1 and (nl_pos == -1 or cr_pos < nl_pos):
                         # Carriage return found - extract and yield as replaceable line
                         line = buffer[:cr_pos]
-                        buffer = buffer[cr_pos + 1:]
+                        buffer = buffer[cr_pos + 1 :]
                         if line.strip():
-                            yield (line.strip(), True)  # replace_last=True for progress updates
+                            yield (
+                                line.strip(),
+                                True,
+                            )  # replace_last=True for progress updates
                     elif nl_pos != -1:
                         # Newline found - extract and yield as new line
                         line = buffer[:nl_pos]
-                        buffer = buffer[nl_pos + 1:]
+                        buffer = buffer[nl_pos + 1 :]
                         if line.strip():
                             lowered = line.lower()
-                            yield (line.strip(), False)  # replace_last=False for new lines
+                            yield (
+                                line.strip(),
+                                False,
+                            )  # replace_last=False for new lines
                             if "error" in lowered or "failed" in lowered:
                                 success_flag["value"] = False
                     else:
@@ -483,21 +496,28 @@ class ContainerManager:
         """
         Get the version tag from existing containers.
         Checks the backend container image tag to determine version.
-        
+
         Returns:
             Version string if found, None if no containers exist or version can't be determined
         """
         try:
             # Check for backend container first (most reliable)
             success, stdout, _ = await self._run_runtime_command(
-                ["ps", "--all", "--filter", "name=openrag-backend", "--format", "{{.Image}}"]
+                [
+                    "ps",
+                    "--all",
+                    "--filter",
+                    "name=openrag-backend",
+                    "--format",
+                    "{{.Image}}",
+                ]
             )
-            
+
             if success and stdout.strip():
                 image_tag = stdout.strip().splitlines()[0].strip()
                 if not image_tag or image_tag == "N/A":
                     return None
-                
+
                 # Extract version from image tag (e.g., langflowai/openrag-backend:0.1.47)
                 if ":" in image_tag:
                     version = image_tag.split(":")[-1]
@@ -506,6 +526,7 @@ class ContainerManager:
                         # Try to get version from .env file
                         try:
                             from pathlib import Path
+
                             env_file = Path(".env")
                             if env_file.exists():
                                 env_content = env_file.read_text()
@@ -524,12 +545,12 @@ class ContainerManager:
                     # Return version if it looks like a version number (not "latest")
                     if version and version != "latest":
                         return version
-            
+
             # Fallback: check all containers for version tags
             success, stdout, _ = await self._run_runtime_command(
                 ["ps", "--all", "--format", "{{.Image}}"]
             )
-            
+
             if success and stdout.strip():
                 images = stdout.strip().splitlines()
                 for image in images:
@@ -540,34 +561,35 @@ class ContainerManager:
                             return version
         except Exception as e:
             logger.debug(f"Error getting container version: {e}")
-        
+
         return None
 
     async def check_version_mismatch(self) -> tuple[bool, Optional[str], str]:
         """
         Check if existing containers have a different version than the current TUI.
-        
+
         Returns:
             Tuple of (has_mismatch, container_version, tui_version)
         """
         try:
             from ..utils.version_check import get_current_version
-            
+
             tui_version = get_current_version()
             if tui_version == "unknown":
                 return False, None, tui_version
-            
+
             container_version = await self.get_container_version()
-            
+
             if container_version is None:
                 # No containers exist, no mismatch
                 return False, None, tui_version
-            
+
             # Compare versions
             from ..utils.version_check import compare_versions
+
             comparison = compare_versions(container_version, tui_version)
             has_mismatch = comparison != 0
-            
+
             return has_mismatch, container_version, tui_version
         except Exception as e:
             logger.debug(f"Error checking version mismatch: {e}")
@@ -711,7 +733,9 @@ class ContainerManager:
                 digests[image] = stdout.strip().splitlines()[0]
         return digests
 
-    def _extract_images_from_compose_config(self, text: str, tried_json: bool) -> set[str]:
+    def _extract_images_from_compose_config(
+        self, text: str, tried_json: bool
+    ) -> set[str]:
         """
         Try JSON first (if we asked for it or it looks like JSON), then YAML if available.
         Returns a set of image names.
@@ -719,7 +743,9 @@ class ContainerManager:
         images: set[str] = set()
 
         # Try JSON parse
-        if tried_json or (text.lstrip().startswith("{") and text.rstrip().endswith("}")):
+        if tried_json or (
+            text.lstrip().startswith("{") and text.rstrip().endswith("}")
+        ):
             try:
                 cfg = json.loads(text)
                 services = cfg.get("services", {})
@@ -735,6 +761,7 @@ class ContainerManager:
         # Try YAML (if available) - import here to avoid hard dependency
         try:
             import yaml
+
             cfg = yaml.safe_load(text) or {}
             services = cfg.get("services", {})
             if isinstance(services, dict):
@@ -773,7 +800,9 @@ class ContainerManager:
                 stdout_text = stdout.decode() if stdout else ""
 
                 if process.returncode == 0 and stdout_text.strip():
-                    from_cfg = self._extract_images_from_compose_config(stdout_text, tried_json=True)
+                    from_cfg = self._extract_images_from_compose_config(
+                        stdout_text, tried_json=True
+                    )
                     if from_cfg:
                         images.update(from_cfg)
                         continue
@@ -794,7 +823,9 @@ class ContainerManager:
                 stdout_text = stdout.decode() if stdout else ""
 
                 if process.returncode == 0 and stdout_text.strip():
-                    from_cfg = self._extract_images_from_compose_config(stdout_text, tried_json=False)
+                    from_cfg = self._extract_images_from_compose_config(
+                        stdout_text, tried_json=False
+                    )
                     if from_cfg:
                         images.update(from_cfg)
                         continue
@@ -808,7 +839,7 @@ class ContainerManager:
             compose_files = [self.compose_file]
             if self.gpu_compose_file.exists():
                 compose_files.append(self.gpu_compose_file)
-            
+
             for compose in compose_files:
                 try:
                     if not compose.exists():
@@ -861,6 +892,7 @@ class ContainerManager:
         # Ensure OPENRAG_VERSION is set in .env file
         try:
             from ..managers.env_manager import EnvManager
+
             env_manager = EnvManager()
             env_manager.ensure_openrag_version()
         except Exception:
@@ -873,8 +905,8 @@ class ContainerManager:
             use_gpu = not cpu_mode
 
         # Show the search process for debugging
-        if hasattr(self, '_compose_search_log'):
-            for line in self._compose_search_log.split('\n'):
+        if hasattr(self, "_compose_search_log"):
+            for line in self._compose_search_log.split("\n"):
                 if line.strip():
                     yield False, line, False
 
@@ -886,7 +918,11 @@ class ContainerManager:
             compose_files_str += f" + {self.gpu_compose_file.absolute()}"
         yield False, f"Compose files: {compose_files_str}", False
         if not self.compose_file.exists():
-            yield False, f"ERROR: Base compose file not found at {self.compose_file.absolute()}", False
+            yield (
+                False,
+                f"ERROR: Base compose file not found at {self.compose_file.absolute()}",
+                False,
+            )
             return
 
         # Check for port conflicts before starting
@@ -918,37 +954,50 @@ class ContainerManager:
             ):
                 yield False, message, replace_last
             if not pull_success["value"]:
-                yield False, "Some images failed to pull; attempting to start services anyway...", False
+                yield (
+                    False,
+                    "Some images failed to pull; attempting to start services anyway...",
+                    False,
+                )
 
         yield False, "Creating and starting containers...", False
         up_success = {"value": True}
         error_messages = []
-        
-        async for message, replace_last in self._stream_compose_command(["up", "-d"], up_success, cpu_mode):
+
+        async for message, replace_last in self._stream_compose_command(
+            ["up", "-d"], up_success, cpu_mode
+        ):
             # Detect error patterns in the output
-            import re
+
             lower_msg = message.lower()
-            
+
             # Check for common error patterns
-            if any(pattern in lower_msg for pattern in [
-                "port.*already.*allocated",
-                "address already in use",
-                "bind.*address already in use",
-                "port is already allocated"
-            ]):
+            if any(
+                pattern in lower_msg
+                for pattern in [
+                    "port.*already.*allocated",
+                    "address already in use",
+                    "bind.*address already in use",
+                    "port is already allocated",
+                ]
+            ):
                 error_messages.append("Port conflict detected")
                 up_success["value"] = False
             elif "error" in lower_msg or "failed" in lower_msg:
                 # Generic error detection
                 if message not in error_messages:
                     error_messages.append(message)
-            
+
             yield False, message, replace_last
 
         if up_success["value"]:
             yield True, "Services started successfully", False
         else:
-            yield False, "Failed to start services. See output above for details.", False
+            yield (
+                False,
+                "Failed to start services. See output above for details.",
+                False,
+            )
             if error_messages:
                 yield False, "\nDetected errors:", False
                 for err in error_messages[:5]:  # Limit to first 5 errors
@@ -986,14 +1035,20 @@ class ContainerManager:
 
         # Pull latest images with streaming output
         pull_success = True
-        async for message, replace_last in self._run_compose_command_streaming(["pull"], cpu_mode):
+        async for message, replace_last in self._run_compose_command_streaming(
+            ["pull"], cpu_mode
+        ):
             yield False, message, replace_last
             # Check for error patterns in the output
             if "error" in message.lower() or "failed" in message.lower():
                 pull_success = False
 
         if not pull_success:
-            yield False, "Failed to pull some images, but continuing with restart...", False
+            yield (
+                False,
+                "Failed to pull some images, but continuing with restart...",
+                False,
+            )
 
         yield False, "Images updated, restarting services...", False
 
@@ -1022,24 +1077,26 @@ class ContainerManager:
 
         # Get the absolute path to opensearch-data directory
         opensearch_data_path = Path("opensearch-data").absolute()
-        
+
         if not opensearch_data_path.exists():
             yield True, "OpenSearch data directory does not exist, skipping"
             return
-        
+
         # Use the opensearch container with proper volume mount flags
         # :Z flag ensures proper SELinux labeling and UID mapping for rootless containers
         cmd = [
             "run",
             "--rm",
-            "-v", f"{opensearch_data_path}:/usr/share/opensearch/data:Z",
+            "-v",
+            f"{opensearch_data_path}:/usr/share/opensearch/data:Z",
             "langflowai/openrag-opensearch:latest",
-            "bash", "-c",
-            "rm -rf /usr/share/opensearch/data/* /usr/share/opensearch/data/.[!.]* && echo 'Cleared successfully'"
+            "bash",
+            "-c",
+            "rm -rf /usr/share/opensearch/data/* /usr/share/opensearch/data/.[!.]* && echo 'Cleared successfully'",
         ]
-        
+
         success, stdout, stderr = await self._run_runtime_command(cmd)
-        
+
         if success and "Cleared successfully" in stdout:
             yield True, "OpenSearch data cleared successfully"
         else:
@@ -1048,17 +1105,22 @@ class ContainerManager:
             cmd = [
                 "run",
                 "--rm",
-                "-v", f"{opensearch_data_path}:/usr/share/opensearch/data:Z",
+                "-v",
+                f"{opensearch_data_path}:/usr/share/opensearch/data:Z",
                 "opensearchproject/opensearch:3.0.0",
-                "bash", "-c",
-                "rm -rf /usr/share/opensearch/data/* /usr/share/opensearch/data/.[!.]* && echo 'Cleared successfully'"
+                "bash",
+                "-c",
+                "rm -rf /usr/share/opensearch/data/* /usr/share/opensearch/data/.[!.]* && echo 'Cleared successfully'",
             ]
             success, stdout, stderr = await self._run_runtime_command(cmd)
-            
+
             if success and "Cleared successfully" in stdout:
                 yield True, "OpenSearch data cleared successfully"
             else:
-                yield False, f"Failed to clear OpenSearch data: {stderr if stderr else 'Unknown error'}"
+                yield (
+                    False,
+                    f"Failed to clear OpenSearch data: {stderr if stderr else 'Unknown error'}",
+                )
 
     async def reset_services(self) -> AsyncIterator[tuple[bool, str]]:
         """Reset all services (stop, remove containers/volumes, clear data) and yield progress updates."""

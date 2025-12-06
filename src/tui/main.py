@@ -3,8 +3,9 @@
 import sys
 from pathlib import Path
 from typing import Iterable, Optional
-from textual.app import App, ComposeResult
+from textual.app import App
 from utils.logging_config import get_logger
+
 try:
     from importlib.resources import files
 except ImportError:
@@ -13,10 +14,6 @@ except ImportError:
 logger = get_logger(__name__)
 
 from .screens.welcome import WelcomeScreen
-from .screens.config import ConfigScreen
-from .screens.monitor import MonitorScreen
-from .screens.logs import LogsScreen
-from .screens.diagnostics import DiagnosticsScreen
 from .managers.env_manager import EnvManager
 from .managers.container_manager import ContainerManager
 from .managers.docling_manager import DoclingManager
@@ -365,7 +362,7 @@ class OpenRAGTUI(App):
         self.container_manager = ContainerManager()
         self.env_manager = EnvManager()
         self.docling_manager = DoclingManager()  # Initialize singleton instance
-    
+
     def notify(
         self,
         message: str,
@@ -379,7 +376,9 @@ class OpenRAGTUI(App):
         # If timeout is None (default), make it 20 seconds
         if timeout is None:
             timeout = 20.0
-        super().notify(message, title=title, severity=severity, timeout=timeout, markup=markup)
+        super().notify(
+            message, title=title, severity=severity, timeout=timeout, markup=markup
+        )
 
     def on_mount(self) -> None:
         """Initialize the application."""
@@ -421,7 +420,13 @@ class OpenRAGTUI(App):
         return True, "Runtime requirements satisfied"
 
 
-def _copy_assets(resource_tree, destination: Path, allowed_suffixes: Optional[Iterable[str]] = None, *, force: bool = False) -> None:
+def _copy_assets(
+    resource_tree,
+    destination: Path,
+    allowed_suffixes: Optional[Iterable[str]] = None,
+    *,
+    force: bool = False,
+) -> None:
     """Copy packaged assets into destination and optionally overwrite existing files.
 
     When ``force`` is True, files are refreshed if the packaged bytes differ.
@@ -435,7 +440,9 @@ def _copy_assets(resource_tree, destination: Path, allowed_suffixes: Optional[It
             _copy_assets(resource, target_path, allowed_suffixes, force=force)
             continue
 
-        if allowed_suffixes and not any(resource.name.endswith(suffix) for suffix in allowed_suffixes):
+        if allowed_suffixes and not any(
+            resource.name.endswith(suffix) for suffix in allowed_suffixes
+        ):
             continue
         resource_bytes = resource.read_bytes()
 
@@ -447,7 +454,9 @@ def _copy_assets(resource_tree, destination: Path, allowed_suffixes: Optional[It
                 if target_path.read_bytes() == resource_bytes:
                     continue
             except Exception as read_error:
-                logger.debug(f"Failed to read existing asset {target_path}: {read_error}")
+                logger.debug(
+                    f"Failed to read existing asset {target_path}: {read_error}"
+                )
 
         target_path.write_bytes(resource_bytes)
         logger.info(f"Copied bundled asset: {target_path}")
@@ -459,7 +468,9 @@ def copy_sample_documents(*, force: bool = False) -> None:
 
     try:
         assets_files = files("tui._assets.openrag-documents")
-        _copy_assets(assets_files, documents_dir, allowed_suffixes=(".pdf",), force=force)
+        _copy_assets(
+            assets_files, documents_dir, allowed_suffixes=(".pdf",), force=force
+        )
     except Exception as e:
         logger.debug(f"Could not copy sample documents: {e}")
         # This is not a critical error - the app can work without sample documents
@@ -502,7 +513,9 @@ def copy_compose_files(*, force: bool = False) -> None:
                     if destination.read_bytes() == resource_bytes:
                         continue
                 except Exception as read_error:
-                    logger.debug(f"Failed to read existing compose file {destination}: {read_error}")
+                    logger.debug(
+                        f"Failed to read existing compose file {destination}: {read_error}"
+                    )
 
             destination.write_bytes(resource_bytes)
             logger.info(f"Copied docker-compose template: {filename}")
@@ -514,6 +527,7 @@ def run_tui():
     """Run the OpenRAG TUI application."""
     # Check for native Windows before launching TUI
     from .utils.platform import PlatformDetector
+
     platform_detector = PlatformDetector()
 
     if platform_detector.is_native_windows():
@@ -539,7 +553,7 @@ def run_tui():
         logger.error("Error running OpenRAG TUI", error=str(e))
     finally:
         # Ensure cleanup happens even on exceptions
-        if app and hasattr(app, 'docling_manager'):
+        if app and hasattr(app, "docling_manager"):
             app.docling_manager.cleanup()
         sys.exit(0)
 

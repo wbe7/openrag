@@ -12,10 +12,8 @@ logger = get_logger(__name__)
 
 import asyncio
 import atexit
-import mimetypes
 import multiprocessing
 import os
-import shutil
 import subprocess
 from functools import partial
 
@@ -101,7 +99,9 @@ async def wait_for_opensearch():
         try:
             await clients.opensearch.info()
             logger.info("OpenSearch is ready")
-            await TelemetryClient.send_event(Category.OPENSEARCH_SETUP, MessageId.ORB_OS_CONN_ESTABLISHED)
+            await TelemetryClient.send_event(
+                Category.OPENSEARCH_SETUP, MessageId.ORB_OS_CONN_ESTABLISHED
+            )
             return
         except Exception as e:
             logger.warning(
@@ -113,7 +113,9 @@ async def wait_for_opensearch():
             if attempt < max_retries - 1:
                 await asyncio.sleep(retry_delay)
             else:
-                await TelemetryClient.send_event(Category.OPENSEARCH_SETUP, MessageId.ORB_OS_TIMEOUT)
+                await TelemetryClient.send_event(
+                    Category.OPENSEARCH_SETUP, MessageId.ORB_OS_TIMEOUT
+                )
                 raise Exception("OpenSearch failed to become ready")
 
 
@@ -157,7 +159,9 @@ async def _ensure_opensearch_index():
                 "dimension"
             ],
         )
-        await TelemetryClient.send_event(Category.OPENSEARCH_INDEX, MessageId.ORB_OS_INDEX_CREATED)
+        await TelemetryClient.send_event(
+            Category.OPENSEARCH_INDEX, MessageId.ORB_OS_INDEX_CREATED
+        )
 
     except Exception as e:
         logger.error(
@@ -165,7 +169,9 @@ async def _ensure_opensearch_index():
             error=str(e),
             index_name=INDEX_NAME,
         )
-        await TelemetryClient.send_event(Category.OPENSEARCH_INDEX, MessageId.ORB_OS_INDEX_CREATE_FAIL)
+        await TelemetryClient.send_event(
+            Category.OPENSEARCH_INDEX, MessageId.ORB_OS_INDEX_CREATE_FAIL
+        )
         # Don't raise the exception to avoid breaking the initialization
         # The service can still function, document operations might fail later
 
@@ -185,7 +191,7 @@ async def init_index():
     dynamic_index_body = await create_dynamic_index_body(
         embedding_model,
         provider=embedding_provider,
-        endpoint=getattr(embedding_provider_config, "endpoint", None)
+        endpoint=getattr(embedding_provider_config, "endpoint", None),
     )
 
     # Create documents index
@@ -198,14 +204,18 @@ async def init_index():
             index_name=INDEX_NAME,
             embedding_model=embedding_model,
         )
-        await TelemetryClient.send_event(Category.OPENSEARCH_INDEX, MessageId.ORB_OS_INDEX_CREATED)
+        await TelemetryClient.send_event(
+            Category.OPENSEARCH_INDEX, MessageId.ORB_OS_INDEX_CREATED
+        )
     else:
         logger.info(
             "Index already exists, skipping creation",
             index_name=INDEX_NAME,
             embedding_model=embedding_model,
         )
-        await TelemetryClient.send_event(Category.OPENSEARCH_INDEX, MessageId.ORB_OS_INDEX_EXISTS)
+        await TelemetryClient.send_event(
+            Category.OPENSEARCH_INDEX, MessageId.ORB_OS_INDEX_EXISTS
+        )
 
     # Create knowledge filters index
     knowledge_filter_index_name = "knowledge_filters"
@@ -233,7 +243,9 @@ async def init_index():
         logger.info(
             "Created knowledge filters index", index_name=knowledge_filter_index_name
         )
-        await TelemetryClient.send_event(Category.OPENSEARCH_INDEX, MessageId.ORB_OS_KF_INDEX_CREATED)
+        await TelemetryClient.send_event(
+            Category.OPENSEARCH_INDEX, MessageId.ORB_OS_KF_INDEX_CREATED
+        )
     else:
         logger.info(
             "Knowledge filters index already exists, skipping creation",
@@ -287,7 +299,9 @@ def generate_jwt_keys():
             logger.info("Generated RSA keys for JWT signing")
         except subprocess.CalledProcessError as e:
             logger.error("Failed to generate RSA keys", error=str(e))
-            TelemetryClient.send_event_sync(Category.SERVICE_INITIALIZATION, MessageId.ORB_SVC_JWT_KEY_FAIL)
+            TelemetryClient.send_event_sync(
+                Category.SERVICE_INITIALIZATION, MessageId.ORB_SVC_JWT_KEY_FAIL
+            )
             raise
     else:
         # Ensure correct permissions on existing keys
@@ -306,7 +320,9 @@ async def init_index_when_ready():
         logger.info("OpenSearch index initialization completed successfully")
     except Exception as e:
         logger.error("OpenSearch index initialization failed", error=str(e))
-        await TelemetryClient.send_event(Category.OPENSEARCH_INDEX, MessageId.ORB_OS_INDEX_INIT_FAIL)
+        await TelemetryClient.send_event(
+            Category.OPENSEARCH_INDEX, MessageId.ORB_OS_INDEX_INIT_FAIL
+        )
         logger.warning(
             "OIDC endpoints will still work, but document operations may fail until OpenSearch is ready"
         )
@@ -334,7 +350,9 @@ async def ingest_default_documents_when_ready(services):
             "Ingesting default documents when ready",
             disable_langflow_ingest=DISABLE_INGEST_WITH_LANGFLOW,
         )
-        await TelemetryClient.send_event(Category.DOCUMENT_INGESTION, MessageId.ORB_DOC_DEFAULT_START)
+        await TelemetryClient.send_event(
+            Category.DOCUMENT_INGESTION, MessageId.ORB_DOC_DEFAULT_START
+        )
         base_dir = _get_documents_dir()
         if not os.path.isdir(base_dir):
             logger.info(
@@ -361,12 +379,16 @@ async def ingest_default_documents_when_ready(services):
             await _ingest_default_documents_openrag(services, file_paths)
         else:
             await _ingest_default_documents_langflow(services, file_paths)
-        
-        await TelemetryClient.send_event(Category.DOCUMENT_INGESTION, MessageId.ORB_DOC_DEFAULT_COMPLETE)
+
+        await TelemetryClient.send_event(
+            Category.DOCUMENT_INGESTION, MessageId.ORB_DOC_DEFAULT_COMPLETE
+        )
 
     except Exception as e:
         logger.error("Default documents ingestion failed", error=str(e))
-        await TelemetryClient.send_event(Category.DOCUMENT_INGESTION, MessageId.ORB_DOC_DEFAULT_FAILED)
+        await TelemetryClient.send_event(
+            Category.DOCUMENT_INGESTION, MessageId.ORB_DOC_DEFAULT_FAILED
+        )
 
 
 async def _ingest_default_documents_langflow(services, file_paths):
@@ -466,57 +488,72 @@ async def _ingest_default_documents_openrag(services, file_paths):
 
 async def _update_mcp_servers_with_provider_credentials(services):
     """Update MCP servers with provider credentials at startup.
-    
+
     This is especially important for no-auth mode where users don't go through
     the OAuth login flow that would normally set these credentials.
     """
     try:
         auth_service = services.get("auth_service")
         session_manager = services.get("session_manager")
-        
+
         if not auth_service or not auth_service.langflow_mcp_service:
             logger.debug("MCP service not available, skipping credential update")
             return
-        
+
         config = get_openrag_config()
-        
+
         # Build global vars with provider credentials using utility function
         from utils.langflow_headers import build_mcp_global_vars_from_config
-        
+
         global_vars = build_mcp_global_vars_from_config(config)
-        
+
         # In no-auth mode, add the anonymous JWT token and user details
         if is_no_auth_mode() and session_manager:
             from session_manager import AnonymousUser
-            
+
             # Create/get anonymous JWT for no-auth mode
             anonymous_jwt = session_manager.get_effective_jwt_token(None, None)
             if anonymous_jwt:
                 global_vars["JWT"] = anonymous_jwt
-            
+
             # Add anonymous user details
             anonymous_user = AnonymousUser()
             global_vars["OWNER"] = anonymous_user.user_id  # "anonymous"
-            global_vars["OWNER_NAME"] = f'"{anonymous_user.name}"'  # "Anonymous User" (quoted for spaces)
+            global_vars["OWNER_NAME"] = (
+                f'"{anonymous_user.name}"'  # "Anonymous User" (quoted for spaces)
+            )
             global_vars["OWNER_EMAIL"] = anonymous_user.email  # "anonymous@localhost"
-            
-            logger.info("Added anonymous JWT and user details to MCP servers for no-auth mode")
-        
+
+            logger.info(
+                "Added anonymous JWT and user details to MCP servers for no-auth mode"
+            )
+
         if global_vars:
-            result = await auth_service.langflow_mcp_service.update_mcp_servers_with_global_vars(global_vars)
-            logger.info("Updated MCP servers with provider credentials at startup", **result)
+            result = await auth_service.langflow_mcp_service.update_mcp_servers_with_global_vars(
+                global_vars
+            )
+            logger.info(
+                "Updated MCP servers with provider credentials at startup", **result
+            )
         else:
-            logger.debug("No provider credentials configured, skipping MCP server update")
-            
+            logger.debug(
+                "No provider credentials configured, skipping MCP server update"
+            )
+
     except Exception as e:
-        logger.warning("Failed to update MCP servers with provider credentials at startup", error=str(e))
+        logger.warning(
+            "Failed to update MCP servers with provider credentials at startup",
+            error=str(e),
+        )
         # Don't fail startup if MCP update fails
 
 
 async def startup_tasks(services):
     """Startup tasks"""
     logger.info("Starting startup tasks")
-    await TelemetryClient.send_event(Category.APPLICATION_STARTUP, MessageId.ORB_APP_START_INIT)
+    await TelemetryClient.send_event(
+        Category.APPLICATION_STARTUP, MessageId.ORB_APP_START_INIT
+    )
     # Only initialize basic OpenSearch connection, not the index
     # Index will be created after onboarding when we know the embedding model
     await wait_for_opensearch()
@@ -526,7 +563,7 @@ async def startup_tasks(services):
 
     # Configure alerting security
     await configure_alerting_security()
-    
+
     # Update MCP servers with provider credentials (especially important for no-auth mode)
     await _update_mcp_servers_with_provider_credentials(services)
 
@@ -537,29 +574,42 @@ async def startup_tasks(services):
             logger.info("Checking if Langflow flows were reset")
             flows_service = services["flows_service"]
             reset_flows = await flows_service.check_flows_reset()
-            
+
             if reset_flows:
                 logger.info(
                     f"Detected reset flows: {', '.join(reset_flows)}. Reapplying all settings."
                 )
-                await TelemetryClient.send_event(Category.FLOW_OPERATIONS, MessageId.ORB_FLOW_RESET_DETECTED)
+                await TelemetryClient.send_event(
+                    Category.FLOW_OPERATIONS, MessageId.ORB_FLOW_RESET_DETECTED
+                )
                 from api.settings import reapply_all_settings
+
                 await reapply_all_settings(session_manager=services["session_manager"])
-                logger.info("Successfully reapplied settings after detecting flow resets")
-                await TelemetryClient.send_event(Category.FLOW_OPERATIONS, MessageId.ORB_FLOW_SETTINGS_REAPPLIED)
+                logger.info(
+                    "Successfully reapplied settings after detecting flow resets"
+                )
+                await TelemetryClient.send_event(
+                    Category.FLOW_OPERATIONS, MessageId.ORB_FLOW_SETTINGS_REAPPLIED
+                )
             else:
-                logger.info("No flows detected as reset, skipping settings reapplication")
+                logger.info(
+                    "No flows detected as reset, skipping settings reapplication"
+                )
         else:
             logger.debug("Configuration not yet edited, skipping flow reset check")
     except Exception as e:
         logger.error(f"Failed to check flows reset or reapply settings: {str(e)}")
-        await TelemetryClient.send_event(Category.FLOW_OPERATIONS, MessageId.ORB_FLOW_RESET_CHECK_FAIL)
+        await TelemetryClient.send_event(
+            Category.FLOW_OPERATIONS, MessageId.ORB_FLOW_RESET_CHECK_FAIL
+        )
         # Don't fail startup if this check fails
 
 
 async def initialize_services():
     """Initialize all services and their dependencies"""
-    await TelemetryClient.send_event(Category.SERVICE_INITIALIZATION, MessageId.ORB_SVC_INIT_START)
+    await TelemetryClient.send_event(
+        Category.SERVICE_INITIALIZATION, MessageId.ORB_SVC_INIT_START
+    )
     # Generate JWT keys if they don't exist
     generate_jwt_keys()
 
@@ -568,7 +618,9 @@ async def initialize_services():
         await clients.initialize()
     except Exception as e:
         logger.error("Failed to initialize clients", error=str(e))
-        await TelemetryClient.send_event(Category.SERVICE_INITIALIZATION, MessageId.ORB_SVC_OS_CLIENT_FAIL)
+        await TelemetryClient.send_event(
+            Category.SERVICE_INITIALIZATION, MessageId.ORB_SVC_OS_CLIENT_FAIL
+        )
         raise
 
     # Initialize session manager
@@ -632,11 +684,15 @@ async def initialize_services():
             logger.warning(
                 "Failed to load persisted connections on startup", error=str(e)
             )
-            await TelemetryClient.send_event(Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_LOAD_FAILED)
+            await TelemetryClient.send_event(
+                Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_LOAD_FAILED
+            )
     else:
         logger.info("[CONNECTORS] Skipping connection loading in no-auth mode")
-    
-    await TelemetryClient.send_event(Category.SERVICE_INITIALIZATION, MessageId.ORB_SVC_INIT_SUCCESS)
+
+    await TelemetryClient.send_event(
+        Category.SERVICE_INITIALIZATION, MessageId.ORB_SVC_INIT_SUCCESS
+    )
 
     langflow_file_service = LangflowFileService()
 
@@ -1174,7 +1230,7 @@ async def create_app():
                 partial(
                     settings.onboarding,
                     flows_service=services["flows_service"],
-                    session_manager=services["session_manager"]
+                    session_manager=services["session_manager"],
                 )
             ),
             methods=["POST"],
@@ -1262,7 +1318,9 @@ async def create_app():
     # Add startup event handler
     @app.on_event("startup")
     async def startup_event():
-        await TelemetryClient.send_event(Category.APPLICATION_STARTUP, MessageId.ORB_APP_STARTED)
+        await TelemetryClient.send_event(
+            Category.APPLICATION_STARTUP, MessageId.ORB_APP_STARTED
+        )
         # Start index initialization in background to avoid blocking OIDC endpoints
         t1 = asyncio.create_task(startup_tasks(services))
         app.state.background_tasks.add(t1)
@@ -1274,17 +1332,21 @@ async def create_app():
             while True:
                 try:
                     await asyncio.sleep(5 * 60)  # Wait 5 minutes
-                    
+
                     # Check if onboarding has been completed
                     config = get_openrag_config()
                     if not config.edited:
-                        logger.debug("Onboarding not completed yet, skipping periodic backup")
+                        logger.debug(
+                            "Onboarding not completed yet, skipping periodic backup"
+                        )
                         continue
-                    
+
                     flows_service = services.get("flows_service")
                     if flows_service:
                         logger.info("Running periodic flow backup")
-                        backup_results = await flows_service.backup_all_flows(only_if_changed=True)
+                        backup_results = await flows_service.backup_all_flows(
+                            only_if_changed=True
+                        )
                         if backup_results["backed_up"]:
                             logger.info(
                                 "Periodic backup completed",
@@ -1310,12 +1372,15 @@ async def create_app():
     # Add shutdown event handler
     @app.on_event("shutdown")
     async def shutdown_event():
-        await TelemetryClient.send_event(Category.APPLICATION_SHUTDOWN, MessageId.ORB_APP_SHUTDOWN)
+        await TelemetryClient.send_event(
+            Category.APPLICATION_SHUTDOWN, MessageId.ORB_APP_SHUTDOWN
+        )
         await cleanup_subscriptions_proper(services)
         # Cleanup async clients
         await clients.cleanup()
         # Cleanup telemetry client
         from utils.telemetry.client import cleanup_telemetry_client
+
         await cleanup_telemetry_client()
 
     return app

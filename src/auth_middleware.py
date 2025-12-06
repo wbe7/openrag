@@ -29,10 +29,9 @@ def require_auth(session_manager):
             # In no-auth mode, bypass authentication entirely
             if is_no_auth_mode():
                 # Create an anonymous user object so endpoints don't break
-                from session_manager import User
-                from datetime import datetime
 
                 from session_manager import AnonymousUser
+
                 request.state.user = AnonymousUser()
                 request.state.jwt_token = None  # No JWT in no-auth mode
                 return await handler(request)
@@ -63,10 +62,9 @@ def optional_auth(session_manager):
             # In no-auth mode, create anonymous user
             if is_no_auth_mode():
                 # Create an anonymous user object so endpoints don't break
-                from session_manager import User
-                from datetime import datetime
 
                 from session_manager import AnonymousUser
+
                 request.state.user = AnonymousUser()
                 request.state.jwt_token = None  # No JWT in no-auth mode
             else:

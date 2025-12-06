@@ -58,7 +58,7 @@ class EnvConfig:
     langflow_auto_login: str = "False"
     langflow_new_user_is_active: str = "False"
     langflow_enable_superuser_cli: str = "False"
-    
+
     # Ingestion settings
     disable_ingest_with_langflow: str = "False"
     nudges_flow_id: str = "ebc01d31-1976-46ce-a385-b0240327226c"
@@ -68,7 +68,7 @@ class EnvConfig:
 
     # OpenSearch data path
     opensearch_data_path: str = "./opensearch-data"
-    
+
     # Container version (linked to TUI version)
     openrag_version: str = ""
 
@@ -121,7 +121,7 @@ class EnvManager:
     def load_existing_env(self) -> bool:
         """Load existing .env file if it exists, or fall back to environment variables."""
         import os
-        
+
         # Map env vars to config attributes
         attr_map = {
             "OPENAI_API_KEY": "openai_api_key",
@@ -154,9 +154,9 @@ class EnvManager:
             "DISABLE_INGEST_WITH_LANGFLOW": "disable_ingest_with_langflow",
             "OPENRAG_VERSION": "openrag_version",
         }
-        
+
         loaded_from_file = False
-        
+
         # Try to load from .env file first
         if self.env_file.exists():
             try:
@@ -178,7 +178,7 @@ class EnvManager:
 
             except Exception as e:
                 logger.error("Error loading .env file", error=str(e))
-        
+
         # Fall back to environment variables if .env file doesn't exist or failed to load
         if not loaded_from_file:
             logger.info("No .env file found, loading from environment variables")
@@ -187,7 +187,7 @@ class EnvManager:
                 if value:
                     setattr(self.config, attr_name, value)
             return True
-        
+
         return loaded_from_file
 
     def setup_secure_defaults(self) -> None:
@@ -197,11 +197,12 @@ class EnvManager:
 
         if not self.config.langflow_secret_key:
             self.config.langflow_secret_key = self.generate_langflow_secret_key()
-        
+
         # Set OPENRAG_VERSION to TUI version if not already set
         if not self.config.openrag_version:
             try:
                 from ..utils.version_check import get_current_version
+
                 current_version = get_current_version()
                 if current_version != "unknown":
                     self.config.openrag_version = current_version
@@ -232,7 +233,9 @@ class EnvManager:
 
         # OpenAI API key is now optional (can be provided during onboarding)
         # Only validate format if a key is provided
-        if self.config.openai_api_key and not validate_openai_api_key(self.config.openai_api_key):
+        if self.config.openai_api_key and not validate_openai_api_key(
+            self.config.openai_api_key
+        ):
             self.config.validation_errors["openai_api_key"] = (
                 "Invalid OpenAI API key format (should start with sk-)"
             )
@@ -339,20 +342,32 @@ class EnvManager:
 
                 # Core settings
                 f.write("# Core settings\n")
-                f.write(f"LANGFLOW_SECRET_KEY={self._quote_env_value(self.config.langflow_secret_key)}\n")
+                f.write(
+                    f"LANGFLOW_SECRET_KEY={self._quote_env_value(self.config.langflow_secret_key)}\n"
+                )
                 # Only write LANGFLOW_SUPERUSER and password if password is set
                 if self.config.langflow_superuser_password:
-                    f.write(f"LANGFLOW_SUPERUSER={self._quote_env_value(self.config.langflow_superuser)}\n")
+                    f.write(
+                        f"LANGFLOW_SUPERUSER={self._quote_env_value(self.config.langflow_superuser)}\n"
+                    )
                     f.write(
                         f"LANGFLOW_SUPERUSER_PASSWORD={self._quote_env_value(self.config.langflow_superuser_password)}\n"
                     )
-                f.write(f"LANGFLOW_CHAT_FLOW_ID={self._quote_env_value(self.config.langflow_chat_flow_id)}\n")
+                f.write(
+                    f"LANGFLOW_CHAT_FLOW_ID={self._quote_env_value(self.config.langflow_chat_flow_id)}\n"
+                )
                 f.write(
                     f"LANGFLOW_INGEST_FLOW_ID={self._quote_env_value(self.config.langflow_ingest_flow_id)}\n"
                 )
-                f.write(f"LANGFLOW_URL_INGEST_FLOW_ID={self._quote_env_value(self.config.langflow_url_ingest_flow_id)}\n")
-                f.write(f"NUDGES_FLOW_ID={self._quote_env_value(self.config.nudges_flow_id)}\n")
-                f.write(f"OPENSEARCH_PASSWORD={self._quote_env_value(self.config.opensearch_password)}\n")
+                f.write(
+                    f"LANGFLOW_URL_INGEST_FLOW_ID={self._quote_env_value(self.config.langflow_url_ingest_flow_id)}\n"
+                )
+                f.write(
+                    f"NUDGES_FLOW_ID={self._quote_env_value(self.config.nudges_flow_id)}\n"
+                )
+                f.write(
+                    f"OPENSEARCH_PASSWORD={self._quote_env_value(self.config.opensearch_password)}\n"
+                )
                 f.write(
                     f"OPENRAG_DOCUMENTS_PATHS={self._quote_env_value(self.config.openrag_documents_paths)}\n"
                 )
@@ -361,14 +376,19 @@ class EnvManager:
                 )
                 # Set OPENRAG_VERSION to TUI version
                 if self.config.openrag_version:
-                    f.write(f"OPENRAG_VERSION={self._quote_env_value(self.config.openrag_version)}\n")
+                    f.write(
+                        f"OPENRAG_VERSION={self._quote_env_value(self.config.openrag_version)}\n"
+                    )
                 else:
                     # Fallback: try to get current version
                     try:
                         from ..utils.version_check import get_current_version
+
                         current_version = get_current_version()
                         if current_version != "unknown":
-                            f.write(f"OPENRAG_VERSION={self._quote_env_value(current_version)}\n")
+                            f.write(
+                                f"OPENRAG_VERSION={self._quote_env_value(current_version)}\n"
+                            )
                     except Exception:
                         pass
                 f.write("\n")
@@ -378,16 +398,26 @@ class EnvManager:
                 if self.config.openai_api_key:
                     provider_vars.append(("OPENAI_API_KEY", self.config.openai_api_key))
                 if self.config.anthropic_api_key:
-                    provider_vars.append(("ANTHROPIC_API_KEY", self.config.anthropic_api_key))
+                    provider_vars.append(
+                        ("ANTHROPIC_API_KEY", self.config.anthropic_api_key)
+                    )
                 if self.config.ollama_endpoint:
-                    provider_vars.append(("OLLAMA_ENDPOINT", self.config.ollama_endpoint))
+                    provider_vars.append(
+                        ("OLLAMA_ENDPOINT", self.config.ollama_endpoint)
+                    )
                 if self.config.watsonx_api_key:
-                    provider_vars.append(("WATSONX_API_KEY", self.config.watsonx_api_key))
+                    provider_vars.append(
+                        ("WATSONX_API_KEY", self.config.watsonx_api_key)
+                    )
                 if self.config.watsonx_endpoint:
-                    provider_vars.append(("WATSONX_ENDPOINT", self.config.watsonx_endpoint))
+                    provider_vars.append(
+                        ("WATSONX_ENDPOINT", self.config.watsonx_endpoint)
+                    )
                 if self.config.watsonx_project_id:
-                    provider_vars.append(("WATSONX_PROJECT_ID", self.config.watsonx_project_id))
-                
+                    provider_vars.append(
+                        ("WATSONX_PROJECT_ID", self.config.watsonx_project_id)
+                    )
+
                 if provider_vars:
                     f.write("# AI Provider API Keys and Endpoints\n")
                     for var_name, var_value in provider_vars:
@@ -396,12 +426,16 @@ class EnvManager:
 
                 # Ingestion settings
                 f.write("# Ingestion settings\n")
-                f.write(f"DISABLE_INGEST_WITH_LANGFLOW={self._quote_env_value(self.config.disable_ingest_with_langflow)}\n")
+                f.write(
+                    f"DISABLE_INGEST_WITH_LANGFLOW={self._quote_env_value(self.config.disable_ingest_with_langflow)}\n"
+                )
                 f.write("\n")
 
                 # Langflow auth settings
                 f.write("# Langflow auth settings\n")
-                f.write(f"LANGFLOW_AUTO_LOGIN={self._quote_env_value(self.config.langflow_auto_login)}\n")
+                f.write(
+                    f"LANGFLOW_AUTO_LOGIN={self._quote_env_value(self.config.langflow_auto_login)}\n"
+                )
                 f.write(
                     f"LANGFLOW_NEW_USER_IS_ACTIVE={self._quote_env_value(self.config.langflow_new_user_is_active)}\n"
                 )
@@ -545,10 +579,11 @@ class EnvManager:
         """Ensure OPENRAG_VERSION is set in .env file to match TUI version."""
         try:
             from ..utils.version_check import get_current_version
+
             current_version = get_current_version()
             if current_version == "unknown":
                 return
-            
+
             # Check if OPENRAG_VERSION is already set in .env
             if self.env_file.exists():
                 env_content = self.env_file.read_text()
@@ -562,25 +597,27 @@ class EnvManager:
                                 # Already correct, no update needed
                                 return
                             break
-            
+
             # Set or update OPENRAG_VERSION
             self.config.openrag_version = current_version
-            
+
             # Update .env file
             if self.env_file.exists():
                 # Read existing content
                 lines = self.env_file.read_text().splitlines()
                 updated = False
                 new_lines = []
-                
+
                 for line in lines:
                     if line.strip().startswith("OPENRAG_VERSION"):
                         # Replace existing line
-                        new_lines.append(f"OPENRAG_VERSION={self._quote_env_value(current_version)}")
+                        new_lines.append(
+                            f"OPENRAG_VERSION={self._quote_env_value(current_version)}"
+                        )
                         updated = True
                     else:
                         new_lines.append(line)
-                
+
                 # If not found, add it after OPENSEARCH_DATA_PATH or at the end
                 if not updated:
                     insert_pos = len(new_lines)
@@ -588,15 +625,18 @@ class EnvManager:
                         if "OPENSEARCH_DATA_PATH" in line:
                             insert_pos = i + 1
                             break
-                    new_lines.insert(insert_pos, f"OPENRAG_VERSION={self._quote_env_value(current_version)}")
-                
-                with open(self.env_file, 'w') as f:
+                    new_lines.insert(
+                        insert_pos,
+                        f"OPENRAG_VERSION={self._quote_env_value(current_version)}",
+                    )
+
+                with open(self.env_file, "w") as f:
                     f.write("\n".join(new_lines) + "\n")
                     f.flush()
                     os.fsync(f.fileno())
             else:
                 # Create new .env file with just OPENRAG_VERSION
-                with open(self.env_file, 'w') as f:
+                with open(self.env_file, "w") as f:
                     content = (
                         f"# OpenRAG Environment Configuration\n"
                         f"# Generated by OpenRAG TUI\n\n"

@@ -17,7 +17,7 @@ async def start_docling(port: int = 5001, host: str = None, enable_ui: bool = Fa
     manager = DoclingManager()
 
     if manager.is_running():
-        print(f"Docling-serve is already running")
+        print("Docling-serve is already running")
         status = manager.get_status()
         print(f"Endpoint: {status['endpoint']}")
         return 0
@@ -62,25 +62,37 @@ async def status_docling():
     status = manager.get_status()
 
     print(f"Status: {status['status']}")
-    if status['status'] == 'running':
+    if status["status"] == "running":
         print(f"Endpoint: {status['endpoint']}")
         print(f"Docs: {status['docs_url']}")
         print(f"PID: {status['pid']}")
 
-    return 0 if status['status'] == 'running' else 1
+    return 0 if status["status"] == "running" else 1
 
 
 async def main():
     parser = argparse.ArgumentParser(description="Control docling-serve for CI/testing")
-    parser.add_argument("command", choices=["start", "stop", "status"], help="Command to run")
-    parser.add_argument("--port", type=int, default=5001, help="Port to run on (default: 5001)")
-    parser.add_argument("--host", default=None, help="Host to bind to (default: auto-detect for containers)")
+    parser.add_argument(
+        "command", choices=["start", "stop", "status"], help="Command to run"
+    )
+    parser.add_argument(
+        "--port", type=int, default=5001, help="Port to run on (default: 5001)"
+    )
+    parser.add_argument(
+        "--host",
+        default=None,
+        help="Host to bind to (default: auto-detect for containers)",
+    )
     parser.add_argument("--enable-ui", action="store_true", help="Enable UI")
 
     args = parser.parse_args()
 
     if args.command == "start":
-        return await start_docling(port=args.port, host=args.host if args.host else None, enable_ui=args.enable_ui)
+        return await start_docling(
+            port=args.port,
+            host=args.host if args.host else None,
+            enable_ui=args.enable_ui,
+        )
     elif args.command == "stop":
         return await stop_docling()
     elif args.command == "status":

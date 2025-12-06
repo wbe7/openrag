@@ -103,7 +103,9 @@ class ModelsService:
                     key=lambda x: (not x.get("default", False), x["value"])
                 )
 
-                logger.info("OpenAI API key validated successfully without consuming credits")
+                logger.info(
+                    "OpenAI API key validated successfully without consuming credits"
+                )
                 return {
                     "language_models": language_models,
                     "embedding_models": embedding_models,
@@ -118,7 +120,9 @@ class ModelsService:
             logger.error(f"Error fetching OpenAI models: {str(e)}")
             raise
 
-    async def get_anthropic_models(self, api_key: str) -> Dict[str, List[Dict[str, str]]]:
+    async def get_anthropic_models(
+        self, api_key: str
+    ) -> Dict[str, List[Dict[str, str]]]:
         """Fetch available models from Anthropic API"""
         try:
             headers = {
@@ -167,7 +171,9 @@ class ModelsService:
                     "embedding_models": [],  # Anthropic doesn't provide embedding models
                 }
             else:
-                logger.error(f"Failed to validate Anthropic API key: {response.status_code}")
+                logger.error(
+                    f"Failed to validate Anthropic API key: {response.status_code}"
+                )
                 raise Exception(
                     f"Anthropic API returned status code {response.status_code}"
                 )
@@ -395,9 +401,13 @@ class ModelsService:
             # Lightweight validation: API key is already validated by successfully getting bearer token
             # No need to make a generation request that consumes credits
             if bearer_token:
-                logger.info("IBM Watson API key validated successfully without consuming credits")
+                logger.info(
+                    "IBM Watson API key validated successfully without consuming credits"
+                )
             else:
-                logger.warning("No bearer token available - API key validation may have failed")
+                logger.warning(
+                    "No bearer token available - API key validation may have failed"
+                )
 
             if not language_models and not embedding_models:
                 raise Exception("No IBM models retrieved from API")

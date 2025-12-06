@@ -5,14 +5,11 @@ from textual.app import ComposeResult
 from textual.containers import Container, Vertical, Horizontal, ScrollableContainer
 from textual.screen import Screen
 from textual.widgets import (
-    Header,
     Footer,
     Static,
     Button,
     Input,
     Label,
-    TabbedContent,
-    TabPane,
     Checkbox,
 )
 from textual.validation import ValidationResult, Validator
@@ -27,7 +24,6 @@ from ..utils.validation import (
     validate_watsonx_endpoint,
     validate_documents_paths,
 )
-from pathlib import Path
 
 
 class OpenAIKeyValidator(Validator):
@@ -53,7 +49,9 @@ class AnthropicKeyValidator(Validator):
         if validate_anthropic_api_key(value):
             return self.success()
         else:
-            return self.failure("Invalid Anthropic API key format (should start with sk-ant-)")
+            return self.failure(
+                "Invalid Anthropic API key format (should start with sk-ant-)"
+            )
 
 
 class OllamaEndpointValidator(Validator):
@@ -145,7 +143,7 @@ class ConfigScreen(Screen):
         self.mode = mode  # "no_auth" or "full"
         self.env_manager = EnvManager()
         self.inputs = {}
-        
+
         # Check if .env file exists
         self.has_env_file = self.env_manager.env_file.exists()
 
@@ -237,7 +235,9 @@ class ConfigScreen(Screen):
         yield Static(" ")
 
         # Langflow Admin Username - conditionally displayed based on password
-        current_password = getattr(self.env_manager.config, "langflow_superuser_password", "")
+        current_password = getattr(
+            self.env_manager.config, "langflow_superuser_password", ""
+        )
         yield Label("Langflow Admin Username *", id="langflow-username-label")
         current_value = getattr(self.env_manager.config, "langflow_superuser", "")
         input_widget = Input(
@@ -544,7 +544,9 @@ class ConfigScreen(Screen):
             "Directory to persist OpenSearch indices across upgrades",
             classes="helper-text",
         )
-        current_value = getattr(self.env_manager.config, "opensearch_data_path", "./opensearch-data")
+        current_value = getattr(
+            self.env_manager.config, "opensearch_data_path", "./opensearch-data"
+        )
         input_widget = Input(
             placeholder="./opensearch-data",
             value=current_value,
@@ -645,7 +647,9 @@ class ConfigScreen(Screen):
     def on_mount(self) -> None:
         """Initialize the screen when mounted."""
         # Set initial visibility of username field based on password
-        current_password = getattr(self.env_manager.config, "langflow_superuser_password", "")
+        current_password = getattr(
+            self.env_manager.config, "langflow_superuser_password", ""
+        )
         self._update_langflow_username_visibility(current_password)
 
         # Focus the first input field
@@ -675,7 +679,10 @@ class ConfigScreen(Screen):
                     langflow_password_input.value = ""
                     # Hide username field
                     self._update_langflow_username_visibility("")
-                self.notify("Cleared Langflow password - autologin enabled", severity="information")
+                self.notify(
+                    "Cleared Langflow password - autologin enabled",
+                    severity="information",
+                )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""
@@ -723,11 +730,15 @@ class ConfigScreen(Screen):
 
         # Only generate OpenSearch password if empty
         if not self.env_manager.config.opensearch_password:
-            self.env_manager.config.opensearch_password = self.env_manager.generate_secure_password()
+            self.env_manager.config.opensearch_password = (
+                self.env_manager.generate_secure_password()
+            )
 
         # Update secret keys
         if not self.env_manager.config.langflow_secret_key:
-            self.env_manager.config.langflow_secret_key = self.env_manager.generate_langflow_secret_key()
+            self.env_manager.config.langflow_secret_key = (
+                self.env_manager.generate_langflow_secret_key()
+            )
 
         # Update input fields with generated values
         if opensearch_input:
@@ -750,11 +761,13 @@ class ConfigScreen(Screen):
                     result = validator.validate(input_widget.value)
                     if result and not result.is_valid:
                         for failure in result.failures:
-                            validation_errors.append(f"{field_name}: {failure.description}")
+                            validation_errors.append(
+                                f"{field_name}: {failure.description}"
+                            )
 
         if validation_errors:
             self.notify(
-                f"Validation failed:\n" + "\n".join(validation_errors[:3]),
+                "Validation failed:\n" + "\n".join(validation_errors[:3]),
                 severity="error",
             )
             return
@@ -773,7 +786,7 @@ class ConfigScreen(Screen):
                 error_messages.append(f"{field}: {error}")
 
             self.notify(
-                f"Validation failed:\n" + "\n".join(error_messages[:3]),
+                "Validation failed:\n" + "\n".join(error_messages[:3]),
                 severity="error",
             )
             return
@@ -911,7 +924,7 @@ class ConfigScreen(Screen):
                     delattr(self, "_docs_pick_callback")
                 except Exception:
                     pass
-            
+
             # Handle OpenSearch data path picker callback
             cb = getattr(self, "_opensearch_data_pick_callback", None)
             if cb is not None:

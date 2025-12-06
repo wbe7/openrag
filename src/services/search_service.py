@@ -1,7 +1,13 @@
 import copy
 from typing import Any, Dict
 from agentd.tool_decorator import tool
-from config.settings import EMBED_MODEL, clients, INDEX_NAME, get_embedding_model, WATSONX_EMBEDDING_DIMENSIONS
+from config.settings import (
+    EMBED_MODEL,
+    clients,
+    INDEX_NAME,
+    get_embedding_model,
+    WATSONX_EMBEDDING_DIMENSIONS,
+)
 from auth_context import get_auth_context
 from utils.logging_config import get_logger
 
@@ -17,7 +23,9 @@ class SearchService:
         self.session_manager = session_manager
 
     @tool
-    async def search_tool(self, query: str, embedding_model: str = None) -> Dict[str, Any]:
+    async def search_tool(
+        self, query: str, embedding_model: str = None
+    ) -> Dict[str, Any]:
         """
         Use this tool to search for documents relevant to the query.
 
@@ -103,26 +111,23 @@ class SearchService:
                     "size": 0,
                     "aggs": {
                         "embedding_models": {
-                            "terms": {
-                                "field": "embedding_model",
-                                "size": 10
-                            }
+                            "terms": {"field": "embedding_model", "size": 10}
                         }
-                    }
+                    },
                 }
 
                 # Apply filters to model detection if any exist
                 if filter_clauses:
-                    agg_query["query"] = {
-                        "bool": {
-                            "filter": filter_clauses
-                        }
-                    }
+                    agg_query["query"] = {"bool": {"filter": filter_clauses}}
 
                 agg_result = await opensearch_client.search(
                     index=INDEX_NAME, body=agg_query, params={"terminate_after": 0}
                 )
-                buckets = agg_result.get("aggregations", {}).get("embedding_models", {}).get("buckets", [])
+                buckets = (
+                    agg_result.get("aggregations", {})
+                    .get("embedding_models", {})
+                    .get("buckets", [])
+                )
                 available_models = [b["key"] for b in buckets if b["key"]]
 
                 if not available_models:
@@ -133,10 +138,13 @@ class SearchService:
                     "Detected embedding models in corpus",
                     available_models=available_models,
                     model_counts={b["key"]: b["doc_count"] for b in buckets},
-                    with_filters=len(filter_clauses) > 0
+                    with_filters=len(filter_clauses) > 0,
                 )
             except Exception as e:
-                logger.warning("Failed to detect embedding models, using configured model", error=str(e))
+                logger.warning(
+                    "Failed to detect embedding models, using configured model",
+                    error=str(e),
+                )
                 available_models = [embedding_model]
 
             # Parallelize embedding generation for all models
@@ -152,7 +160,10 @@ class SearchService:
                 formatted_model = model_name
 
                 # Skip if already has a provider prefix
-                if not any(model_name.startswith(prefix + "/") for prefix in ["openai", "ollama", "watsonx", "anthropic"]):
+                if not any(
+                    model_name.startswith(prefix + "/")
+                    for prefix in ["openai", "ollama", "watsonx", "anthropic"]
+                ):
                     # Detect provider from model name characteristics:
                     # - Ollama: contains ":" (e.g., "nomic-embed-text:latest")
                     # - WatsonX: check against known IBM embedding models
@@ -161,11 +172,15 @@ class SearchService:
                     if ":" in model_name:
                         # Ollama models use tags with colons
                         formatted_model = f"ollama/{model_name}"
-                        logger.debug(f"Formatted Ollama model: {model_name} -> {formatted_model}")
+                        logger.debug(
+                            f"Formatted Ollama model: {model_name} -> {formatted_model}"
+                        )
                     elif model_name in WATSONX_EMBEDDING_DIMENSIONS:
                         # WatsonX embedding models - use hardcoded list from settings
                         formatted_model = f"watsonx/{model_name}"
-                        logger.debug(f"Formatted WatsonX model: {model_name} -> {formatted_model}")
+                        logger.debug(
+                            f"Formatted WatsonX model: {model_name} -> {formatted_model}"
+                        )
                     # else: OpenAI models don't need a prefix
 
                 while attempts < MAX_EMBED_RETRIES:
@@ -175,9 +190,9 @@ class SearchService:
                             model=formatted_model, input=[query]
                         )
                         # Try to get embedding - some providers return .embedding, others return ['embedding']
-                        embedding = getattr(resp.data[0], 'embedding', None)
+                        embedding = getattr(resp.data[0], "embedding", None)
                         if embedding is None:
-                            embedding = resp.data[0]['embedding']
+                            embedding = resp.data[0]["embedding"]
                         return model_name, embedding
                     except Exception as e:
                         last_exception = e
@@ -225,7 +240,7 @@ class SearchService:
             logger.info(
                 "Generated query embeddings",
                 models=list(query_embeddings.keys()),
-                query_preview=query[:50]
+                query_preview=query[:50],
             )
         else:
             # Wildcard query - no embedding needed
@@ -271,21 +286,25 @@ class SearchService:
             for model_name, embedding_vector in query_embeddings.items():
                 field_name = get_embedding_field_name(model_name)
                 embedding_fields_to_check.append(field_name)
-                knn_queries.append({
-                    "knn": {
-                        field_name: {
-                            "vector": embedding_vector,
-                            "k": 50,
-                            "num_candidates": 1000,
+                knn_queries.append(
+                    {
+                        "knn": {
+                            field_name: {
+                                "vector": embedding_vector,
+                                "k": 50,
+                                "num_candidates": 1000,
+                            }
                         }
                     }
-                })
+                )
 
             # Build exists filter - doc must have at least one embedding field
             exists_any_embedding = {
                 "bool": {
-                    "should": [{"exists": {"field": f}} for f in embedding_fields_to_check],
-                    "minimum_should_match": 1
+                    "should": [
+                        {"exists": {"field": f}} for f in embedding_fields_to_check
+                    ],
+                    "minimum_should_match": 1,
                 }
             }
 
@@ -296,7 +315,7 @@ class SearchService:
                 "Building hybrid query with filters",
                 user_filters_count=len(filter_clauses),
                 total_filters_count=len(all_filters),
-                filter_types=[type(f).__name__ for f in all_filters]
+                filter_types=[type(f).__name__ for f in all_filters],
             )
 
             # Hybrid search query structure (semantic + keyword)
@@ -307,8 +326,8 @@ class SearchService:
                         {
                             "dis_max": {
                                 "tie_breaker": 0.0,  # Take only the best match, no blending
-                                "boost": 0.7,         # 70% weight for semantic search
-                                "queries": knn_queries
+                                "boost": 0.7,  # 70% weight for semantic search
+                                "queries": knn_queries,
                             }
                         },
                         {
@@ -363,9 +382,9 @@ class SearchService:
         if not is_wildcard_match_all:
             try:
                 fallback_search_body = copy.deepcopy(search_body)
-                knn_query_blocks = (
-                    fallback_search_body["query"]["bool"]["should"][0]["dis_max"]["queries"]
-                )
+                knn_query_blocks = fallback_search_body["query"]["bool"]["should"][0][
+                    "dis_max"
+                ]["queries"]
                 for query_candidate in knn_query_blocks:
                     knn_section = query_candidate.get("knn")
                     if isinstance(knn_section, dict):
@@ -422,7 +441,9 @@ class SearchService:
                     raise
             else:
                 logger.error(
-                    "OpenSearch query failed", error=error_message, search_body=search_body
+                    "OpenSearch query failed",
+                    error=error_message,
+                    search_body=search_body,
                 )
                 raise
         except Exception as e:
@@ -448,7 +469,9 @@ class SearchService:
                     "owner_email": hit["_source"].get("owner_email"),
                     "file_size": hit["_source"].get("file_size"),
                     "connector_type": hit["_source"].get("connector_type"),
-                    "embedding_model": hit["_source"].get("embedding_model"),  # Include in results
+                    "embedding_model": hit["_source"].get(
+                        "embedding_model"
+                    ),  # Include in results
                     "embedding_dimensions": hit["_source"].get("embedding_dimensions"),
                 }
             )

@@ -1,8 +1,6 @@
 import uuid
 import json
-from typing import Any, Dict, Optional, List
-from datetime import datetime
-from config.settings import clients
+from typing import Any, Dict, List
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)

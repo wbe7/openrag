@@ -1,11 +1,9 @@
-import json
 import jwt
 import httpx
 from datetime import datetime, timedelta
 from typing import Dict, Optional, Any
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from cryptography.hazmat.primitives import serialization
-import os
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -13,6 +11,8 @@ logger = get_logger(__name__)
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
+
+
 @dataclass
 class User:
     """User information from OAuth provider"""
@@ -31,6 +31,7 @@ class User:
         if self.last_login is None:
             self.last_login = datetime.now()
 
+
 class AnonymousUser(User):
     """Anonymous user"""
 
@@ -42,7 +43,6 @@ class AnonymousUser(User):
             picture=None,
             provider="none",
         )
-
 
 
 class SessionManager:
@@ -216,7 +216,9 @@ class SessionManager:
         )
 
         # In no-auth mode, create anonymous JWT if needed
-        if jwt_token is None and (is_no_auth_mode() or user_id in (None, AnonymousUser().user_id)):
+        if jwt_token is None and (
+            is_no_auth_mode() or user_id in (None, AnonymousUser().user_id)
+        ):
             if not hasattr(self, "_anonymous_jwt"):
                 # Create anonymous JWT token for OpenSearch OIDC
                 logger.debug("Creating anonymous JWT")

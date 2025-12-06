@@ -1,9 +1,7 @@
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-import json
 import base64
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
 
 async def oidc_discovery(request: Request, session_manager):

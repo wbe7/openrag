@@ -16,6 +16,7 @@ from .oauth import GoogleDriveOAuth
 
 logger = get_logger(__name__)
 
+
 # -------------------------
 # Config model
 # -------------------------
@@ -602,10 +603,7 @@ class GoogleDriveConnector(BaseConnector):
             }
         except Exception as e:
             # Log the error and re-raise to surface authentication/permission issues
-            logger.error(
-                f"GoogleDriveConnector.list_files failed: {e}",
-                exc_info=True
-            )
+            logger.error(f"GoogleDriveConnector.list_files failed: {e}", exc_info=True)
             raise
 
     async def get_file_content(self, file_id: str) -> ConnectorDocument:

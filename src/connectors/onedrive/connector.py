@@ -25,7 +25,9 @@ class OneDriveConnector(BaseConnector):
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
 
-        logger.debug(f"OneDrive connector __init__ called with config type: {type(config)}")
+        logger.debug(
+            f"OneDrive connector __init__ called with config type: {type(config)}"
+        )
         logger.debug(f"OneDrive connector __init__ config value: {config}")
 
         if config is None:
@@ -60,7 +62,9 @@ class OneDriveConnector(BaseConnector):
 
         # Token file setup
         project_root = Path(__file__).resolve().parent.parent.parent.parent
-        token_file = config.get("token_file") or str(project_root / "onedrive_token.json")
+        token_file = config.get("token_file") or str(
+            project_root / "onedrive_token.json"
+        )
         Path(token_file).parent.mkdir(parents=True, exist_ok=True)
 
         # Only initialize OAuth if we have credentials
@@ -95,12 +99,20 @@ class OneDriveConnector(BaseConnector):
         self._default_params = {
             "$select": "id,name,size,lastModifiedDateTime,createdDateTime,webUrl,file,folder,@microsoft.graph.downloadUrl"
         }
-        
+
         # Selective sync support (similar to Google Drive)
-        self.cfg = type('OneDriveConfig', (), {
-            'file_ids': config.get('file_ids') or config.get('selected_files') or config.get('selected_file_ids'),
-            'folder_ids': config.get('folder_ids') or config.get('selected_folders') or config.get('selected_folder_ids'),
-        })()
+        self.cfg = type(
+            "OneDriveConfig",
+            (),
+            {
+                "file_ids": config.get("file_ids")
+                or config.get("selected_files")
+                or config.get("selected_file_ids"),
+                "folder_ids": config.get("folder_ids")
+                or config.get("selected_folders")
+                or config.get("selected_folder_ids"),
+            },
+        )()
 
     @property
     def _graph_base_url(self) -> str:
@@ -113,7 +125,9 @@ class OneDriveConnector(BaseConnector):
 
     async def authenticate(self) -> bool:
         """Test authentication - BaseConnector interface."""
-        logger.debug(f"OneDrive authenticate() called, oauth is None: {self.oauth is None}")
+        logger.debug(
+            f"OneDrive authenticate() called, oauth is None: {self.oauth is None}"
+        )
         try:
             if not self.oauth:
                 logger.debug("OneDrive authentication failed: OAuth not initialized")
@@ -133,6 +147,7 @@ class OneDriveConnector(BaseConnector):
         except Exception as e:
             logger.error(f"OneDrive authentication failed: {e}")
             import traceback
+
             traceback.print_exc()
             self._authenticated = False
             return False
@@ -148,7 +163,9 @@ class OneDriveConnector(BaseConnector):
         if not self.oauth:
             raise RuntimeError("OneDrive OAuth not initialized - missing credentials")
         try:
-            success = await self.oauth.handle_authorization_callback(auth_code, self.redirect_uri)
+            success = await self.oauth.handle_authorization_callback(
+                auth_code, self.redirect_uri
+            )
             if success:
                 self._authenticated = True
                 return {"status": "success"}
@@ -176,13 +193,15 @@ class OneDriveConnector(BaseConnector):
                         doc = await self.get_file_content(file_id)
                         self.emit(doc)
                     except Exception as e:
-                        logger.error(f"Failed to sync OneDrive file {file_info.get('name', 'unknown')}: {e}")
+                        logger.error(
+                            f"Failed to sync OneDrive file {file_info.get('name', 'unknown')}: {e}"
+                        )
                         continue
             except Exception as e:
                 logger.error(f"OneDrive sync_once failed: {e}")
                 raise
 
-        if hasattr(asyncio, 'run'):
+        if hasattr(asyncio, "run"):
             asyncio.run(_async_sync())
         else:
             loop = asyncio.get_event_loop()
@@ -193,14 +212,18 @@ class OneDriveConnector(BaseConnector):
         Set up real-time subscription for file changes.
         NOTE: Change notifications may not be available for personal OneDrive accounts.
         """
-        webhook_url = self.config.get('webhook_url')
+        webhook_url = self.config.get("webhook_url")
         if not webhook_url:
-            logger.warning("No webhook URL configured, skipping OneDrive subscription setup")
+            logger.warning(
+                "No webhook URL configured, skipping OneDrive subscription setup"
+            )
             return "no-webhook-configured"
 
         try:
             if not await self.authenticate():
-                raise RuntimeError("OneDrive authentication failed during subscription setup")
+                raise RuntimeError(
+                    "OneDrive authentication failed during subscription setup"
+                )
 
             token = self.oauth.get_access_token()
 
@@ -223,7 +246,9 @@ class OneDriveConnector(BaseConnector):
             url = f"{self._graph_base_url}/subscriptions"
 
             async with httpx.AsyncClient() as client:
-                response = await client.post(url, json=subscription_data, headers=headers, timeout=30)
+                response = await client.post(
+                    url, json=subscription_data, headers=headers, timeout=30
+                )
                 response.raise_for_status()
 
                 result = response.json()
@@ -243,6 +268,7 @@ class OneDriveConnector(BaseConnector):
     def _get_subscription_expiry(self) -> str:
         """Get subscription expiry time (Graph caps duration; often <= 3 days)."""
         from datetime import datetime, timedelta
+
         expiry = datetime.utcnow() + timedelta(days=3)
         return expiry.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
@@ -250,7 +276,7 @@ class OneDriveConnector(BaseConnector):
         self,
         page_token: Optional[str] = None,
         max_files: Optional[int] = None,
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """List files from OneDrive using Microsoft Graph."""
         try:
@@ -278,23 +304,28 @@ class OneDriveConnector(BaseConnector):
             items = data.get("value", [])
             for item in items:
                 if item.get("file"):  # include files only
-                    files.append({
-                        "id": item.get("id", ""),
-                        "name": item.get("name", ""),
-                        "path": f"/drive/items/{item.get('id')}",
-                        "size": int(item.get("size", 0)),
-                        "modified": item.get("lastModifiedDateTime"),
-                        "created": item.get("createdDateTime"),
-                        "mime_type": item.get("file", {}).get("mimeType", self._get_mime_type(item.get("name", ""))),
-                        "url": item.get("webUrl", ""),
-                        "download_url": item.get("@microsoft.graph.downloadUrl"),
-                    })
+                    files.append(
+                        {
+                            "id": item.get("id", ""),
+                            "name": item.get("name", ""),
+                            "path": f"/drive/items/{item.get('id')}",
+                            "size": int(item.get("size", 0)),
+                            "modified": item.get("lastModifiedDateTime"),
+                            "created": item.get("createdDateTime"),
+                            "mime_type": item.get("file", {}).get(
+                                "mimeType", self._get_mime_type(item.get("name", ""))
+                            ),
+                            "url": item.get("webUrl", ""),
+                            "download_url": item.get("@microsoft.graph.downloadUrl"),
+                        }
+                    )
 
             # Next page
             next_page_token = None
             next_link = data.get("@odata.nextLink")
             if next_link:
                 from urllib.parse import urlparse, parse_qs
+
                 parsed = urlparse(next_link)
                 query_params = parse_qs(parsed.query)
                 if "$skiptoken" in query_params:
@@ -310,7 +341,9 @@ class OneDriveConnector(BaseConnector):
         """Get file content and metadata."""
         try:
             if not await self.authenticate():
-                raise RuntimeError("OneDrive authentication failed during file content retrieval")
+                raise RuntimeError(
+                    "OneDrive authentication failed during file content retrieval"
+                )
 
             file_metadata = await self._get_file_metadata_by_id(file_id)
             if not file_metadata:
@@ -375,7 +408,9 @@ class OneDriveConnector(BaseConnector):
                     "size": int(item.get("size", 0)),
                     "modified": item.get("lastModifiedDateTime"),
                     "created": item.get("createdDateTime"),
-                    "mime_type": item.get("file", {}).get("mimeType", self._get_mime_type(item.get("name", ""))),
+                    "mime_type": item.get("file", {}).get(
+                        "mimeType", self._get_mime_type(item.get("name", ""))
+                    ),
                     "url": item.get("webUrl", ""),
                     "download_url": item.get("@microsoft.graph.downloadUrl"),
                     "isFolder": False,
@@ -419,15 +454,20 @@ class OneDriveConnector(BaseConnector):
         if not date_str:
             return datetime.now()
         try:
-            if date_str.endswith('Z'):
+            if date_str.endswith("Z"):
                 return datetime.fromisoformat(date_str[:-1]).replace(tzinfo=None)
             else:
-                return datetime.fromisoformat(date_str.replace('T', ' '))
+                return datetime.fromisoformat(date_str.replace("T", " "))
         except (ValueError, AttributeError):
             return datetime.now()
 
-    async def _make_graph_request(self, url: str, method: str = "GET",
-                                  data: Optional[Dict] = None, params: Optional[Dict] = None) -> httpx.Response:
+    async def _make_graph_request(
+        self,
+        url: str,
+        method: str = "GET",
+        data: Optional[Dict] = None,
+        params: Optional[Dict] = None,
+    ) -> httpx.Response:
         """Make authenticated API request to Microsoft Graph."""
         token = self.oauth.get_access_token()
         headers = {
@@ -437,9 +477,13 @@ class OneDriveConnector(BaseConnector):
 
         async with httpx.AsyncClient() as client:
             if method.upper() == "GET":
-                response = await client.get(url, headers=headers, params=params, timeout=30)
+                response = await client.get(
+                    url, headers=headers, params=params, timeout=30
+                )
             elif method.upper() == "POST":
-                response = await client.post(url, headers=headers, json=data, timeout=30)
+                response = await client.post(
+                    url, headers=headers, json=data, timeout=30
+                )
             elif method.upper() == "DELETE":
                 response = await client.delete(url, headers=headers, timeout=30)
             else:
@@ -451,22 +495,22 @@ class OneDriveConnector(BaseConnector):
     async def _list_selected_files(self) -> Dict[str, Any]:
         """List only selected files/folders (selective sync)."""
         files: List[Dict[str, Any]] = []
-        
+
         # Process selected file IDs
         if self.cfg.file_ids:
             for file_id in self.cfg.file_ids:
                 try:
                     file_meta = await self._get_file_metadata_by_id(file_id)
-                    if file_meta and not file_meta.get('isFolder', False):
+                    if file_meta and not file_meta.get("isFolder", False):
                         files.append(file_meta)
-                    elif file_meta and file_meta.get('isFolder', False):
+                    elif file_meta and file_meta.get("isFolder", False):
                         # If it's a folder, expand its contents
                         folder_files = await self._list_folder_contents(file_id)
                         files.extend(folder_files)
                 except Exception as e:
                     logger.warning(f"Failed to get file {file_id}: {e}")
                     continue
-        
+
         # Process selected folder IDs
         if self.cfg.folder_ids:
             for folder_id in self.cfg.folder_ids:
@@ -476,20 +520,20 @@ class OneDriveConnector(BaseConnector):
                 except Exception as e:
                     logger.warning(f"Failed to list folder {folder_id}: {e}")
                     continue
-        
+
         return {"files": files, "next_page_token": None}
-    
+
     async def _list_folder_contents(self, folder_id: str) -> List[Dict[str, Any]]:
         """List all files in a folder recursively."""
         files: List[Dict[str, Any]] = []
-        
+
         try:
             url = f"{self._graph_base_url}/me/drive/items/{folder_id}/children"
             params = dict(self._default_params)
-            
+
             response = await self._make_graph_request(url, params=params)
             data = response.json()
-            
+
             items = data.get("value", [])
             for item in items:
                 if item.get("file"):  # It's a file
@@ -501,26 +545,28 @@ class OneDriveConnector(BaseConnector):
                     files.extend(subfolder_files)
         except Exception as e:
             logger.error(f"Failed to list folder contents for {folder_id}: {e}")
-        
+
         return files
 
     def _get_mime_type(self, filename: str) -> str:
         """Get MIME type based on file extension."""
         import mimetypes
+
         mime_type, _ = mimetypes.guess_type(filename)
         return mime_type or "application/octet-stream"
 
     # Webhook methods - BaseConnector interface
-    def handle_webhook_validation(self, request_method: str,
-                                  headers: Dict[str, str],
-                                  query_params: Dict[str, str]) -> Optional[str]:
+    def handle_webhook_validation(
+        self, request_method: str, headers: Dict[str, str], query_params: Dict[str, str]
+    ) -> Optional[str]:
         """Handle webhook validation (Graph API specific)."""
         if request_method == "POST" and "validationToken" in query_params:
             return query_params["validationToken"]
         return None
 
-    def extract_webhook_channel_id(self, payload: Dict[str, Any],
-                                   headers: Dict[str, str]) -> Optional[str]:
+    def extract_webhook_channel_id(
+        self, payload: Dict[str, Any], headers: Dict[str, str]
+    ) -> Optional[str]:
         """Extract channel/subscription ID from webhook payload."""
         notifications = payload.get("value", [])
         if notifications:
@@ -546,7 +592,9 @@ class OneDriveConnector(BaseConnector):
 
         try:
             if not await self.authenticate():
-                logger.error("OneDrive authentication failed during subscription cleanup")
+                logger.error(
+                    "OneDrive authentication failed during subscription cleanup"
+                )
                 return False
 
             token = self.oauth.get_access_token()
@@ -558,12 +606,18 @@ class OneDriveConnector(BaseConnector):
                 response = await client.delete(url, headers=headers, timeout=30)
 
                 if response.status_code in [200, 204, 404]:
-                    logger.info(f"OneDrive subscription {subscription_id} cleaned up successfully")
+                    logger.info(
+                        f"OneDrive subscription {subscription_id} cleaned up successfully"
+                    )
                     return True
                 else:
-                    logger.warning(f"Unexpected response cleaning up subscription: {response.status_code}")
+                    logger.warning(
+                        f"Unexpected response cleaning up subscription: {response.status_code}"
+                    )
                     return False
 
         except Exception as e:
-            logger.error(f"Failed to cleanup OneDrive subscription {subscription_id}: {e}")
+            logger.error(
+                f"Failed to cleanup OneDrive subscription {subscription_id}: {e}"
+            )
             return False

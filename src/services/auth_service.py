@@ -19,7 +19,12 @@ from connectors.sharepoint import SharePointConnector
 
 
 class AuthService:
-    def __init__(self, session_manager: SessionManager, connector_service=None, langflow_mcp_service: LangflowMCPService | None = None):
+    def __init__(
+        self,
+        session_manager: SessionManager,
+        connector_service=None,
+        langflow_mcp_service: LangflowMCPService | None = None,
+    ):
         self.session_manager = session_manager
         self.connector_service = connector_service
         self.used_auth_codes = set()  # Track used authorization codes
@@ -89,7 +94,6 @@ class AuthService:
         )
 
         # Get OAuth configuration from connector and OAuth classes
-        import os
 
         # Map connector types to their connector and OAuth classes
         connector_class_map = {
@@ -294,7 +298,11 @@ class AuthService:
 
             # Best-effort: update Langflow MCP servers to include user's JWT and owner headers
             try:
-                if self.langflow_mcp_service and isinstance(jwt_token, str) and jwt_token.strip():
+                if (
+                    self.langflow_mcp_service
+                    and isinstance(jwt_token, str)
+                    and jwt_token.strip()
+                ):
                     global_vars = {"JWT": jwt_token}
                     global_vars["CONNECTOR_TYPE_URL"] = "url"
                     if user_info:
@@ -305,23 +313,25 @@ class AuthService:
                             # Alternative: URL-encode the owner name to preserve spaces and special characters.
                             owner_name = user_info.get("name")
                             if owner_name:
-                                global_vars["OWNER_NAME"] = str(f"\"{owner_name}\"")
+                                global_vars["OWNER_NAME"] = str(f'"{owner_name}"')
                         if user_info.get("email"):
                             global_vars["OWNER_EMAIL"] = user_info.get("email")
-                    
+
                     # Add provider credentials to MCP servers using utility function
                     from config.settings import get_openrag_config
                     from utils.langflow_headers import build_mcp_global_vars_from_config
-                    
+
                     config = get_openrag_config()
                     provider_vars = build_mcp_global_vars_from_config(config)
-                    
+
                     # Merge provider credentials with user info
                     global_vars.update(provider_vars)
 
                     # Run in background to avoid delaying login flow
                     task = asyncio.create_task(
-                        self.langflow_mcp_service.update_mcp_servers_with_global_vars(global_vars)
+                        self.langflow_mcp_service.update_mcp_servers_with_global_vars(
+                            global_vars
+                        )
                     )
                     # Keep reference until done to avoid premature GC
                     self._background_tasks.add(task)
@@ -329,7 +339,7 @@ class AuthService:
             except Exception:
                 # Do not block login on MCP update issues
                 pass
-            
+
             response_data = {
                 "status": "authenticated",
                 "purpose": "app_auth",
@@ -405,7 +415,7 @@ class AuthService:
                     else None,
                 },
             }
-            
+
             return user_data
         else:
             return {"authenticated": False, "user": None}

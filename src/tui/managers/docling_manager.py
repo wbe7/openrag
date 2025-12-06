@@ -12,7 +12,6 @@ from utils.logging_config import get_logger
 logger = get_logger(__name__)
 
 
-
 class DoclingManager:
     """Manages local docling serve instance as external process."""
 
@@ -32,13 +31,14 @@ class DoclingManager:
         self._process: Optional[subprocess.Popen] = None
         self._port = 5001
         # Bind to all interfaces by default (can be overridden with DOCLING_BIND_HOST env var)
-        self._host = os.getenv('DOCLING_BIND_HOST', '0.0.0.0')
+        self._host = os.getenv("DOCLING_BIND_HOST", "0.0.0.0")
         self._running = False
         self._starting = False
         self._external_process = False
 
         # PID file to track docling-serve across sessions (in current working directory)
         from pathlib import Path
+
         self._pid_file = Path.cwd() / ".docling.pid"
 
         # Log storage - simplified, no queue
@@ -57,7 +57,7 @@ class DoclingManager:
         # Just clean up our references
         self._add_log_entry("TUI exiting - docling-serve will continue running")
         # Note: We keep the PID file so we can reconnect in future sessions
-        
+
     def _save_pid(self, pid: int) -> None:
         """Save the process PID to a file for persistence across sessions."""
         try:
@@ -100,7 +100,9 @@ class DoclingManager:
         pid = self._load_pid()
         if pid is not None:
             if self._is_process_running(pid):
-                self._add_log_entry(f"Recovered existing docling-serve process (PID: {pid})")
+                self._add_log_entry(
+                    f"Recovered existing docling-serve process (PID: {pid})"
+                )
                 # Mark as external process since we didn't start it in this session
                 self._external_process = True
                 self._running = True
@@ -119,8 +121,8 @@ class DoclingManager:
             self._log_buffer.append(entry)
             # Keep buffer size limited
             if len(self._log_buffer) > self._max_log_lines:
-                self._log_buffer = self._log_buffer[-self._max_log_lines:]
-        
+                self._log_buffer = self._log_buffer[-self._max_log_lines :]
+
     def is_running(self) -> bool:
         """Check if docling serve is running (by PID only)."""
         # Check if we have a direct process handle
@@ -142,7 +144,7 @@ class DoclingManager:
         self._running = False
         self._external_process = False
         return False
-    
+
     def check_port_available(self) -> tuple[bool, Optional[str]]:
         """Check if the native service port is available.
 
@@ -154,7 +156,7 @@ class DoclingManager:
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(0.5)
-            result = sock.connect_ex(('127.0.0.1', self._port))
+            result = sock.connect_ex(("127.0.0.1", self._port))
             sock.close()
 
             if result == 0:
@@ -178,7 +180,7 @@ class DoclingManager:
                 "endpoint": None,
                 "docs_url": None,
                 "ui_url": None,
-                "pid": None
+                "pid": None,
             }
 
         if self.is_running():
@@ -199,7 +201,7 @@ class DoclingManager:
                 "endpoint": f"http://{display_host}:{self._port}",
                 "docs_url": f"http://{display_host}:{self._port}/docs",
                 "ui_url": f"http://{display_host}:{self._port}/ui",
-                "pid": pid
+                "pid": pid,
             }
         else:
             display_host = "localhost" if self._host == "0.0.0.0" else self._host
@@ -210,10 +212,12 @@ class DoclingManager:
                 "endpoint": None,
                 "docs_url": None,
                 "ui_url": None,
-                "pid": None
+                "pid": None,
             }
-    
-    async def start(self, port: int = 5001, host: Optional[str] = None, enable_ui: bool = False) -> Tuple[bool, str]:
+
+    async def start(
+        self, port: int = 5001, host: Optional[str] = None, enable_ui: bool = False
+    ) -> Tuple[bool, str]:
         """Start docling serve as external process."""
         if self.is_running():
             return False, "Docling serve is already running"
@@ -225,13 +229,17 @@ class DoclingManager:
 
         # Check if port is already in use before trying to start
         import socket
+
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(0.5)
             result = s.connect_ex((self._host, self._port))
             s.close()
             if result == 0:
-                return False, f"Port {self._port} on {self._host} is already in use by another process. Please stop it first."
+                return (
+                    False,
+                    f"Port {self._port} on {self._host} is already in use by another process. Please stop it first.",
+                )
         except Exception as e:
             self._add_log_entry(f"Error checking port availability: {e}")
 
@@ -246,17 +254,32 @@ class DoclingManager:
             # Build command to run docling-serve
             # Check if we should use uv run (look for uv in environment or check if we're in a uv project)
             import shutil
-            if shutil.which("uv") and (os.path.exists("pyproject.toml") or os.getenv("VIRTUAL_ENV")):
+
+            if shutil.which("uv") and (
+                os.path.exists("pyproject.toml") or os.getenv("VIRTUAL_ENV")
+            ):
                 cmd = [
-                    "uv", "run", "python", "-m", "docling_serve", "run",
-                    "--host", self._host,
-                    "--port", str(self._port),
+                    "uv",
+                    "run",
+                    "python",
+                    "-m",
+                    "docling_serve",
+                    "run",
+                    "--host",
+                    self._host,
+                    "--port",
+                    str(self._port),
                 ]
             else:
                 cmd = [
-                    sys.executable, "-m", "docling_serve", "run",
-                    "--host", self._host,
-                    "--port", str(self._port),
+                    sys.executable,
+                    "-m",
+                    "docling_serve",
+                    "run",
+                    "--host",
+                    self._host,
+                    "--port",
+                    str(self._port),
                 ]
 
             if enable_ui:
@@ -270,7 +293,7 @@ class DoclingManager:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 universal_newlines=True,
-                bufsize=0  # Unbuffered for real-time output
+                bufsize=0,  # Unbuffered for real-time output
             )
 
             self._running = True
@@ -296,23 +319,28 @@ class DoclingManager:
                 # Check if it's listening on the port
                 try:
                     import socket
+
                     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     s.settimeout(0.5)
                     result = s.connect_ex((self._host, self._port))
                     s.close()
 
                     if result == 0:
-                        self._add_log_entry(f"Docling-serve is now listening on {self._host}:{self._port}")
+                        self._add_log_entry(
+                            f"Docling-serve is now listening on {self._host}:{self._port}"
+                        )
                         # Service is now running, clear starting flag
                         self._starting = False
                         break
                 except:
                     pass
 
-                self._add_log_entry(f"Waiting for startup... ({i+1}/10)")
+                self._add_log_entry(f"Waiting for startup... ({i + 1}/10)")
 
             # Add a test message to verify logging is working
-            self._add_log_entry(f"Process PID: {self._process.pid}, Poll: {self._process.poll()}")
+            self._add_log_entry(
+                f"Process PID: {self._process.pid}, Poll: {self._process.poll()}"
+            )
 
             if self._process.poll() is not None:
                 # Process already exited - get return code and any output
@@ -339,7 +367,10 @@ class DoclingManager:
 
                 self._running = False
                 self._starting = False
-                return False, f"Docling serve process exited immediately (code: {return_code})"
+                return (
+                    False,
+                    f"Docling serve process exited immediately (code: {return_code})",
+                )
 
             # If we get here and the process is still running but not listening yet,
             # clear the starting flag anyway (it's running, just not ready)
@@ -351,7 +382,10 @@ class DoclingManager:
 
         except FileNotFoundError:
             self._starting = False
-            return False, "docling-serve not available. Please install: uv add docling-serve"
+            return (
+                False,
+                "docling-serve not available. Please install: uv add docling-serve",
+            )
         except Exception as e:
             self._running = False
             self._process = None
@@ -360,6 +394,7 @@ class DoclingManager:
 
     def _start_output_capture(self):
         """Start threads to capture subprocess stdout and stderr."""
+
         def capture_stdout():
             if not self._process or not self._process.stdout:
                 self._add_log_entry("No stdout pipe available")
@@ -438,14 +473,18 @@ class DoclingManager:
                 # This is a process we recovered from PID file
                 pid_to_stop = self._load_pid()
                 if pid_to_stop and self._is_process_running(pid_to_stop):
-                    self._add_log_entry(f"Stopping process from PID file (PID: {pid_to_stop})")
+                    self._add_log_entry(
+                        f"Stopping process from PID file (PID: {pid_to_stop})"
+                    )
                     try:
                         os.kill(pid_to_stop, 15)  # SIGTERM
                         # Wait a bit for graceful shutdown
                         await asyncio.sleep(2)
                         if self._is_process_running(pid_to_stop):
                             # Still running, force kill
-                            self._add_log_entry(f"Force killing process (PID: {pid_to_stop})")
+                            self._add_log_entry(
+                                f"Force killing process (PID: {pid_to_stop})"
+                            )
                             os.kill(pid_to_stop, 9)  # SIGKILL
                     except Exception as e:
                         self._add_log_entry(f"Error stopping external process: {e}")
@@ -467,31 +506,36 @@ class DoclingManager:
         except Exception as e:
             self._add_log_entry(f"Error stopping docling serve: {e}")
             return False, f"Error stopping docling serve: {str(e)}"
-    
-    async def restart(self, port: Optional[int] = None, host: Optional[str] = None, enable_ui: bool = False) -> Tuple[bool, str]:
+
+    async def restart(
+        self,
+        port: Optional[int] = None,
+        host: Optional[str] = None,
+        enable_ui: bool = False,
+    ) -> Tuple[bool, str]:
         """Restart docling serve."""
         # Use current settings if not specified
         if port is None:
             port = self._port
         if host is None:
             host = self._host
-            
+
         # Stop if running
         if self.is_running():
             success, msg = await self.stop()
             if not success:
                 return False, f"Failed to stop: {msg}"
-            
+
             # Wait a moment for cleanup
             await asyncio.sleep(1)
-        
+
         # Start with new settings
         return await self.start(port, host, enable_ui)
-    
+
     def add_manual_log_entry(self, message: str) -> None:
         """Add a manual log entry - useful for debugging."""
         self._add_log_entry(f"MANUAL: {message}")
-    
+
     def get_logs(self, lines: int = 50) -> Tuple[bool, str]:
         """Get logs from the docling-serve process."""
         if self.is_running():
@@ -506,7 +550,7 @@ class DoclingManager:
                 return True, logs
         else:
             return True, "Docling serve is not running."
-    
+
     async def follow_logs(self) -> AsyncIterator[str]:
         """Follow logs from the docling-serve process in real-time."""
         # First yield status message and any existing logs

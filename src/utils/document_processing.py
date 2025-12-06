@@ -1,7 +1,5 @@
-import hashlib
 import os
 import sys
-import platform
 from collections import defaultdict
 from .gpu_detection import detect_gpu_devices
 from utils.logging_config import get_logger
@@ -85,7 +83,6 @@ def get_worker_converter():
     """Get or create a DocumentConverter instance for this worker process"""
     global _worker_converter
     if _worker_converter is None:
-        
         # Configure GPU settings for this worker
         has_gpu_devices, _ = detect_gpu_devices()
         if not has_gpu_devices:
@@ -184,7 +181,6 @@ def process_document_sync(file_path: str):
     """Synchronous document processing function for multiprocessing"""
     import traceback
     import psutil
-    import sys
     from collections import defaultdict
 
     process = psutil.Process()
@@ -230,6 +226,7 @@ def process_document_sync(file_path: str):
         # Compute file hash
         try:
             from utils.hash_utils import hash_id
+
             logger.info("Computing file hash", worker_pid=os.getpid())
             file_hash = hash_id(file_path)
             logger.info(

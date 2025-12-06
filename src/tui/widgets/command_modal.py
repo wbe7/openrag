@@ -6,7 +6,7 @@ from typing import Callable, Optional, AsyncIterator
 
 from rich.text import Text
 from textual.app import ComposeResult
-from textual.containers import Container, Horizontal
+from textual.containers import Container
 from textual.screen import ModalScreen
 from textual.widgets import Button, Static, Label, TextArea, Footer
 
@@ -205,9 +205,7 @@ class CommandOutputModal(ModalScreen):
             )
             with Container(id="button-row"):
                 yield Button("Copy Output", variant="default", id="copy-btn")
-                yield Button(
-                    "Close", variant="primary", id="close-btn", disabled=True
-                )
+                yield Button("Close", variant="primary", id="close-btn", disabled=True)
             yield Static("", id="copy-status")
         yield Footer()
 
@@ -283,21 +281,24 @@ class CommandOutputModal(ModalScreen):
                 output.move_cursor((len(self._output_lines), 0))
 
                 # Detect error patterns in messages
-                import re
+
                 lower_msg = message.lower() if message else ""
-                if not self._error_detected and any(pattern in lower_msg for pattern in [
-                    "error:",
-                    "failed",
-                    "port.*already.*allocated",
-                    "address already in use",
-                    "not found",
-                    "permission denied"
-                ]):
+                if not self._error_detected and any(
+                    pattern in lower_msg
+                    for pattern in [
+                        "error:",
+                        "failed",
+                        "port.*already.*allocated",
+                        "address already in use",
+                        "not found",
+                        "permission denied",
+                    ]
+                ):
                     self._error_detected = True
                     # Enable close button when error detected
                     close_btn = self.query_one("#close-btn", Button)
                     close_btn.disabled = False
-                
+
                 # If command is complete, update UI
                 if is_complete:
                     self._command_complete = True
@@ -344,7 +345,9 @@ class CommandOutputModal(ModalScreen):
             potential_layer_id = parts[0]
 
             # Check if this looks like a layer ID (hex string, 12 chars for Docker layers)
-            if len(potential_layer_id) == 12 and all(c in '0123456789abcdefABCDEF' for c in potential_layer_id):
+            if len(potential_layer_id) == 12 and all(
+                c in "0123456789abcdefABCDEF" for c in potential_layer_id
+            ):
                 # This is a layer message
                 if potential_layer_id in self._layer_line_map:
                     # Update the existing line for this layer

@@ -74,7 +74,7 @@ class VersionMismatchWarningModal(ModalScreen[bool]):
 
     def __init__(self, container_version: str, tui_version: str):
         """Initialize the warning modal.
-        
+
         Args:
             container_version: Version of existing containers
             tui_version: Current TUI version
@@ -95,7 +95,7 @@ class VersionMismatchWarningModal(ModalScreen[bool]):
                 f"⚠️  Please backup your flows before continuing:\n"
                 f"   Your flows are in ./flows/ directory\n\n"
                 f"Do you want to continue?",
-                id="message"
+                id="message",
             )
             with Horizontal(id="button-row"):
                 yield Button("Cancel", id="cancel-btn")
@@ -111,4 +111,3 @@ class VersionMismatchWarningModal(ModalScreen[bool]):
             self.dismiss(True)  # User wants to continue
         else:
             self.dismiss(False)  # User cancelled
-

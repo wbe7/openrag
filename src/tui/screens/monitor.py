@@ -4,18 +4,16 @@ import asyncio
 import re
 import shutil
 from pathlib import Path
-from typing import Literal, Any, Optional, AsyncIterator
+from typing import Literal, Optional, AsyncIterator
 
 # Define button variant type
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 
 from textual.app import ComposeResult
-from textual.containers import Container, Vertical, Horizontal, ScrollableContainer
+from textual.containers import Horizontal, ScrollableContainer
 from textual.screen import Screen
-from textual.widgets import Header, Footer, Static, Button, DataTable
-from textual.timer import Timer
+from textual.widgets import Footer, Static, Button, DataTable
 from rich.text import Text
-from rich.table import Table
 
 from ..managers.container_manager import ContainerManager, ServiceStatus, ServiceInfo
 from ..managers.docling_manager import DoclingManager
@@ -65,7 +63,6 @@ class MonitorScreen(Screen):
         if self._container_manager is None:
             self._container_manager = self.app.container_manager
         return self._container_manager
-
 
     def compose(self) -> ComposeResult:
         """Create the monitoring screen layout."""
@@ -373,6 +370,7 @@ class MonitorScreen(Screen):
                 # This ensures docker compose reads the correct version
                 try:
                     from ..managers.env_manager import EnvManager
+
                     env_manager = EnvManager()
                     env_manager.ensure_openrag_version()
                     # Small delay to ensure .env file is written and flushed
@@ -484,15 +482,15 @@ class MonitorScreen(Screen):
                 config_path = Path("config")
                 conversations_file = Path("conversations.json")
                 flows_backup_path = Path("flows/backup")
-                
+
                 if config_path.exists():
                     shutil.rmtree(config_path)
                     # Recreate empty config directory
                     config_path.mkdir(parents=True, exist_ok=True)
-                
+
                 if conversations_file.exists():
                     conversations_file.unlink()
-                
+
                 # Delete flow backups only if user chose to (and they actually exist)
                 if self._check_flow_backups():
                     if delete_backups:
@@ -501,8 +499,11 @@ class MonitorScreen(Screen):
                         flows_backup_path.mkdir(parents=True, exist_ok=True)
                         self.notify("Flow backups deleted", severity="information")
                     else:
-                        self.notify("Flow backups preserved in ./flows/backup", severity="information")
-                
+                        self.notify(
+                            "Flow backups preserved in ./flows/backup",
+                            severity="information",
+                        )
+
             except Exception as e:
                 self.notify(
                     f"Error clearing config: {str(e)}",
@@ -528,16 +529,19 @@ class MonitorScreen(Screen):
             yield success, message
             if not success and "failed" in message.lower():
                 return
-        
+
         # Now clear opensearch-data using container
         yield False, "Clearing OpenSearch data..."
         opensearch_data_path = Path("opensearch-data")
         if opensearch_data_path.exists():
-            async for success, message in self.container_manager.clear_opensearch_data_volume():
+            async for (
+                success,
+                message,
+            ) in self.container_manager.clear_opensearch_data_volume():
                 yield success, message
                 if not success and "failed" in message.lower():
                     return
-            
+
             # Recreate empty opensearch-data directory
             try:
                 opensearch_data_path.mkdir(parents=True, exist_ok=True)
@@ -545,7 +549,7 @@ class MonitorScreen(Screen):
             except Exception as e:
                 yield False, f"Error recreating opensearch-data directory: {e}"
                 return
-        
+
         yield True, "Factory reset completed successfully"
 
     def _check_flow_backups(self) -> bool:
@@ -843,7 +847,9 @@ class MonitorScreen(Screen):
             controls.mount(
                 Button("Upgrade", variant="warning", id=f"upgrade-btn{suffix}")
             )
-            controls.mount(Button("Factory Reset", variant="error", id=f"reset-btn{suffix}"))
+            controls.mount(
+                Button("Factory Reset", variant="error", id=f"reset-btn{suffix}")
+            )
 
         except Exception as e:
             notify_with_diagnostics(

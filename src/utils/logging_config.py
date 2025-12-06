@@ -1,8 +1,6 @@
 import os
 import sys
-from typing import Any, Dict
 import structlog
-from structlog import processors
 
 
 def configure_logging(

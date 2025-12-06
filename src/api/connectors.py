@@ -26,14 +26,18 @@ async def connector_sync(request: Request, connector_service, session_manager):
     selected_files = data.get("selected_files")
 
     try:
-        await TelemetryClient.send_event(Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_SYNC_START)
+        await TelemetryClient.send_event(
+            Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_SYNC_START
+        )
         logger.debug(
             "Starting connector sync",
             connector_type=connector_type,
             max_files=max_files,
         )
         user = request.state.user
-        jwt_token = session_manager.get_effective_jwt_token(user.user_id, request.state.jwt_token)
+        jwt_token = session_manager.get_effective_jwt_token(
+            user.user_id, request.state.jwt_token
+        )
 
         # Get all active connections for this connector type and user
         connections = await connector_service.connection_manager.list_connections(
@@ -56,7 +60,9 @@ async def connector_sync(request: Request, connector_service, session_manager):
             )
             try:
                 # Get the connector instance and test authentication
-                connector = await connector_service.get_connector(connection.connection_id)
+                connector = await connector_service.get_connector(
+                    connection.connection_id
+                )
                 if connector and await connector.authenticate():
                     working_connection = connection
                     logger.debug(
@@ -88,7 +94,7 @@ async def connector_sync(request: Request, connector_service, session_manager):
             "Starting sync with working connection",
             connection_id=working_connection.connection_id,
         )
-        
+
         if selected_files:
             task_id = await connector_service.sync_specific_files(
                 working_connection.connection_id,
@@ -104,7 +110,9 @@ async def connector_sync(request: Request, connector_service, session_manager):
                 jwt_token=jwt_token,
             )
         task_ids = [task_id]
-        await TelemetryClient.send_event(Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_SYNC_COMPLETE)
+        await TelemetryClient.send_event(
+            Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_SYNC_COMPLETE
+        )
         return JSONResponse(
             {
                 "task_ids": task_ids,
@@ -117,7 +125,9 @@ async def connector_sync(request: Request, connector_service, session_manager):
 
     except Exception as e:
         logger.error("Connector sync failed", error=str(e))
-        await TelemetryClient.send_event(Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_SYNC_FAILED)
+        await TelemetryClient.send_event(
+            Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_SYNC_FAILED
+        )
         return JSONResponse({"error": f"Sync failed: {str(e)}"}, status_code=500)
 
 
@@ -137,7 +147,9 @@ async def connector_status(request: Request, connector_service, session_manager)
         try:
             connector = await connector_service._get_connector(connection.connection_id)
             if connector is not None:
-                connection_client_ids[connection.connection_id] = connector.get_client_id()
+                connection_client_ids[connection.connection_id] = (
+                    connector.get_client_id()
+                )
             else:
                 connection_client_ids[connection.connection_id] = None
         except Exception as e:
@@ -189,7 +201,9 @@ async def connector_webhook(request: Request, connector_service, session_manager
         config=temp_config,
     )
     try:
-        await TelemetryClient.send_event(Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_WEBHOOK_RECV)
+        await TelemetryClient.send_event(
+            Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_WEBHOOK_RECV
+        )
         temp_connector = connector_service.connection_manager._create_connector(
             temp_connection
         )
@@ -341,10 +355,13 @@ async def connector_webhook(request: Request, connector_service, session_manager
 
     except Exception as e:
         logger.error("Webhook processing failed", error=str(e))
-        await TelemetryClient.send_event(Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_WEBHOOK_FAILED)
+        await TelemetryClient.send_event(
+            Category.CONNECTOR_OPERATIONS, MessageId.ORB_CONN_WEBHOOK_FAILED
+        )
         return JSONResponse(
             {"error": f"Webhook processing failed: {str(e)}"}, status_code=500
         )
+
 
 async def connector_token(request: Request, connector_service, session_manager):
     """Get access token for connector API calls (e.g., Pickers)."""
@@ -358,7 +375,9 @@ async def connector_token(request: Request, connector_service, session_manager):
 
     try:
         # 1) Load the connection and verify ownership
-        connection = await connector_service.connection_manager.get_connection(connection_id)
+        connection = await connector_service.connection_manager.get_connection(
+            connection_id
+        )
         if not connection or connection.user_id != user.user_id:
             return JSONResponse({"error": "Connection not found"}, status_code=404)
 
@@ -366,13 +385,19 @@ async def connector_token(request: Request, connector_service, session_manager):
         connector = await connector_service._get_connector(connection_id)
         if not connector:
             return JSONResponse(
-                {"error": f"Connector not available - authentication may have failed for {url_connector_type}"},
+                {
+                    "error": f"Connector not available - authentication may have failed for {url_connector_type}"
+                },
                 status_code=404,
             )
 
-        real_type = getattr(connector, "type", None) or getattr(connection, "connector_type", None)
+        real_type = getattr(connector, "type", None) or getattr(
+            connection, "connector_type", None
+        )
         if real_type is None:
-            return JSONResponse({"error": "Unable to determine connector type"}, status_code=500)
+            return JSONResponse(
+                {"error": "Unable to determine connector type"}, status_code=500
+            )
 
         # Optional: warn if URL path type disagrees with real type
         if url_connector_type and url_connector_type != real_type:
@@ -398,7 +423,11 @@ async def connector_token(request: Request, connector_service, session_manager):
                 try:
                     if connector.oauth.creds.expiry:
                         import time
-                        expires_in = max(0, int(connector.oauth.creds.expiry.timestamp() - time.time()))
+
+                        expires_in = max(
+                            0,
+                            int(connector.oauth.creds.expiry.timestamp() - time.time()),
+                        )
                 except Exception:
                     expires_in = None
 
@@ -408,7 +437,9 @@ async def connector_token(request: Request, connector_service, session_manager):
                         "expires_in": expires_in,
                     }
                 )
-            return JSONResponse({"error": "Invalid or expired credentials"}, status_code=401)
+            return JSONResponse(
+                {"error": "Invalid or expired credentials"}, status_code=401
+            )
 
         # ONEDRIVE / SHAREPOINT (MSAL or custom)
         if real_type in ("onedrive", "sharepoint") and hasattr(connector, "oauth"):
@@ -432,11 +463,17 @@ async def connector_token(request: Request, connector_service, session_manager):
                 return JSONResponse({"access_token": access_token, "expires_in": None})
             except ValueError as e:
                 # Typical when acquire_token_silent fails (e.g., needs re-auth)
-                return JSONResponse({"error": f"Failed to get access token: {str(e)}"}, status_code=401)
+                return JSONResponse(
+                    {"error": f"Failed to get access token: {str(e)}"}, status_code=401
+                )
             except Exception as e:
-                return JSONResponse({"error": f"Authentication error: {str(e)}"}, status_code=500)
+                return JSONResponse(
+                    {"error": f"Authentication error: {str(e)}"}, status_code=500
+                )
 
-        return JSONResponse({"error": "Token not available for this connector type"}, status_code=400)
+        return JSONResponse(
+            {"error": "Token not available for this connector type"}, status_code=400
+        )
 
     except Exception as e:
         logger.error("Error getting connector token", exc_info=True)

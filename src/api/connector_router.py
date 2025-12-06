@@ -1,12 +1,8 @@
 """Connector router that automatically routes based on configuration settings."""
 
-from starlette.requests import Request
 
 from config.settings import (
     DISABLE_INGEST_WITH_LANGFLOW,
-    clients,
-    INDEX_NAME,
-    INDEX_BODY,
 )
 from utils.logging_config import get_logger
 

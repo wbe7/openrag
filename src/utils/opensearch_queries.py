@@ -1,6 +1,7 @@
 """
 Utility functions for constructing OpenSearch queries consistently.
 """
+
 from typing import Union, List
 
 
@@ -14,14 +15,12 @@ def build_filename_query(filename: str) -> dict:
     Returns:
         A dict containing the OpenSearch query body
     """
-    return {
-        "term": {
-            "filename": filename
-        }
-    }
+    return {"term": {"filename": filename}}
 
 
-def build_filename_search_body(filename: str, size: int = 1, source: Union[bool, List[str]] = False) -> dict:
+def build_filename_search_body(
+    filename: str, size: int = 1, source: Union[bool, List[str]] = False
+) -> dict:
     """
     Build a complete search body for checking if a filename exists.
 
@@ -33,11 +32,7 @@ def build_filename_search_body(filename: str, size: int = 1, source: Union[bool,
     Returns:
         A dict containing the complete OpenSearch search body
     """
-    return {
-        "query": build_filename_query(filename),
-        "size": size,
-        "_source": source
-    }
+    return {"query": build_filename_query(filename), "size": size, "_source": source}
 
 
 def build_filename_delete_body(filename: str) -> dict:
@@ -50,6 +45,4 @@ def build_filename_delete_body(filename: str) -> dict:
     Returns:
         A dict containing the OpenSearch delete-by-query body
     """
-    return {
-        "query": build_filename_query(filename)
-    }
+    return {"query": build_filename_query(filename)}

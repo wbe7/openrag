@@ -88,13 +88,13 @@ class LangflowFileService:
         # Pass files via tweaks to File component (File-PSU37 from the flow)
         if file_paths:
             tweaks["DoclingRemote-Dp3PX"] = {"path": file_paths}
-            
-
 
         # Pass JWT token via tweaks using the x-langflow-global-var- pattern
         if jwt_token:
             # Using the global variable pattern that Langflow expects for OpenSearch components
-            tweaks["OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4"] = {"jwt_token": jwt_token}
+            tweaks["OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4"] = {
+                "jwt_token": jwt_token
+            }
             logger.debug("[LF] Added JWT token to tweaks for OpenSearch components")
         else:
             logger.warning("[LF] No JWT token provided")
@@ -133,32 +133,40 @@ class LangflowFileService:
             bool(jwt_token),
         )
         # To compute the file size in bytes, use len() on the file content (which should be bytes)
-        file_size_bytes = len(file_tuples[0][1]) if file_tuples and len(file_tuples[0]) > 1 else 0
+        file_size_bytes = (
+            len(file_tuples[0][1]) if file_tuples and len(file_tuples[0]) > 1 else 0
+        )
         # Avoid logging full payload to prevent leaking sensitive data (e.g., JWT)
 
         # Extract file metadata if file_tuples is provided
-        filename = str(file_tuples[0][0]) if file_tuples and len(file_tuples) > 0 else ""
-        mimetype = str(file_tuples[0][2]) if file_tuples and len(file_tuples) > 0 and len(file_tuples[0]) > 2 else ""
+        filename = (
+            str(file_tuples[0][0]) if file_tuples and len(file_tuples) > 0 else ""
+        )
+        mimetype = (
+            str(file_tuples[0][2])
+            if file_tuples and len(file_tuples) > 0 and len(file_tuples[0]) > 2
+            else ""
+        )
 
         # Get the current embedding model and provider credentials from config
         from config.settings import get_openrag_config
         from utils.langflow_headers import add_provider_credentials_to_headers
-        
+
         config = get_openrag_config()
         embedding_model = config.knowledge.embedding_model
 
-        headers={
-                "X-Langflow-Global-Var-JWT": str(jwt_token),
-                "X-Langflow-Global-Var-OWNER": str(owner),
-                "X-Langflow-Global-Var-OWNER_NAME": str(owner_name),
-                "X-Langflow-Global-Var-OWNER_EMAIL": str(owner_email),
-                "X-Langflow-Global-Var-CONNECTOR_TYPE": str(connector_type),
-                "X-Langflow-Global-Var-FILENAME": filename,
-                "X-Langflow-Global-Var-MIMETYPE": mimetype,
-                "X-Langflow-Global-Var-FILESIZE": str(file_size_bytes),
-                "X-Langflow-Global-Var-SELECTED_EMBEDDING_MODEL": str(embedding_model),
-            }
-        
+        headers = {
+            "X-Langflow-Global-Var-JWT": str(jwt_token),
+            "X-Langflow-Global-Var-OWNER": str(owner),
+            "X-Langflow-Global-Var-OWNER_NAME": str(owner_name),
+            "X-Langflow-Global-Var-OWNER_EMAIL": str(owner_email),
+            "X-Langflow-Global-Var-CONNECTOR_TYPE": str(connector_type),
+            "X-Langflow-Global-Var-FILENAME": filename,
+            "X-Langflow-Global-Var-MIMETYPE": mimetype,
+            "X-Langflow-Global-Var-FILESIZE": str(file_size_bytes),
+            "X-Langflow-Global-Var-SELECTED_EMBEDDING_MODEL": str(embedding_model),
+        }
+
         # Add provider credentials as global variables for ingestion
         add_provider_credentials_to_headers(headers, config)
         logger.info(f"[LF] Headers {headers}")
@@ -203,7 +211,7 @@ class LangflowFileService:
         owner: Optional[str] = None,
         owner_name: Optional[str] = None,
         owner_email: Optional[str] = None,
-        connector_type: Optional[str] = None,   
+        connector_type: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Combined upload, ingest, and delete operation.

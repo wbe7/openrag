@@ -86,18 +86,29 @@ class TaskService:
             delete_after_ingest=delete_after_ingest,
             replace_duplicates=replace_duplicates,
         )
-        return await self.create_custom_task(user_id, file_paths, processor, original_filenames)
+        return await self.create_custom_task(
+            user_id, file_paths, processor, original_filenames
+        )
 
-    async def create_custom_task(self, user_id: str, items: list, processor, original_filenames: dict | None = None) -> str:
+    async def create_custom_task(
+        self,
+        user_id: str,
+        items: list,
+        processor,
+        original_filenames: dict | None = None,
+    ) -> str:
         """Create a new task with custom processor for any type of items"""
         import os
+
         # Store anonymous tasks under a stable key so they can be retrieved later
         store_user_id = user_id or AnonymousUser().user_id
         task_id = str(uuid.uuid4())
 
         # Create file tasks with original filenames if provided
         normalized_originals = (
-            {str(k): v for k, v in original_filenames.items()} if original_filenames else {}
+            {str(k): v for k, v in original_filenames.items()}
+            if original_filenames
+            else {}
         )
         file_tasks = {
             str(item): FileTask(
@@ -140,7 +151,7 @@ class TaskService:
                 metadata={
                     "total_files": len(items),
                     "processor_type": processor.__class__.__name__,
-                }
+                },
             )
         )
 
@@ -162,6 +173,7 @@ class TaskService:
             async def process_with_semaphore(file_path: str):
                 async with semaphore:
                     from models.processors import DocumentFileProcessor
+
                     file_task = upload_task.file_tasks[file_path]
 
                     # Create processor with user context (all None for background processing)
@@ -187,7 +199,7 @@ class TaskService:
             if upload_task.processed_files >= upload_task.total_files:
                 upload_task.status = TaskStatus.COMPLETED
                 upload_task.updated_at = time.time()
-                
+
                 # Send telemetry for task completion
                 asyncio.create_task(
                     TelemetryClient.send_event(
@@ -197,7 +209,7 @@ class TaskService:
                             "total_files": upload_task.total_files,
                             "successful_files": upload_task.successful_files,
                             "failed_files": upload_task.failed_files,
-                        }
+                        },
                     )
                 )
 
@@ -212,7 +224,7 @@ class TaskService:
                 failed_task = self.task_store[user_id][task_id]
                 failed_task.status = TaskStatus.FAILED
                 failed_task.updated_at = time.time()
-                
+
                 # Send telemetry for task failure
                 asyncio.create_task(
                     TelemetryClient.send_event(
@@ -223,7 +235,7 @@ class TaskService:
                             "processed_files": failed_task.processed_files,
                             "successful_files": failed_task.successful_files,
                             "failed_files": failed_task.failed_files,
-                        }
+                        },
                     )
                 )
 
@@ -272,7 +284,7 @@ class TaskService:
             # Mark task as completed
             upload_task.status = TaskStatus.COMPLETED
             upload_task.updated_at = time.time()
-            
+
             # Send telemetry for task completion
             asyncio.create_task(
                 TelemetryClient.send_event(
@@ -282,7 +294,7 @@ class TaskService:
                         "total_files": upload_task.total_files,
                         "successful_files": upload_task.successful_files,
                         "failed_files": upload_task.failed_files,
-                    }
+                    },
                 )
             )
 
@@ -303,7 +315,7 @@ class TaskService:
                 failed_task = self.task_store[user_id][task_id]
                 failed_task.status = TaskStatus.FAILED
                 failed_task.updated_at = time.time()
-                
+
                 # Send telemetry for task failure
                 asyncio.create_task(
                     TelemetryClient.send_event(
@@ -314,7 +326,7 @@ class TaskService:
                             "processed_files": failed_task.processed_files,
                             "successful_files": failed_task.successful_files,
                             "failed_files": failed_task.failed_files,
-                        }
+                        },
                     )
                 )
 
