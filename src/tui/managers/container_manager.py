@@ -1390,9 +1390,9 @@ class ContainerManager:
                 yield False, "Failed to stop services, aborting prune"
                 return
 
-        # Give services time to fully stop
+        # Give services time to fully stop and release image locks
         import asyncio
-        await asyncio.sleep(2)
+        await asyncio.sleep(5)
 
         yield False, "Scanning for OpenRAG images..."
 
