@@ -1391,7 +1391,6 @@ class ContainerManager:
                 return
 
         # Give services time to fully stop and release image locks
-        import asyncio
         await asyncio.sleep(5)
 
         yield False, "Scanning for OpenRAG images..."
