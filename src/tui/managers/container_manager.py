@@ -2,7 +2,8 @@
 
 import asyncio
 import json
-import subprocess
+import os
+import re
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -121,6 +122,35 @@ class ContainerManager:
         self._compose_search_log += f"\n  3. Falling back to: {cwd_path.absolute()}"
         return Path(filename)
 
+    def _get_env_from_file(self) -> Dict[str, str]:
+        """Read environment variables from .env file, prioritizing file values over os.environ.
+        
+        This ensures Docker Compose commands use the latest values from .env file,
+        even if os.environ has stale values.
+        """
+        env = dict(os.environ)  # Start with current environment
+        env_file = Path(".env")
+        
+        if env_file.exists():
+            try:
+                from ..utils.validation import sanitize_env_value
+                with open(env_file, "r") as f:
+                    for line in f:
+                        line = line.strip()
+                        if not line or line.startswith("#"):
+                            continue
+                        if "=" in line:
+                            key, value = line.split("=", 1)
+                            key = key.strip()
+                            value = sanitize_env_value(value)
+                            # Override os.environ with .env file values
+                            # This ensures Docker Compose uses the latest .env values
+                            env[key] = value
+            except Exception as e:
+                logger.debug(f"Error reading .env file for Docker Compose: {e}")
+        
+        return env
+
     def is_available(self) -> bool:
         """Check if container runtime with compose is available."""
         return (self.runtime_info.runtime_type != RuntimeType.NONE and
@@ -153,7 +183,6 @@ class ContainerManager:
                 continue
                 
             try:
-                import re
                 content = compose_file.read_text()
                 current_service = None
                 in_ports_section = False
@@ -245,11 +274,15 @@ class ContainerManager:
         cmd.extend(args)
 
         try:
+            # Get environment variables from .env file to ensure latest values
+            env = self._get_env_from_file()
+            
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
                 cwd=Path.cwd(),
+                env=env,
             )
 
             stdout, stderr = await process.communicate()
@@ -287,11 +320,15 @@ class ContainerManager:
         cmd.extend(args)
 
         try:
+            # Get environment variables from .env file to ensure latest values
+            env = self._get_env_from_file()
+            
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.STDOUT,
                 cwd=Path.cwd(),
+                env=env,
             )
 
             if process.stdout:
@@ -356,11 +393,15 @@ class ContainerManager:
         cmd.extend(args)
 
         try:
+            # Get environment variables from .env file to ensure latest values
+            env = self._get_env_from_file()
+            
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.STDOUT,
                 cwd=Path.cwd(),
+                env=env,
             )
         except Exception as e:
             success_flag["value"] = False
@@ -926,7 +967,6 @@ class ContainerManager:
         
         async for message, replace_last in self._stream_compose_command(["up", "-d"], up_success, cpu_mode):
             # Detect error patterns in the output
-            import re
             lower_msg = message.lower()
             
             # Check for common error patterns
@@ -1110,11 +1150,15 @@ class ContainerManager:
         cmd.extend(["logs", "-f", service_name])
 
         try:
+            # Get environment variables from .env file to ensure latest values
+            env = self._get_env_from_file()
+            
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.STDOUT,
                 cwd=Path.cwd(),
+                env=env,
             )
 
             if process.stdout:
