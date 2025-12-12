@@ -12,7 +12,6 @@ from dotenv import load_dotenv
 from utils.logging_config import get_logger
 
 from ..utils.validation import (
-    sanitize_env_value,
     validate_documents_paths,
     validate_google_oauth_client_id,
     validate_non_empty,
@@ -548,17 +547,12 @@ class EnvManager:
             
             # Check if OPENRAG_VERSION is already set in .env
             if self.env_file.exists():
-                env_content = self.env_file.read_text()
-                if "OPENRAG_VERSION" in env_content:
-                    # Already set, check if it needs updating
-                    for line in env_content.splitlines():
-                        if line.strip().startswith("OPENRAG_VERSION"):
-                            existing_value = line.split("=", 1)[1].strip()
-                            existing_value = sanitize_env_value(existing_value)
-                            if existing_value == current_version:
-                                # Already correct, no update needed
-                                return
-                            break
+                # Load .env file using load_dotenv
+                load_dotenv(dotenv_path=self.env_file, override=False)
+                existing_value = os.environ.get("OPENRAG_VERSION", "")
+                if existing_value and existing_value == current_version:
+                    # Already correct, no update needed
+                    return
             
             # Set or update OPENRAG_VERSION
             self.config.openrag_version = current_version
