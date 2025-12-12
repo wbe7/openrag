@@ -1,5 +1,6 @@
 """Environment configuration manager for OpenRAG TUI."""
 
+import os
 import secrets
 import string
 from dataclasses import dataclass, field
@@ -7,9 +8,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from dotenv import load_dotenv
 from utils.logging_config import get_logger
-
-logger = get_logger(__name__)
 
 from ..utils.validation import (
     sanitize_env_value,
@@ -19,6 +19,8 @@ from ..utils.validation import (
     validate_openai_api_key,
     validate_url,
 )
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -119,9 +121,15 @@ class EnvManager:
         return f"'{escaped_value}'"
 
     def load_existing_env(self) -> bool:
-        """Load existing .env file if it exists, or fall back to environment variables."""
-        import os
+        """Load existing .env file if it exists, or fall back to environment variables.
         
+        Uses python-dotenv's load_dotenv() for standard .env file parsing, which handles:
+        - Quoted values (single and double quotes)
+        - Variable expansion (${VAR})
+        - Multiline values
+        - Escaped characters
+        - Comments
+        """
         # Map env vars to config attributes
         # These are environment variable names, not actual secrets
         attr_map = {  # pragma: allowlist secret
@@ -158,36 +166,23 @@ class EnvManager:
         
         loaded_from_file = False
         
-        # Try to load from .env file first
+        # Load .env file using python-dotenv for standard parsing
+        # override=True ensures .env file values take precedence over existing environment variables
         if self.env_file.exists():
             try:
-                with open(self.env_file, "r") as f:
-                    for line in f:
-                        line = line.strip()
-                        if not line or line.startswith("#"):
-                            continue
-
-                        if "=" in line:
-                            key, value = line.split("=", 1)
-                            key = key.strip()
-                            value = sanitize_env_value(value)
-
-                            if key in attr_map:
-                                setattr(self.config, attr_map[key], value)
-
+                # Load .env file with override=True to ensure file values take precedence
+                load_dotenv(dotenv_path=self.env_file, override=True)
                 loaded_from_file = True
-
+                logger.debug(f"Loaded .env file from {self.env_file}")
             except Exception as e:
                 logger.error("Error loading .env file", error=str(e))
         
-        # Fall back to environment variables if .env file doesn't exist or failed to load
-        if not loaded_from_file:
-            logger.info("No .env file found, loading from environment variables")
-            for env_key, attr_name in attr_map.items():
-                value = os.environ.get(env_key, "")
-                if value:
-                    setattr(self.config, attr_name, value)
-            return True
+        # Map environment variables to config attributes
+        # This works whether values came from .env file or existing environment variables
+        for env_key, attr_name in attr_map.items():
+            value = os.environ.get(env_key, "")
+            if value:
+                setattr(self.config, attr_name, value)
         
         return loaded_from_file
 
@@ -546,6 +541,7 @@ class EnvManager:
         """Ensure OPENRAG_VERSION is set in .env file to match TUI version."""
         try:
             from ..utils.version_check import get_current_version
+            import os
             current_version = get_current_version()
             if current_version == "unknown":
                 return

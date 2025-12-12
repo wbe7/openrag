@@ -125,27 +125,28 @@ class ContainerManager:
     def _get_env_from_file(self) -> Dict[str, str]:
         """Read environment variables from .env file, prioritizing file values over os.environ.
         
+        Uses python-dotenv's load_dotenv() for standard .env file parsing, which handles:
+        - Quoted values (single and double quotes)
+        - Variable expansion (${VAR})
+        - Multiline values
+        - Escaped characters
+        - Comments
+        
         This ensures Docker Compose commands use the latest values from .env file,
         even if os.environ has stale values.
         """
+        from dotenv import load_dotenv
+        
         env = dict(os.environ)  # Start with current environment
         env_file = Path(".env")
         
         if env_file.exists():
             try:
-                from ..utils.validation import sanitize_env_value
-                with open(env_file, "r") as f:
-                    for line in f:
-                        line = line.strip()
-                        if not line or line.startswith("#"):
-                            continue
-                        if "=" in line:
-                            key, value = line.split("=", 1)
-                            key = key.strip()
-                            value = sanitize_env_value(value)
-                            # Override os.environ with .env file values
-                            # This ensures Docker Compose uses the latest .env values
-                            env[key] = value
+                # Load .env file with override=True to ensure file values take precedence
+                # This loads into os.environ, then we copy to our dict
+                load_dotenv(dotenv_path=env_file, override=True)
+                # Update our dict with all environment variables (including those from .env)
+                env.update(os.environ)
             except Exception as e:
                 logger.debug(f"Error reading .env file for Docker Compose: {e}")
         
