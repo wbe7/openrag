@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Quickstart | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/quickstart"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Quickstart | OpenRAG"><meta data-rh="true" name="description" content="Use this quickstart to install OpenRAG, and then try some of OpenRAG&#x27;s core features."><meta data-rh="true" property="og:description" content="Use this quickstart to install OpenRAG, and then try some of OpenRAG&#x27;s core features."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/quickstart"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/quickstart" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/quickstart" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Quickstart","item":"https://docs.openr.ag/quickstart"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.c7097fe1.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.732f6967.js" defer="defer"></script>
 <script src="/assets/js/main.b10c6137.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -56,7 +56,7 @@ Once the environment is ready, the OpenRAG <a class="" href="/tui">Terminal User
 <p>This process can take some time while OpenRAG pulls and runs the container images.
 If all services start successfully, the TUI prints a confirmation message:</p>
 <div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">Services started successfully</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Command completed successfully</span><br></span></code></pre></div></div>
-<p>Your OpenRAG configuration and passwords are stored in an <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> file that is created automatically in your OpenRAG installation directory, which is the directory where you ran the installer script.
+<p>Your OpenRAG configuration and passwords are stored in an <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> file that is created automatically at <code>~/.openrag/tui</code>.
 Container definitions are stored in the <code>docker-compose</code> files in the same directory.</p>
 </li>
 <li class="">
@@ -94,7 +94,7 @@ You can click a document to view the chunks of the document as they are stored i
 <p>Click <strong>Add Knowledge</strong> to add your own documents to your OpenRAG knowledge base.</p>
 <p>For this quickstart, use either the <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path></svg> <strong>File</strong> or <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path></svg> <strong>Folder</strong> upload options to load documents from your local machine.
 <strong>Folder</strong> uploads an entire directory.
-The default directory is the <code>/openrag-documents</code> subdirectory in your OpenRAG installation directory.</p>
+The default directory is <code>~/.openrag/documents</code>.</p>
 <p>For information about the cloud storage provider options, see <a class="" href="/ingestion#oauth-ingestion">Ingest files with OAuth connectors</a>.</p>
 </li>
 <li class="">
@@ -123,7 +123,7 @@ If a document was chunked improperly, you might need to tweak the ingestion or m
 </li>
 <li class="">
 <p>For greater insight into the underlying <a class="" href="/agents">Langflow flow</a> that drives the OpenRAG chat, click <strong>Edit in Langflow</strong> and then click <strong>Proceed</strong> to launch the Langflow visual editor in a new browser window.</p>
-<p>If Langflow requests login information, enter the <code>LANGFLOW_SUPERUSER</code> and <code>LANGFLOW_SUPERUSER_PASSWORD</code> from the <code>.env</code> file in your OpenRAG installation directory.</p>
+<p>If Langflow requests login information, enter the <code>LANGFLOW_SUPERUSER</code> and <code>LANGFLOW_SUPERUSER_PASSWORD</code> from the <code>.env</code> file at <code>~/.openrag/tui</code>.</p>
 <p>The <strong>OpenRAG OpenSearch Agent</strong> flow opens in a new browser window.</p>
 <p><img decoding="async" loading="lazy" alt="OpenRAG OpenSearch Agent flow" src="/assets/images/opensearch-agent-flow-f3b279e02425cd043002eb7749067108.png" width="4084" height="2176" class="img_ev3q"></p>
 </li>

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Invoke OpenRAG with uvx | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/install-uvx"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Invoke OpenRAG with uvx | OpenRAG"><meta data-rh="true" name="description" content="Use uvx to invoke OpenRAG outside of a Python project or without modifying your project&#x27;s dependencies."><meta data-rh="true" property="og:description" content="Use uvx to invoke OpenRAG outside of a Python project or without modifying your project&#x27;s dependencies."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/install-uvx"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/install-uvx" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/install-uvx" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Invoke OpenRAG with uvx","item":"https://docs.openr.ag/install-uvx"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.c7097fe1.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.732f6967.js" defer="defer"></script>
 <script src="/assets/js/main.b10c6137.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -61,7 +61,7 @@ Anthropic provides language models only; you must select an additional provider 
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">mkdir</span><span class="token plain"> openrag-workspace</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token builtin class-name">cd</span><span class="token plain"> openrag-workspace</span><br></span></code></pre></div></div>
 </li>
 <li class="">
-<p>Optional: If you want to use a pre-populated <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>, copy it to this directory before invoking OpenRAG.</p>
+<p>Optional: If you want to use a pre-populated <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>, create one at <code>~/.openrag/tui</code> before invoking OpenRAG.</p>
 </li>
 <li class="">
 <p>Invoke OpenRAG:</p>
@@ -78,7 +78,7 @@ After clearing the cache, you can re-invoke OpenRAG (<code>uvx openrag</code>) t
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="setup">Set up OpenRAG with the TUI<a href="#setup" class="hash-link" aria-label="Direct link to Set up OpenRAG with the TUI" title="Direct link to Set up OpenRAG with the TUI" translate="no">​</a></h2>
 <p>When you install OpenRAG with <code>uvx</code>, you manage the OpenRAG services with the TUI.
 The TUI guides you through the initial configuration process before you start the OpenRAG services.</p>
-<p>Your configuration values are stored in an <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> that is created automatically in the OpenRAG installation directory, which is the directory where you invoked OpenRAG.
+<p>Your configuration values are stored in an <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> that is created automatically at <code>~/.openrag/tui</code>.
 If OpenRAG detects an existing <code>.env</code> file in this directory, then the TUI can populate those values automatically during setup and onboarding.</p>
 <p>Container definitions are stored in the <code>docker-compose</code> files in the same directory as the OpenRAG <code>.env</code> file.</p>
 <p>You can use either <strong>Basic Setup</strong> or <strong>Advanced Setup</strong> to configure OpenRAG.
@@ -119,7 +119,7 @@ If you want to use a different model provider, you can leave this field empty.</
 </li>
 <li class="">
 <p>Click <strong>Save Configuration</strong>.</p>
-<p>Your passwords and API key, if provided, are stored in the <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> in your OpenRAG installation directory.
+<p>Your passwords and API key, if provided, are stored in the <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> at <code>~/.openrag/tui</code>.
 If you modified any credentials that were pulled from an existing <code>.env</code> file, those values are updated in the <code>.env</code> file.</p>
 </li>
 <li class="">
@@ -161,7 +161,7 @@ If you aren&#x27;t sure which models or providers to use, you must provide an Op
 If you want to use a different model provider, you can leave this field empty.</p>
 </li>
 <li class="">
-<p>To upload documents from external storage, such as Google Drive, add the required OAuth credentials for the connectors that you want to use. These settings can be populated automatically if OpenRAG detects these credentials in an <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> in the OpenRAG installation directory.</p>
+<p>To upload documents from external storage, such as Google Drive, add the required OAuth credentials for the connectors that you want to use. These settings can be populated automatically if OpenRAG detects these credentials in an <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> at <code>~/.openrag/tui</code>.</p>
 <ul>
 <li class=""><strong>Amazon</strong>: Provide your AWS Access Key ID and AWS Secret Access Key with access to your S3 instance. For more information, see the AWS documentation on <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-applications.html" target="_blank" rel="noopener noreferrer" class="">Configuring access to AWS applications</a>.</li>
 <li class=""><strong>Google</strong>: Provide your Google OAuth Client ID and Google OAuth Client Secret. You can generate these in the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" class="">Google Cloud Console</a>. For more information, see the <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank" rel="noopener noreferrer" class="">Google OAuth client documentation</a>.</li>
@@ -176,7 +176,7 @@ Register these redirect values with your OAuth provider as they are presented in
 </li>
 <li class="">
 <p>Click <strong>Save Configuration</strong>.</p>
-<p>Your passwords, API key, and OAuth credentials, if provided, are stored in the <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> in your OpenRAG installation directory.
+<p>Your passwords, API key, and OAuth credentials, if provided, are stored in the <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> at <code>~/.openrag/tui</code>.
 If you modified any credentials that were pulled from an existing <code>.env</code> file, those values are updated in the <code>.env</code> file.</p>
 </li>
 <li class="">
