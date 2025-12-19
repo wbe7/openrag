@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Reinstall OpenRAG | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/reinstall"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Reinstall OpenRAG | OpenRAG"><meta data-rh="true" name="description" content="You can reset your OpenRAG deployment to its initial state by recreating the containers and deleting accessory data, such as the .env file and ingested documents."><meta data-rh="true" property="og:description" content="You can reset your OpenRAG deployment to its initial state by recreating the containers and deleting accessory data, such as the .env file and ingested documents."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/reinstall"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/reinstall" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/reinstall" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Reinstall OpenRAG","item":"https://docs.openr.ag/reinstall"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.0ec053c5.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.a299070f.js" defer="defer"></script>
 <script src="/assets/js/main.b10c6137.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -20,7 +20,7 @@ Destroyed containers and deleted data are lost and cannot be recovered after run
 </ol>
 <ol start="2">
 <li class="">
-<p>In the TUI&#x27;s <strong>Status</strong> menu (<kbd>3</kbd>), click <strong>Factory Reset</strong> to <a class="" href="/manage-services#reset-containers">reset your OpenRAG containers</a>.</p>
+<p>In the TUI, click <strong>Status</strong>, and then click <strong>Factory Reset</strong> to <a class="" href="/manage-services#reset-containers">reset your OpenRAG containers</a>.</p>
 <div class="theme-admonition theme-admonition-warning admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg></span>warning</div><div class="admonitionContent_BuS1"><p>This is a destructive operation that does the following:</p><ul>
 <li class="">Destroys all OpenRAG containers, volumes, and local images.</li>
 <li class="">Prunes any additional container objects.</li>
@@ -28,7 +28,7 @@ Destroyed containers and deleted data are lost and cannot be recovered after run
 </ul><p></p><p></p>Destroyed containers and deleted data are lost and cannot be recovered after running this operation.<p></p></div></div>
 </li>
 <li class="">
-<p>Exit the TUI with <kbd>q</kbd>.</p>
+<p>Press <kbd>Esc</kbd> to close the <strong>Status</strong> page, and then press <kbd>q</kbd> to exit the TUI.</p>
 </li>
 <li class="">
 <p>Optional: Delete or edit <a class="" href="/reference/configuration">OpenRAG&#x27;s <code>.env</code> file</a>, which is stored at <code>~/.openrag/tui</code>.</p>
@@ -90,8 +90,9 @@ It is recommended that you preserve OpenRAG&#x27;s <a href="https://github.com/l
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">Docker</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">docker</span><span class="token plain"> stop </span><span class="token variable" style="color:#36acaa">$(</span><span class="token variable function" style="color:#d73a49">docker</span><span class="token variable" style="color:#36acaa"> </span><span class="token variable function" style="color:#d73a49">ps</span><span class="token variable" style="color:#36acaa"> </span><span class="token variable parameter variable" style="color:#36acaa">-q</span><span class="token variable" style="color:#36acaa">)</span><br></span></code></pre></div></div>
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">Podman</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">podman</span><span class="token plain"> stop </span><span class="token parameter variable" style="color:#36acaa">--all</span><br></span></code></pre></div></div>
 </li>
-</ol>
-<ol start="2">
+<li class="">
+<p>Remove and clean up containers:</p>
+<ol>
 <li class="">
 <p>Remove all containers, including stopped containers:</p>
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">Docker</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">docker</span><span class="token plain"> </span><span class="token function" style="color:#d73a49">rm</span><span class="token plain"> </span><span class="token parameter variable" style="color:#36acaa">--force</span><span class="token plain"> </span><span class="token variable" style="color:#36acaa">$(</span><span class="token variable function" style="color:#d73a49">docker</span><span class="token variable" style="color:#36acaa"> </span><span class="token variable function" style="color:#d73a49">ps</span><span class="token variable" style="color:#36acaa"> </span><span class="token variable parameter variable" style="color:#36acaa">-aq</span><span class="token variable" style="color:#36acaa">)</span><br></span></code></pre></div></div>
@@ -118,7 +119,7 @@ It is recommended that you preserve OpenRAG&#x27;s <a href="https://github.com/l
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">Podman</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">podman</span><span class="token plain"> system prune </span><span class="token parameter variable" style="color:#36acaa">--all</span><span class="token plain"> </span><span class="token parameter variable" style="color:#36acaa">--force</span><span class="token plain"> </span><span class="token parameter variable" style="color:#36acaa">--volumes</span><br></span></code></pre></div></div>
 </li>
 </ol>
-<ol start="8">
+</li>
 <li class="">
 <p>Optional: Edit OpenRAG&#x27;s <code>.env</code> file if needed.</p>
 </li>

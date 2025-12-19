@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Ingest knowledge | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/ingestion"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Ingest knowledge | OpenRAG"><meta data-rh="true" name="description" content="Upload documents to your OpenRAG OpenSearch instance to populate your knowledge base with unique content, such as your own company documents, research papers, or websites."><meta data-rh="true" property="og:description" content="Upload documents to your OpenRAG OpenSearch instance to populate your knowledge base with unique content, such as your own company documents, research papers, or websites."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/ingestion"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/ingestion" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/ingestion" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ingest knowledge","item":"https://docs.openr.ag/ingestion"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.0ec053c5.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.a299070f.js" defer="defer"></script>
 <script src="/assets/js/main.b10c6137.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -81,28 +81,28 @@ These files aren&#x27;t stored in the knowledge base permanently.</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="enable-oauth-connectors">Enable OAuth connectors<a href="#enable-oauth-connectors" class="hash-link" aria-label="Direct link to Enable OAuth connectors" title="Direct link to Enable OAuth connectors" translate="no">​</a></h3>
 <p>Before users can connect their own cloud storage accounts, you must configure the provider&#x27;s OAuth credentials in OpenRAG. Typically, this requires that you register OpenRAG as an OAuth application in your cloud provider, and then obtain the app&#x27;s OAuth credentials, such as a client ID and secret key.
 To enable multiple connectors, you must register an app and generate credentials for each provider.</p>
-<div class="theme-tabs-container tabs-container tabList__CuJ"><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active">TUI-managed services</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Self-managed services</li></ul><div class="margin-top--md"><div role="tabpanel" class="tabItem_Ymn6"><p>If you use the <a class="" href="/tui">Terminal User Interface (TUI)</a> to manage your OpenRAG services, enter OAuth credentials in the <strong>Advanced Setup</strong> menu.
+<div class="theme-tabs-container tabs-container tabList__CuJ"><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active">TUI-managed services</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Self-managed services</li></ul><div class="margin-top--md"><div role="tabpanel" class="tabItem_Ymn6"><p>If you use the <a class="" href="/tui">Terminal User Interface (TUI)</a> to manage your OpenRAG services, enter OAuth credentials on the <strong>Advanced Setup</strong> page.
 You can do this during <a class="" href="/install#setup">installation</a>, or you can add the credentials afterwards:</p><ol>
 <li class="">
-<p>If OpenRAG is running, open the TUI&#x27;s <strong>Status</strong> menu (<kbd>3</kbd>), and then click <strong>Stop Services</strong>.</p>
+<p>If OpenRAG is running, click <strong>Stop All Services</strong> in the TUI.</p>
 </li>
 <li class="">
-<p>Open the <strong>Advanced Setup</strong> menu (<kbd>2</kbd>), and then add the OAuth credentials for the cloud storage providers that you want to use:</p>
+<p>Open the <strong>Advanced Setup</strong> page, and then add the OAuth credentials for the cloud storage providers that you want to use under <strong>API Keys</strong>:</p>
 <ul>
-<li class=""><strong>Amazon</strong>: Provide your AWS Access Key ID and AWS Secret Access Key with access to your S3 instance. For more information, see the AWS documentation on <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-applications.html" target="_blank" rel="noopener noreferrer" class="">Configuring access to AWS applications</a>.</li>
 <li class=""><strong>Google</strong>: Provide your Google OAuth Client ID and Google OAuth Client Secret. You can generate these in the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" class="">Google Cloud Console</a>. For more information, see the <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank" rel="noopener noreferrer" class="">Google OAuth client documentation</a>.</li>
 <li class=""><strong>Microsoft</strong>: For the Microsoft OAuth Client ID and Microsoft OAuth Client Secret, provide <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/app-registration?view=odsp-graph-online" target="_blank" rel="noopener noreferrer" class="">Azure application registration credentials for SharePoint and OneDrive</a>. For more information, see the <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/graph-oauth" target="_blank" rel="noopener noreferrer" class="">Microsoft Graph OAuth client documentation</a>.</li>
+<li class=""><strong>Amazon</strong>: Provide your AWS Access Key ID and AWS Secret Access Key with access to your S3 instance. For more information, see the AWS documentation on <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-applications.html" target="_blank" rel="noopener noreferrer" class="">Configuring access to AWS applications</a>.</li>
 </ul>
 </li>
 <li class="">
-<p>The TUI presents redirect URIs for your OAuth app that you must register with your OAuth provider.
-These are the URLs your OAuth provider will redirect back to after users authenticate and grant access to their cloud storage.</p>
+<p>Register the redirect URIs shown in the TUI in your OAuth provider.
+These are the URLs your OAuth provider will use to redirect users back to OpenRAG after they sign in.</p>
 </li>
 <li class="">
 <p>Click <strong>Save Configuration</strong> to add the OAuth credentials to your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>.</p>
 </li>
 <li class="">
-<p>Click <strong>Start All Services</strong> to restart the OpenRAG containers with OAuth enabled.</p>
+<p>Click <strong>Start Services</strong> to restart the OpenRAG containers with OAuth enabled.</p>
 </li>
 <li class="">
 <p>Launch the OpenRAG app.
@@ -118,16 +118,16 @@ You should be prompted to sign in to your OAuth provider before being redirected
 <p>Edit your OpenRAG <code>.env</code> file to add the OAuth credentials for the cloud storage providers that you want to use:</p>
 <ul>
 <li class="">
-<p><strong>Amazon</strong>: Provide your AWS Access Key ID and AWS Secret Access Key with access to your S3 instance. For more information, see the AWS documentation on <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-applications.html" target="_blank" rel="noopener noreferrer" class="">Configuring access to AWS applications</a>.</p>
-<div class="language-env codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-env codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">AWS_ACCESS_KEY_ID=</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">AWS_SECRET_ACCESS_KEY=</span><br></span></code></pre></div></div>
-</li>
-<li class="">
 <p><strong>Google</strong>: Provide your Google OAuth Client ID and Google OAuth Client Secret. You can generate these in the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" class="">Google Cloud Console</a>. For more information, see the <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank" rel="noopener noreferrer" class="">Google OAuth client documentation</a>.</p>
 <div class="language-env codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-env codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">GOOGLE_OAUTH_CLIENT_ID=</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">GOOGLE_OAUTH_CLIENT_SECRET=</span><br></span></code></pre></div></div>
 </li>
 <li class="">
 <p><strong>Microsoft</strong>: For the Microsoft OAuth Client ID and Microsoft OAuth Client Secret, provide <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/app-registration?view=odsp-graph-online" target="_blank" rel="noopener noreferrer" class="">Azure application registration credentials for SharePoint and OneDrive</a>. For more information, see the <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/graph-oauth" target="_blank" rel="noopener noreferrer" class="">Microsoft Graph OAuth client documentation</a>.</p>
 <div class="language-env codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-env codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">MICROSOFT_GRAPH_OAUTH_CLIENT_ID=</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">MICROSOFT_GRAPH_OAUTH_CLIENT_SECRET=</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p><strong>Amazon</strong>: Provide your AWS Access Key ID and AWS Secret Access Key with access to your S3 instance. For more information, see the AWS documentation on <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-applications.html" target="_blank" rel="noopener noreferrer" class="">Configuring access to AWS applications</a>.</p>
+<div class="language-env codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-env codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">AWS_ACCESS_KEY_ID=</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">AWS_SECRET_ACCESS_KEY=</span><br></span></code></pre></div></div>
 </li>
 </ul>
 </li>
@@ -138,6 +138,10 @@ You should be prompted to sign in to your OAuth provider before being redirected
 <p>Restart your OpenRAG containers:</p>
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">Docker</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">docker</span><span class="token plain"> compose up </span><span class="token parameter variable" style="color:#36acaa">-d</span><br></span></code></pre></div></div>
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">Podman</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">podman</span><span class="token plain"> compose up </span><span class="token parameter variable" style="color:#36acaa">-d</span><br></span></code></pre></div></div>
+</li>
+<li class="">
+<p>Access the OpenRAG frontend at <code>http://localhost:3000</code>.
+You should be prompted to sign in to your OAuth provider before being redirected to your OpenRAG instance.</p>
 </li>
 </ol></div></div></div>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="authenticate-and-ingest-files-from-cloud-storage">Authenticate and ingest files from cloud storage<a href="#authenticate-and-ingest-files-from-cloud-storage" class="hash-link" aria-label="Direct link to Authenticate and ingest files from cloud storage" title="Direct link to Authenticate and ingest files from cloud storage" translate="no">​</a></h3>

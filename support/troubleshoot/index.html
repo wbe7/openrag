@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Troubleshoot OpenRAG | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/support/troubleshoot"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Troubleshoot OpenRAG | OpenRAG"><meta data-rh="true" name="description" content="This page provides troubleshooting advice for issues you might encounter when using OpenRAG or contributing to OpenRAG."><meta data-rh="true" property="og:description" content="This page provides troubleshooting advice for issues you might encounter when using OpenRAG or contributing to OpenRAG."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/support/troubleshoot"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/support/troubleshoot" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/support/troubleshoot" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Troubleshoot OpenRAG","item":"https://docs.openr.ag/support/troubleshoot"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.0ec053c5.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.a299070f.js" defer="defer"></script>
 <script src="/assets/js/main.b10c6137.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -51,7 +51,7 @@ For example, on macOS, this is typically a user cache directory, such as <code>~
 <p>This cache can become stale, producing errors like missing dependencies.</p>
 <ol>
 <li class="">
-<p><a class="" href="/tui">Exit the TUI</a>.</p>
+<p>If the TUI is open, press <kbd>q</kbd> to exit the TUI.</p>
 </li>
 <li class="">
 <p>Clear the <code>uv</code> cache:</p>
@@ -64,7 +64,7 @@ For example, on macOS, this is typically a user cache directory, such as <code>~
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">uvx openrag</span><br></span></code></pre></div></div>
 </li>
 <li class="">
-<p>Click <strong>Open App</strong>, and then retry document ingestion.</p>
+<p>Click <strong>Launch OpenRAG</strong>, and then retry document ingestion.</p>
 </li>
 </ol>
 <p>If you install OpenRAG with <code>uv</code>, dependencies are synced directly from your <code>pyproject.toml</code> file.

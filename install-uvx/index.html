@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Invoke OpenRAG with uvx | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/install-uvx"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Invoke OpenRAG with uvx | OpenRAG"><meta data-rh="true" name="description" content="Use uvx to invoke OpenRAG outside of a Python project or without modifying your project&#x27;s dependencies."><meta data-rh="true" property="og:description" content="Use uvx to invoke OpenRAG outside of a Python project or without modifying your project&#x27;s dependencies."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/install-uvx"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/install-uvx" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/install-uvx" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Invoke OpenRAG with uvx","item":"https://docs.openr.ag/install-uvx"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.0ec053c5.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.a299070f.js" defer="defer"></script>
 <script src="/assets/js/main.b10c6137.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -122,79 +122,87 @@ Documents are filtered by user owner; users see only the documents that they upl
 <p>If OpenRAG detects OAuth credentials during setup, it recommends <strong>Advanced Setup</strong> in the TUI.</p>
 <div class="theme-tabs-container tabs-container tabList__CuJ"><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active">Basic setup</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Advanced setup</li></ul><div class="margin-top--md"><div role="tabpanel" class="tabItem_Ymn6"><ol>
 <li class="">
-<p>In the TUI, click <strong>Basic Setup</strong> or press <kbd>1</kbd>.</p>
+<p>In the TUI, select <strong>Basic Setup</strong>.</p>
 </li>
 <li class="">
-<p>Enter administrator passwords for the OpenRAG OpenSearch and Langflow services, or click <strong>Generate Passwords</strong> to generate passwords automatically.</p>
-<p>The OpenSearch password is required.</p>
+<p>Enter administrator passwords for the OpenRAG OpenSearch and Langflow services.</p>
+<p>The OpenSearch password is required, and a secure password is automatically generated if you don&#x27;t provide one manually.</p>
 <p>The Langflow password is recommended but optional.
 If the Langflow password is empty, the Langflow server starts without authentication enabled. For more information, see <a class="" href="/reference/configuration#langflow-settings">Langflow settings</a>.</p>
+<p>You can click <strong>Generate Password</strong> to create a Langflow password and username automatically.</p>
 </li>
 <li class="">
-<p>Optional: Enter your OpenAI API key, or leave this field empty to provide model provider credentials during the application onboarding process.</p>
-<p>There is no material difference between providing the key now or during the <a href="#application-onboarding" class="">application onboarding process</a>.
-If you provide a key now, it can be populated automatically during the application onboarding process if you select the OpenAI model provider, and then enable <strong>Get API key from environment variable</strong>.</p>
+<p>Optional: Under <strong>API Keys</strong>, enter your model provider credentials, or leave these fields empty if you want to configure model provider credentials during the application onboarding process.</p>
+<p>There is no material difference between providing these values now or during the <a href="#application-onboarding" class="">application onboarding process</a>.
+If you provide a credential now, it can be populated automatically during the application onboarding process if you enable the <strong>Use environment API key</strong> option.</p>
 <p>OpenRAG&#x27;s core functionality requires access to language and embedding models.
 By default, OpenRAG uses OpenAI models.
-If you aren&#x27;t sure which models or providers to use, you must provide an OpenAI API key to use OpenRAG&#x27;s default model configuration.
-If you want to use a different model provider, you can leave this field empty.</p>
+If you aren&#x27;t sure which models or providers to use, you must provide an OpenAI API key to use OpenRAG&#x27;s default model configuration.</p>
+</li>
+<li class="">
+<p>Optional: Under <strong>Others</strong>, edit the <a class="" href="/knowledge">knowledge base</a> paths if you don&#x27;t want to use the default paths:</p>
+<ul>
+<li class=""><strong>Documents Paths</strong>: One or more paths to directories are where OpenRAG looks for documents to ingest.</li>
+<li class=""><strong>OpenSearch Data PAth</strong>: Specify the path where you want OpenRAG to create your OpenSearch index.</li>
+</ul>
 </li>
 <li class="">
 <p>Click <strong>Save Configuration</strong>.</p>
-<p>Your passwords and API key, if provided, are stored in the <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> at <code>~/.openrag/tui</code>.
+<p>Your passwords and API keys, if provided, are stored in the <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> at <code>~/.openrag/tui</code>.
 If you modified any credentials that were pulled from an existing <code>.env</code> file, those values are updated in the <code>.env</code> file.</p>
 </li>
 <li class="">
-<p>Click <strong>Start All Services</strong> to start the OpenRAG services that run in containers.</p>
+<p>Click <strong>Start OpenRAG</strong> to start the OpenRAG services.</p>
 <p>This process can take some time while OpenRAG pulls and runs the container images.
 If all services start successfully, the TUI prints a confirmation message:</p>
 <div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">Services started successfully</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Command completed successfully</span><br></span></code></pre></div></div>
 </li>
 <li class="">
-<p>Under <a class="" href="/manage-services"><strong>Native Services</strong></a>, click <strong>Start</strong> to start the Docling service.</p>
-</li>
-<li class="">
-<p>Launch the OpenRAG application:</p>
-<ul>
-<li class="">From the TUI main menu, click <strong>Open App</strong>.</li>
-<li class="">In your browser, navigate to <code>localhost:3000</code>.</li>
-</ul>
+<p>Click <strong>Close</strong>, and then click <strong>Launch OpenRAG</strong> or navigate to <code>localhost:3000</code> in your browser.</p>
 </li>
 <li class="">
 <p>Continue with the <a href="#application-onboarding" class="">application onboarding process</a>.</p>
 </li>
 </ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><ol>
 <li class="">
-<p>In the TUI, click <strong>Advanced Setup</strong> or press <kbd>2</kbd>.</p>
+<p>In the TUI, select <strong>Advanced Setup</strong>.</p>
 </li>
 <li class="">
-<p>Enter administrator passwords for the OpenRAG OpenSearch and Langflow services, or click <strong>Generate Passwords</strong> to generate passwords automatically.</p>
-<p>The OpenSearch password is required.</p>
+<p>Enter administrator passwords for the OpenRAG OpenSearch and Langflow services.</p>
+<p>The OpenSearch password is required, and a secure password is automatically generated if you don&#x27;t provide one manually.</p>
 <p>The Langflow password is recommended but optional.
 If the Langflow password is empty, the Langflow server starts without authentication enabled. For more information, see <a class="" href="/reference/configuration#langflow-settings">Langflow settings</a>.</p>
+<p>You can click <strong>Generate Password</strong> to create a Langflow password and username automatically.</p>
 </li>
 <li class="">
-<p>Optional: Enter your OpenAI API key, or leave this field empty to provide model provider credentials during the application onboarding process.</p>
-<p>There is no material difference between providing the key now or during the <a href="#application-onboarding" class="">application onboarding process</a>.
-If you provide a key now, it can be populated automatically during the application onboarding process if you select the OpenAI model provider, and then enable <strong>Get API key from environment variable</strong>.</p>
+<p>Optional: Under <strong>API Keys</strong>, enter your model provider credentials, or leave the <strong>OpenAI</strong>, <strong>Anthropic</strong>, <strong>Ollama</strong>, and <strong>IBM watsonx.ai</strong> fields empty if you want to configure model provider credentials during the application onboarding process.</p>
+<p>There is no material difference between providing these values now or during the <a href="#application-onboarding" class="">application onboarding process</a>.
+If you provide a credential now, it can be populated automatically during the application onboarding process if you enable the <strong>Use environment API key</strong> option.</p>
 <p>OpenRAG&#x27;s core functionality requires access to language and embedding models.
 By default, OpenRAG uses OpenAI models.
-If you aren&#x27;t sure which models or providers to use, you must provide an OpenAI API key to use OpenRAG&#x27;s default model configuration.
-If you want to use a different model provider, you can leave this field empty.</p>
+If you aren&#x27;t sure which models or providers to use, you must provide an OpenAI API key to use OpenRAG&#x27;s default model configuration.</p>
 </li>
 <li class="">
-<p>To upload documents from external storage, such as Google Drive, add the required OAuth credentials for the connectors that you want to use. These settings can be populated automatically if OpenRAG detects these credentials in an <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> at <code>~/.openrag/tui</code>.</p>
+<p>Recommended: To upload documents from external storage, such as Google Drive, add the required OAuth credentials for the connectors that you want to use under <strong>API Keys</strong>. These settings can be populated automatically if OpenRAG detects these credentials in an <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> at <code>~/.openrag/tui</code>.</p>
 <ul>
-<li class=""><strong>Amazon</strong>: Provide your AWS Access Key ID and AWS Secret Access Key with access to your S3 instance. For more information, see the AWS documentation on <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-applications.html" target="_blank" rel="noopener noreferrer" class="">Configuring access to AWS applications</a>.</li>
 <li class=""><strong>Google</strong>: Provide your Google OAuth Client ID and Google OAuth Client Secret. You can generate these in the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" class="">Google Cloud Console</a>. For more information, see the <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank" rel="noopener noreferrer" class="">Google OAuth client documentation</a>.</li>
 <li class=""><strong>Microsoft</strong>: For the Microsoft OAuth Client ID and Microsoft OAuth Client Secret, provide <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/app-registration?view=odsp-graph-online" target="_blank" rel="noopener noreferrer" class="">Azure application registration credentials for SharePoint and OneDrive</a>. For more information, see the <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/graph-oauth" target="_blank" rel="noopener noreferrer" class="">Microsoft Graph OAuth client documentation</a>.</li>
+<li class=""><strong>Amazon</strong>: Provide your AWS Access Key ID and AWS Secret Access Key with access to your S3 instance. For more information, see the AWS documentation on <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-applications.html" target="_blank" rel="noopener noreferrer" class="">Configuring access to AWS applications</a>.</li>
 </ul>
 <p>You can <a class="" href="/ingestion#oauth-ingestion">manage OAuth credentials</a> later, but it is recommended to configure them during initial set up.</p>
 </li>
 <li class="">
-<p>The OpenRAG TUI presents redirect URIs for your OAuth app.
-These are the URLs your OAuth provider will redirect back to after user sign-in.
-Register these redirect values with your OAuth provider as they are presented in the TUI.</p>
+<p>Register the redirect URIs shown in the TUI in your OAuth provider.
+These are the URLs your OAuth provider will use to redirect users back to OpenRAG after they sign in.</p>
+</li>
+<li class="">
+<p>Optional: Under <strong>Others</strong>, you can edit the following settings if needed:</p>
+<ul>
+<li class=""><strong>Documents Paths</strong>: Use the default path or provide one or more paths to directories are where OpenRAG looks for documents to ingest in to your <a class="" href="/knowledge">knowledge base</a>.</li>
+<li class=""><strong>OpenSearch Data Path</strong>: Specify the path where you want OpenRAG to create your OpenSearch index.</li>
+<li class=""><strong>Langflow Public URL (<code>LANGFLOW_PUBLIC_URL</code>)</strong> : Sets the base address to access the Langflow web interface. This is where users interact with flows in a browser.</li>
+<li class=""><strong>Webhook Base URL (<code>WEBHOOK_BASE_URL</code>)</strong>: If applicable, set the base address for your OAuth connector endpoints. If set, the OAuth connector webhook URLs are constructed as <code>WEBHOOK_BASE_URL/connectors/${provider}/webhook</code>.</li>
+</ul>
 </li>
 <li class="">
 <p>Click <strong>Save Configuration</strong>.</p>
@@ -202,38 +210,16 @@ Register these redirect values with your OAuth provider as they are presented in
 If you modified any credentials that were pulled from an existing <code>.env</code> file, those values are updated in the <code>.env</code> file.</p>
 </li>
 <li class="">
-<p>Click <strong>Start All Services</strong> to start the OpenRAG services that run in containers.</p>
+<p>Click <strong>Start OpenRAG</strong> to start the OpenRAG services.</p>
 <p>This process can take some time while OpenRAG pulls and runs the container images.
 If all services start successfully, the TUI prints a confirmation message:</p>
 <div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">Services started successfully</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Command completed successfully</span><br></span></code></pre></div></div>
 </li>
 <li class="">
-<p>Under <a class="" href="/manage-services"><strong>Native Services</strong></a>, click <strong>Start</strong> to start the Docling service.</p>
-</li>
-<li class="">
-<p>Launch the OpenRAG application:</p>
-<ul>
-<li class="">From the TUI main menu, click <strong>Open App</strong>.</li>
-<li class="">In your browser, navigate to <code>localhost:3000</code>.</li>
-</ul>
+<p>Click <strong>Close</strong>, and then click <strong>Launch OpenRAG</strong> or navigate to <code>localhost:3000</code> in your browser.</p>
 </li>
 <li class="">
 <p>If you enabled OAuth connectors, you must sign in to your OAuth provider before being redirected to your OpenRAG instance.</p>
-</li>
-<li class="">
-<p>If required, you can edit the following additional environment variables.
-Only change these variables if your OpenRAG deployment has a non-default network configuration, such as a reverse proxy or custom domain.</p>
-<ul>
-<li class=""><code>LANGFLOW_PUBLIC_URL</code>: Sets the base address to access the Langflow web interface. This is where users interact with flows in a browser.</li>
-<li class=""><code>WEBHOOK_BASE_URL</code>: Sets the base address for the following OpenRAG OAuth connector endpoints:<!-- -->
-<ul>
-<li class="">Amazon S3: Not applicable.</li>
-<li class="">Google Drive: <code>WEBHOOK_BASE_URL/connectors/google_drive/webhook</code></li>
-<li class="">OneDrive: <code>WEBHOOK_BASE_URL/connectors/onedrive/webhook</code></li>
-<li class="">SharePoint: <code>WEBHOOK_BASE_URL/connectors/sharepoint/webhook</code></li>
-</ul>
-</li>
-</ul>
 </li>
 <li class="">
 <p>Continue with the <a href="#application-onboarding" class="">application onboarding process</a>.</p>
@@ -249,8 +235,7 @@ Additionally, you can set multiple embedding models.</p>
 <p>You only need to complete onboarding for your preferred providers.</p>
 <div class="theme-tabs-container tabs-container tabList__CuJ"><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active">Anthropic</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">IBM watsonx.ai</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Ollama</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">OpenAI (default)</li></ul><div class="margin-top--md"><div role="tabpanel" class="tabItem_Ymn6"><div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>Anthropic doesn&#x27;t provide embedding models. If you select Anthropic for your language model, you must select a different provider for the embedding model.</p></div></div><ol>
 <li class="">
-<p>Enter your Anthropic API key, or enable <strong>Get API key from environment variable</strong> to pull the key from your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>.</p>
-<p>If you set <code>ANTHROPIC_API_KEY</code> in your OpenRAG <code>.env</code> file, this value can be populated automatically.</p>
+<p>Enter your Anthropic API key, or enable <strong>Use environment API key</strong> to pull the key from your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>.</p>
 </li>
 <li class="">
 <p>Under <strong>Advanced settings</strong>, select the language model that you want to use.</p>
@@ -274,8 +259,11 @@ The overview demonstrates some basic functionality that is covered in the <a cla
 </li>
 </ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><ol>
 <li class="">
-<p>Use the values from your IBM watsonx deployment for the <strong>watsonx.ai API Endpoint</strong>, <strong>IBM Project ID</strong>, and <strong>IBM API key</strong> fields.</p>
-<p>If you set <code>WATSONX_API_KEY</code>, <code>WATSONX_API_URL</code>, or <code>WATSONX_PROJECT_ID</code> in your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>, these values can be populated automatically.</p>
+<p>For <strong>watsonx.ai API Endpoint</strong>, select the base URL for your watsonx.ai model deployment.</p>
+</li>
+<li class="">
+<p>Enter your watsonx.ai deployment&#x27;s project ID and API key.</p>
+<p>You can enable <strong>Use environment API key</strong> to pull the key from your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>.</p>
 </li>
 <li class="">
 <p>Under <strong>Advanced settings</strong>, select the language model that you want to use.</p>
@@ -318,23 +306,30 @@ You can submit an <a href="https://github.com/langflow-ai/openrag/issues" target
 <p>If you are running a remote server, it must be accessible from your OpenRAG deployment.</p>
 </li>
 <li class="">
-<p>In OpenRAG onboarding, connect to your Ollama server:</p>
+<p>In the OpenRAG onboarding dialog, enter your Ollama server&#x27;s base URL:</p>
 <ul>
 <li class=""><strong>Local Ollama server</strong>: Enter your Ollama server&#x27;s base URL and port. The default Ollama server address is <code>http://localhost:11434</code>.</li>
 <li class=""><strong>Ollama Cloud</strong>: Because Ollama Cloud models run at the same address as a local Ollama server and automatically offload to Ollama&#x27;s cloud service, you can use the same base URL and port as you would for a local Ollama server. The default address is <code>http://localhost:11434</code>.</li>
 <li class=""><strong>Remote server</strong>: Enter your remote Ollama server&#x27;s base URL and port, such as <code>http://your-remote-server:11434</code>.</li>
 </ul>
-<p>If the connection succeeds, OpenRAG populates the model lists with the server&#x27;s available models.</p>
 </li>
 <li class="">
-<p>Select the model that your Ollama server is running.</p>
+<p>Select the language model that your Ollama server is running.</p>
+<p>If your server isn&#x27;t running any language models, you must either deploy a language model on your Ollama server, or use another provider for the language model.</p>
 <p>Language model and embedding model selections are independent.
 You can use the same or different servers for each model.</p>
 <p>To use different providers for each model, you must configure both providers, and select the relevant model for each provider.</p>
 </li>
 <li class="">
 <p>Click <strong>Complete</strong>.</p>
-<p>After you configure the embedding model, OpenRAG uses the address and models to ingest some <a class="" href="/knowledge#default-documents">initial documents</a>. This tests the connection, and it allows you to ask OpenRAG about itself in the <a class="" href="/chat"><strong>Chat</strong></a>.
+</li>
+<li class="">
+<p>Select a provider for embeddings, provide the required information, and then select the embedding model you want to use.
+For information about another provider&#x27;s credentials and settings, see the instructions for that provider.</p>
+</li>
+<li class="">
+<p>Click <strong>Complete</strong>.</p>
+<p>After you configure the embedding model, OpenRAG uses your credentials and models to ingest some <a class="" href="/knowledge#default-documents">initial documents</a>. This tests the connection, and it allows you to ask OpenRAG about itself in the <a class="" href="/chat"><strong>Chat</strong></a>.
 If there is a problem with the model configuration, an error occurs and you are redirected back to the application onboarding screen.
 Verify that the server address is valid, and that the selected model is running on the server.
 Then, click <strong>Complete</strong> to retry ingestion.</p>
@@ -345,8 +340,7 @@ The overview demonstrates some basic functionality that is covered in the <a cla
 </li>
 </ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><ol>
 <li class="">
-<p>Enter your OpenAI API key, or enable <strong>Get API key from environment variable</strong> to pull the key from your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>.</p>
-<p>If you set <code>OPENAI_API_KEY</code> in your OpenRAG <code>.env</code> file, this value can be populated automatically.</p>
+<p>Enter your OpenAI API key, or enable <strong>Use environment API key</strong> to pull the key from your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>.</p>
 </li>
 <li class="">
 <p>Under <strong>Advanced settings</strong>, select the language model that you want to use.</p>

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Quickstart | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/quickstart"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Quickstart | OpenRAG"><meta data-rh="true" name="description" content="Use this quickstart to install OpenRAG, and then try some of OpenRAG&#x27;s core features."><meta data-rh="true" property="og:description" content="Use this quickstart to install OpenRAG, and then try some of OpenRAG&#x27;s core features."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/quickstart"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/quickstart" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/quickstart" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Quickstart","item":"https://docs.openr.ag/quickstart"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.0ec053c5.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.a299070f.js" defer="defer"></script>
 <script src="/assets/js/main.b10c6137.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -40,30 +40,30 @@ The script installs OpenRAG dependencies, including Docker or Podman, and then i
 You might be prompted to install certain dependencies if they aren&#x27;t already present in your environment.</p>
 <p>The entire process can take a few minutes.
 Once the environment is ready, the OpenRAG <a class="" href="/tui">Terminal User Interface (TUI)</a> starts.</p>
-<p><img decoding="async" loading="lazy" alt="OpenRAG TUI Interface" src="/assets/images/OpenRAG_TUI_2025-09-10T13_04_11_757637-9441c53ba39162a88ac6c11cbeaed0e0.svg" width="1995" height="1099" class="img_ev3q"></p>
+<p><img decoding="async" loading="lazy" alt="OpenRAG TUI Interface" src="/assets/images/openrag_tui_dec_2025-c7022e66cc6675f25aced7b8acd8274d.png" width="653" height="397" class="img_ev3q"></p>
 </li>
 <li class="">
 <p>In the TUI, click <strong>Basic Setup</strong>.</p>
 </li>
 <li class="">
-<p>Click <strong>Generate Passwords</strong> to create administrator passwords for your OpenRAG OpenSearch and Langflow services.</p>
+<p>For <strong>Langflow Admin Password</strong>, click <strong>Generate Password</strong> to create a Langflow administrator password and username.</p>
 </li>
 <li class="">
-<p>Leave the <strong>OpenAI API key</strong> field empty.</p>
+<p>Use the default values for all other fields.</p>
 </li>
 <li class="">
-<p>Click <strong>Save Configuration</strong>, and then click <strong>Start All Services</strong>.</p>
+<p>Click <strong>Save Configuration</strong>.</p>
+<p>Your OpenRAG configuration and passwords are stored in an <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> file that is created automatically at <code>~/.openrag/tui</code>.
+OpenRAG container definitions are stored in the <code>docker-compose</code> files in the same directory.</p>
+</li>
+<li class="">
+<p>Click <strong>Start OpenRAG</strong> to start the OpenRAG services.</p>
 <p>This process can take some time while OpenRAG pulls and runs the container images.
 If all services start successfully, the TUI prints a confirmation message:</p>
 <div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">Services started successfully</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Command completed successfully</span><br></span></code></pre></div></div>
-<p>Your OpenRAG configuration and passwords are stored in an <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a> file that is created automatically at <code>~/.openrag/tui</code>.
-Container definitions are stored in the <code>docker-compose</code> files in the same directory.</p>
 </li>
 <li class="">
-<p>Under <a class="" href="/manage-services"><strong>Native Services</strong></a>, click <strong>Start</strong> to start the Docling service.</p>
-</li>
-<li class="">
-<p>From the TUI main menu, click <strong>Open App</strong> to launch the OpenRAG application and start the application onboarding process.</p>
+<p>Click <strong>Close</strong>, and then click <strong>Launch OpenRAG</strong> to access the OpenRAG application and start the application onboarding process.</p>
 </li>
 <li class="">
 <p>For this quickstart, select the <strong>OpenAI</strong> model provider, enter your OpenAI API key, and then click <strong>Complete</strong>. Use the default settings for all other model options.</p>
