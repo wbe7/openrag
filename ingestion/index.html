@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Ingest knowledge | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/ingestion"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Ingest knowledge | OpenRAG"><meta data-rh="true" name="description" content="Upload documents to your OpenRAG OpenSearch instance to populate your knowledge base with unique content, such as your own company documents, research papers, or websites."><meta data-rh="true" property="og:description" content="Upload documents to your OpenRAG OpenSearch instance to populate your knowledge base with unique content, such as your own company documents, research papers, or websites."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/ingestion"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/ingestion" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/ingestion" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ingest knowledge","item":"https://docs.openr.ag/ingestion"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.28b5001d.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.0ec053c5.js" defer="defer"></script>
 <script src="/assets/js/main.b10c6137.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -43,10 +43,10 @@ By default, this flow uses Docling Serve to import and process documents.</p><p>
 <p><a href="https://docs.langflow.org/bundles-docling#export-doclingdocument" target="_blank" rel="noopener noreferrer" class=""><strong>Export DoclingDocument</strong> component</a>: Exports processed <code>DoclingDocument</code> data to Markdown format with image placeholders. This conversion standardizes the document data in preparation for further processing.</p>
 </li>
 <li class="">
-<p><a href="https://docs.langflow.org/components-processing#dataframe-operations" target="_blank" rel="noopener noreferrer" class=""><strong>DataFrame Operations</strong> component</a>: Three of these components run sequentially to add metadata to the document data: <code>filename</code>, <code>file_size</code>, and <code>mimetype</code>.</p>
+<p><a href="https://docs.langflow.org/dataframe-operations" target="_blank" rel="noopener noreferrer" class=""><strong>DataFrame Operations</strong> component</a>: Three of these components run sequentially to add metadata to the document data: <code>filename</code>, <code>file_size</code>, and <code>mimetype</code>.</p>
 </li>
 <li class="">
-<p><a href="https://docs.langflow.org/components-processing#split-text" target="_blank" rel="noopener noreferrer" class=""><strong>Split Text</strong> component</a>: Splits the processed text into chunks, based on the configured <a class="" href="/knowledge#knowledge-ingestion-settings">chunk size and overlap settings</a>.</p>
+<p><a href="https://docs.langflow.org/split-text" target="_blank" rel="noopener noreferrer" class=""><strong>Split Text</strong> component</a>: Splits the processed text into chunks, based on the configured <a class="" href="/knowledge#knowledge-ingestion-settings">chunk size and overlap settings</a>.</p>
 </li>
 <li class="">
 <p><strong>Secret Input</strong> component: If needed, four of these components securely fetch the <a class="" href="/knowledge#auth">OAuth authentication</a> configuration variables: <code>CONNECTOR_TYPE</code>, <code>OWNER</code>, <code>OWNER_EMAIL</code>, and <code>OWNER_NAME</code>.</p>
@@ -170,10 +170,10 @@ By default, this flow uses Docling Serve to import and process documents.</p><p>
 <p><a href="https://docs.langflow.org/bundles-docling#export-doclingdocument" target="_blank" rel="noopener noreferrer" class=""><strong>Export DoclingDocument</strong> component</a>: Exports processed <code>DoclingDocument</code> data to Markdown format with image placeholders. This conversion standardizes the document data in preparation for further processing.</p>
 </li>
 <li class="">
-<p><a href="https://docs.langflow.org/components-processing#dataframe-operations" target="_blank" rel="noopener noreferrer" class=""><strong>DataFrame Operations</strong> component</a>: Three of these components run sequentially to add metadata to the document data: <code>filename</code>, <code>file_size</code>, and <code>mimetype</code>.</p>
+<p><a href="https://docs.langflow.org/dataframe-operations" target="_blank" rel="noopener noreferrer" class=""><strong>DataFrame Operations</strong> component</a>: Three of these components run sequentially to add metadata to the document data: <code>filename</code>, <code>file_size</code>, and <code>mimetype</code>.</p>
 </li>
 <li class="">
-<p><a href="https://docs.langflow.org/components-processing#split-text" target="_blank" rel="noopener noreferrer" class=""><strong>Split Text</strong> component</a>: Splits the processed text into chunks, based on the configured <a class="" href="/knowledge#knowledge-ingestion-settings">chunk size and overlap settings</a>.</p>
+<p><a href="https://docs.langflow.org/split-text" target="_blank" rel="noopener noreferrer" class=""><strong>Split Text</strong> component</a>: Splits the processed text into chunks, based on the configured <a class="" href="/knowledge#knowledge-ingestion-settings">chunk size and overlap settings</a>.</p>
 </li>
 <li class="">
 <p><strong>Secret Input</strong> component: If needed, four of these components securely fetch the <a class="" href="/knowledge#auth">OAuth authentication</a> configuration variables: <code>CONNECTOR_TYPE</code>, <code>OWNER</code>, <code>OWNER_EMAIL</code>, and <code>OWNER_NAME</code>.</p>
