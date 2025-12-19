@@ -535,7 +535,7 @@ class MonitorScreen(Screen):
             self.operation_in_progress = False
 
     async def _factory_reset_with_data_clear(self) -> AsyncIterator[tuple[bool, str]]:
-        """Generator that stops services and clears opensearch data."""
+        """Generator that stops services and clears opensearch data and config."""
         # First stop all services
         async for success, message in self.container_manager.reset_services():
             yield success, message
@@ -561,6 +561,18 @@ class MonitorScreen(Screen):
                 yield True, "OpenSearch data directory recreated"
             except Exception as e:
                 yield False, f"Error recreating opensearch-data directory: {e}"
+                return
+        
+        # Clear config.yaml to reset provider settings and model selections
+        yield False, "Clearing configuration..."
+        config_path = Path(env_manager.config.openrag_config_path.replace("$HOME", str(Path.home()))).expanduser()
+        config_file = config_path / "config.yaml"
+        if config_file.exists():
+            try:
+                config_file.unlink()
+                yield True, "Configuration file removed"
+            except Exception as e:
+                yield False, f"Error removing config file: {e}"
                 return
         
         yield True, "Factory reset completed successfully"
