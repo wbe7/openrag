@@ -1,5 +1,6 @@
 services:
   openrag-backend:
+    image: docker.io/langflowai/openrag-backend:${OPENRAG_VERSION:-latest}
     environment:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - NVIDIA_VISIBLE_DEVICES=all
