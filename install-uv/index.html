@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Install OpenRAG in a Python project with uv | OpenRAG</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="robots" content="noindex, nofollow"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://docs.openr.ag/install-uv"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Install OpenRAG in a Python project with uv | OpenRAG"><meta data-rh="true" name="description" content="Use uv to install OpenRAG as a managed or unmanaged dependency in a new or existing Python project."><meta data-rh="true" property="og:description" content="Use uv to install OpenRAG as a managed or unmanaged dependency in a new or existing Python project."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.openr.ag/install-uv"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/install-uv" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.openr.ag/install-uv" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Install OpenRAG with uv","item":"https://docs.openr.ag/install-uv"}]}</script><link rel="stylesheet" href="/assets/css/styles.66669ecc.css">
-<script src="/assets/js/runtime~main.732f6967.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.28b5001d.js" defer="defer"></script>
 <script src="/assets/js/main.b10c6137.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -41,11 +41,33 @@ You must have access to at least one language model and one embedding model.
 If a provider offers both types, you can use the same provider for both models.
 If a provider offers only one type, you must select two providers.</p>
 <ul>
-<li class=""><strong>OpenAI</strong>: Create an <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="">OpenAI API key</a>.</li>
-<li class=""><strong>Anthropic</strong>: Create an <a href="https://www.anthropic.com/docs/api/reference" target="_blank" rel="noopener noreferrer" class="">Anthropic API key</a>.
-Anthropic provides language models only; you must select an additional provider for embeddings.</li>
-<li class=""><strong>IBM watsonx.ai</strong>: Get your watsonx.ai API endpoint, IBM project ID, and IBM API key from your watsonx deployment.</li>
-<li class=""><strong>Ollama</strong>: Deploy an <a href="https://docs.ollama.com/" target="_blank" rel="noopener noreferrer" class="">Ollama instance and models</a> locally, in the cloud, or on a remote server, and then get your Ollama server&#x27;s base URL and the names of the models that you want to use.</li>
+<li class="">
+<p><strong>OpenAI</strong>: Create an <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="">OpenAI API key</a>.</p>
+</li>
+<li class="">
+<p><strong>Anthropic</strong>: Create an <a href="https://www.anthropic.com/docs/api/reference" target="_blank" rel="noopener noreferrer" class="">Anthropic API key</a>.
+Anthropic provides language models only; you must select an additional provider for embeddings.</p>
+</li>
+<li class="">
+<p><strong>IBM watsonx.ai</strong>: Get your watsonx.ai API endpoint, IBM project ID, and IBM API key from your watsonx deployment.</p>
+</li>
+<li class="">
+<p><strong>Ollama</strong>: Deploy an <a href="https://docs.ollama.com/" target="_blank" rel="noopener noreferrer" class="">Ollama instance and models</a> locally, in the cloud, or on a remote server. Then, get your Ollama server&#x27;s base URL and the names of the models that you want to use.</p>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>OpenRAG isn&#x27;t guaranteed to be compatible with all models that are available through Ollama.
+For example, some models might produce unexpected results, such as JSON-formatted output instead of natural language responses, and some models aren&#x27;t appropriate for the types of tasks that OpenRAG performs, such as those that generate media.</p>
+<p>The OpenRAG team recommends the following models when using Ollama as your model provider:</p>
+<ul>
+<li class="">
+<p><strong>Language models</strong>: <code>gpt-oss:20b</code> or <code>mistral-nemo:12b</code>.</p>
+<p>If you choose <code>gpt-oss:20b</code>, consider using Ollama Cloud or running Ollama on a remote machine because this model requires at least 16GB of RAM.</p>
+</li>
+<li class="">
+<p><strong>Embedding models</strong>: <a href="https://ollama.com/library/nomic-embed-text" target="_blank" rel="noopener noreferrer" class=""><code>nomic-embed-text:latest</code></a>, <code>mxbai-embed-large:latest</code>, or <code>embeddinggemma:latest</code>.</p>
+</li>
+</ul>
+<p>You can experiment with other models, but if you encounter issues that you are unable to resolve through other RAG best practices (like context filters and prompt engineering), try switching to one of the recommended models.
+You can submit an <a href="https://github.com/langflow-ai/openrag/issues" target="_blank" rel="noopener noreferrer" class="">OpenRAG GitHub issue</a> to request support for specific models.</p></div></div>
+</li>
 </ul>
 </li>
 <li class="">
@@ -319,9 +341,22 @@ Verify that the credentials are valid and have access to the selected model, and
 <p>Continue through the overview slides for a brief introduction to OpenRAG, or click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg> <strong>Skip overview</strong>.
 The overview demonstrates some basic functionality that is covered in the <a class="" href="/quickstart#chat-with-documents">quickstart</a> and in other parts of the OpenRAG documentation.</p>
 </li>
-</ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>Ollama isn&#x27;t installed with OpenRAG. You must install it separately if you want to use Ollama as a model provider.</p></div></div><p>Using Ollama as your language and embedding model provider offers greater flexibility and configuration options for hosting models, but it can be advanced for new users.
-The recommendations given here are a reasonable starting point for users with at least one GPU and experience running LLMs locally.</p><p>The OpenRAG team recommends the OpenAI <code>gpt-oss:20b</code> lanuage model and the <a href="https://ollama.com/library/nomic-embed-text" target="_blank" rel="noopener noreferrer" class=""><code>nomic-embed-text</code></a> embedding model.
-However, <code>gpt-oss:20b</code> uses 16GB of RAM, so consider using Ollama Cloud or running Ollama on a remote machine.</p><ol>
+</ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><p>Using Ollama as your language and embedding model provider offers greater flexibility and configuration options for hosting models.
+However, it requires additional setup because Ollama isn&#x27;t included with OpenRAG.
+You must deploy Ollama separately if you want to use Ollama as a model provider.</p><div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>OpenRAG isn&#x27;t guaranteed to be compatible with all models that are available through Ollama.
+For example, some models might produce unexpected results, such as JSON-formatted output instead of natural language responses, and some models aren&#x27;t appropriate for the types of tasks that OpenRAG performs, such as those that generate media.</p>
+<p>The OpenRAG team recommends the following models when using Ollama as your model provider:</p>
+<ul>
+<li class="">
+<p><strong>Language models</strong>: <code>gpt-oss:20b</code> or <code>mistral-nemo:12b</code>.</p>
+<p>If you choose <code>gpt-oss:20b</code>, consider using Ollama Cloud or running Ollama on a remote machine because this model requires at least 16GB of RAM.</p>
+</li>
+<li class="">
+<p><strong>Embedding models</strong>: <a href="https://ollama.com/library/nomic-embed-text" target="_blank" rel="noopener noreferrer" class=""><code>nomic-embed-text:latest</code></a>, <code>mxbai-embed-large:latest</code>, or <code>embeddinggemma:latest</code>.</p>
+</li>
+</ul>
+<p>You can experiment with other models, but if you encounter issues that you are unable to resolve through other RAG best practices (like context filters and prompt engineering), try switching to one of the recommended models.
+You can submit an <a href="https://github.com/langflow-ai/openrag/issues" target="_blank" rel="noopener noreferrer" class="">OpenRAG GitHub issue</a> to request support for specific models.</p></div></div><ol>
 <li class="">
 <p><a href="https://docs.ollama.com/" target="_blank" rel="noopener noreferrer" class="">Install Ollama locally or on a remote server</a>, or <a href="https://docs.ollama.com/cloud" target="_blank" rel="noopener noreferrer" class="">run models in Ollama Cloud</a>.</p>
 <p>If you are running a remote server, it must be accessible from your OpenRAG deployment.</p>
