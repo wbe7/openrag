@@ -3,6 +3,8 @@ title: Troubleshoot OpenRAG
 slug: /support/troubleshoot
 ---
 
+import PartialOllamaModels from '@site/docs/_partial-ollama-models.mdx';
+
 This page provides troubleshooting advice for issues you might encounter when using OpenRAG or contributing to OpenRAG.
 
 ## OpenSearch fails to start
@@ -36,7 +38,7 @@ For more information about this variable and how this variable controls Langflow
 
 ## Container out of memory errors
 
-Increase Docker memory allocation or use [docker-compose-cpu.yml](https://github.com/langflow-ai/openrag/blob/main/docker-compose-cpu.yml) to deploy OpenRAG.
+Increase Docker memory allocation or use the CPU-only deployment (base `docker-compose.yml` without GPU override) to reduce memory usage.
 
 ## Memory issue with Podman on macOS
 
@@ -68,11 +70,11 @@ This is likely due to a stale `uv` cache when you [install OpenRAG with `uvx`](/
 
 When you invoke OpenRAG with `uvx openrag`, `uvx` creates a cached, ephemeral environment that doesn't modify your project.
 The location and path of this cache depends on your operating system.
-For example, on macOS, this is typically a user cache directory, such as `/Users/USER_NAME/.cache/uv`.
+For example, on macOS, this is typically a user cache directory, such as `~/.cache/uv`.
 
 This cache can become stale, producing errors like missing dependencies.
 
-1. [Exit the TUI](/tui).
+1. If the TUI is open, press <kbd>q</kbd> to exit the TUI.
 
 2. Clear the `uv` cache:
 
@@ -92,7 +94,7 @@ This cache can become stale, producing errors like missing dependencies.
    uvx openrag
    ```
 
-4. Click **Open App**, and then retry document ingestion.
+4. Click **Launch OpenRAG**, and then retry document ingestion.
 
 If you install OpenRAG with `uv`, dependencies are synced directly from your `pyproject.toml` file.
 This should automatically install `easyocr` because `easyocr` is included as a dependency in OpenRAG's `pyproject.toml`.
@@ -138,3 +140,7 @@ To resolve this issue, do the following:
 ## Document ingestion or similarity search issues
 
 See [Troubleshoot ingestion](/ingestion#troubleshoot-ingestion).
+
+## Ollama model issues
+
+<PartialOllamaModels />
