@@ -1,7 +1,6 @@
 # https://github.com/dorny/paths-filter
 python:
   - "src/**"
-  - "src/**.py"
   - "pyproject.toml"
   - "uv.lock"
   - "**/test-integration.yml"
