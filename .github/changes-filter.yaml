@@ -1,0 +1,54 @@
+# https://github.com/dorny/paths-filter
+python:
+  - "src/**"
+  - "src/**.py"
+  - "pyproject.toml"
+  - "uv.lock"
+  - "**/test-integration.yml"
+
+frontend:
+  - "frontend/**"
+  - "frontend/**.ts"
+  - "frontend/**.tsx"
+  - "frontend/package.json"
+  - "frontend/package-lock.json"
+
+docs:
+  - "docs/**"
+
+docker:
+  - "docker-compose*.yml"
+  - "Dockerfile*"
+  - "uv.lock"
+  - "pyproject.toml"
+  - "src/**"
+  - "frontend/**"
+  - ".dockerignore"
+
+tests:
+  - "tests/**"
+  - "src/**"
+
+api:
+  - "src/api/**"
+  - "src/main.py"
+
+services:
+  - "src/services/**"
+
+connectors:
+  - "src/connectors/**"
+
+flows:
+  - "flows/**"
+
+config:
+  - "config/**"
+  - "securityconfig/**"
+
+sdks:
+  - "sdks/**"
+
+scripts:
+  - "scripts/**"
+
