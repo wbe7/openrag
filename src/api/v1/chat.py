@@ -104,14 +104,18 @@ async def chat_create_endpoint(request: Request, chat_service, session_manager):
 
     user = request.state.user
     user_id = user.user_id
-    jwt_token = session_manager.get_effective_jwt_token(user_id, None)
+    jwt_token = session_manager.get_effective_jwt_token(user_id, request.state.jwt_token)
+
+    # Get RBAC groups and roles from user for access control
+    user_groups = getattr(user, "groups", [])
+    user_roles = getattr(user, "roles", [])
 
     # Set context variables for search tool
     if filters:
         set_search_filters(filters)
     set_search_limit(limit)
     set_score_threshold(score_threshold)
-    set_auth_context(user_id, jwt_token)
+    set_auth_context(user_id, jwt_token, groups=user_groups, roles=user_roles)
 
     if stream:
         raw_stream = await chat_service.langflow_chat(
@@ -121,6 +125,8 @@ async def chat_create_endpoint(request: Request, chat_service, session_manager):
             previous_response_id=chat_id,
             stream=True,
             filter_id=filter_id,
+            groups=user_groups,
+            roles=user_roles,
         )
         chat_id_container = {}
         return StreamingResponse(
@@ -136,6 +142,8 @@ async def chat_create_endpoint(request: Request, chat_service, session_manager):
             previous_response_id=chat_id,
             stream=False,
             filter_id=filter_id,
+            groups=user_groups,
+            roles=user_roles,
         )
         # Transform response_id to chat_id for v1 API format
         return JSONResponse({

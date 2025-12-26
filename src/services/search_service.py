@@ -2,7 +2,7 @@ import copy
 from typing import Any, Dict
 from agentd.tool_decorator import tool
 from config.settings import EMBED_MODEL, clients, INDEX_NAME, get_embedding_model, WATSONX_EMBEDDING_DIMENSIONS
-from auth_context import get_auth_context
+from auth_context import get_auth_context, get_current_user_groups
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -259,8 +259,24 @@ class SearchService:
         # Build query body
         if is_wildcard_match_all:
             # Match all documents; still allow filters to narrow scope
-            if filter_clauses:
-                query_block = {"bool": {"filter": filter_clauses}}
+            # Also add RBAC group filter for wildcard queries
+            wildcard_filters = list(filter_clauses)  # Copy existing filters
+            
+            user_groups = get_current_user_groups()
+            if user_groups:
+                groups_access_filter = {
+                    "bool": {
+                        "should": [
+                            {"bool": {"must_not": {"exists": {"field": "allowed_groups"}}}},
+                            {"terms": {"allowed_groups": user_groups}},
+                        ],
+                        "minimum_should_match": 1
+                    }
+                }
+                wildcard_filters.append(groups_access_filter)
+            
+            if wildcard_filters:
+                query_block = {"bool": {"filter": wildcard_filters}}
             else:
                 query_block = {"match_all": {}}
         else:
@@ -291,6 +307,29 @@ class SearchService:
 
             # Add exists filter to existing filters
             all_filters = [*filter_clauses, exists_any_embedding]
+
+            # RBAC: Add group-based access control filter (fallback if DLS isn't configured)
+            # Documents are accessible if:
+            #   1. No allowed_groups field exists (backward compatibility, open access)
+            #   2. User's groups match any of the document's allowed_groups
+            user_groups = get_current_user_groups()
+            if user_groups:
+                groups_access_filter = {
+                    "bool": {
+                        "should": [
+                            # Document has no allowed_groups restriction
+                            {"bool": {"must_not": {"exists": {"field": "allowed_groups"}}}},
+                            # User's groups match document's allowed_groups
+                            {"terms": {"allowed_groups": user_groups}},
+                        ],
+                        "minimum_should_match": 1
+                    }
+                }
+                all_filters.append(groups_access_filter)
+                logger.debug(
+                    "Added RBAC group filter",
+                    user_groups=user_groups,
+                )
 
             logger.debug(
                 "Building hybrid query with filters",

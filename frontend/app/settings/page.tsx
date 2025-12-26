@@ -136,6 +136,7 @@ function KnowledgeSourcesPage() {
 	// API Keys state
 	const [createKeyDialogOpen, setCreateKeyDialogOpen] = useState(false);
 	const [newKeyName, setNewKeyName] = useState("");
+	const [newKeyGroups, setNewKeyGroups] = useState("");
 	const [newlyCreatedKey, setNewlyCreatedKey] = useState<string | null>(null);
 	const [showKeyDialogOpen, setShowKeyDialogOpen] = useState(false);
 
@@ -156,6 +157,7 @@ function KnowledgeSourcesPage() {
 			setCreateKeyDialogOpen(false);
 			setShowKeyDialogOpen(true);
 			setNewKeyName("");
+			setNewKeyGroups("");
 			toast.success("API key created");
 		},
 		onError: (error) => {
@@ -438,7 +440,16 @@ function KnowledgeSourcesPage() {
 			toast.error("Please enter a name for the API key");
 			return;
 		}
-		createApiKeyMutation.mutate({ name: newKeyName.trim() });
+		// Parse groups from comma-separated string
+		const groups = newKeyGroups
+			.split(",")
+			.map((g) => g.trim())
+			.filter((g) => g.length > 0);
+
+		createApiKeyMutation.mutate({
+			name: newKeyName.trim(),
+			groups: groups.length > 0 ? groups : undefined,
+		});
 	};
 
 	const handleRevokeApiKey = (keyId: string) => {
@@ -1427,6 +1438,9 @@ function KnowledgeSourcesPage() {
 												Key
 											</th>
 											<th className="text-left text-sm font-medium text-muted-foreground px-4 py-3">
+												Groups
+											</th>
+											<th className="text-left text-sm font-medium text-muted-foreground px-4 py-3">
 												Created
 											</th>
 											<th className="text-left text-sm font-medium text-muted-foreground px-4 py-3">
@@ -1447,6 +1461,24 @@ function KnowledgeSourcesPage() {
 													<code className="text-sm bg-muted px-2 py-1 rounded">
 														{key.key_prefix}...
 													</code>
+												</td>
+												<td className="px-4 py-3 text-sm text-muted-foreground">
+													{key.groups && key.groups.length > 0 ? (
+														<div className="flex flex-wrap gap-1">
+															{key.groups.map((group: string) => (
+																<span
+																	key={group}
+																	className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-primary/10 text-primary"
+																>
+																	{group}
+																</span>
+															))}
+														</div>
+													) : (
+														<span className="text-muted-foreground/50">
+															All groups
+														</span>
+													)}
 												</td>
 												<td className="px-4 py-3 text-sm text-muted-foreground">
 													{formatDate(key.created_at)}
@@ -1507,58 +1539,77 @@ function KnowledgeSourcesPage() {
 				</Card>
 			)}
 
-			{/* Create API Key Dialog */}
-			<Dialog open={createKeyDialogOpen} onOpenChange={setCreateKeyDialogOpen}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>Create API Key</DialogTitle>
-						<DialogDescription>
-							Give your API key a name to help you identify it later.
-						</DialogDescription>
-					</DialogHeader>
-					<div className="py-4">
-						<LabelWrapper label="Name" id="api-key-name">
-							<Input
-								id="api-key-name"
-								placeholder="e.g., Production App, Development"
-								value={newKeyName}
-								onChange={(e) => setNewKeyName(e.target.value)}
-								onKeyDown={(e) => {
-									if (e.key === "Enter") {
-										handleCreateApiKey();
-									}
-								}}
-							/>
-						</LabelWrapper>
-					</div>
-					<DialogFooter>
-						<Button
-							variant="ghost"
-							onClick={() => {
-								setCreateKeyDialogOpen(false);
-								setNewKeyName("");
+		{/* Create API Key Dialog */}
+		<Dialog open={createKeyDialogOpen} onOpenChange={setCreateKeyDialogOpen}>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Create API Key</DialogTitle>
+					<DialogDescription>
+						Create an API key with optional group restrictions for access
+						control.
+					</DialogDescription>
+				</DialogHeader>
+				<div className="py-4 space-y-4">
+					<LabelWrapper label="Name" id="api-key-name">
+						<Input
+							id="api-key-name"
+							placeholder="e.g., Production App, Development"
+							value={newKeyName}
+							onChange={(e) => setNewKeyName(e.target.value)}
+							onKeyDown={(e) => {
+								if (e.key === "Enter") {
+									handleCreateApiKey();
+								}
 							}}
-							size="sm"
-						>
-							Cancel
-						</Button>
-						<Button
-							onClick={handleCreateApiKey}
-							disabled={createApiKeyMutation.isPending || !newKeyName.trim()}
-							size="sm"
-						>
-							{createApiKeyMutation.isPending ? (
-								<>
-									<Loader2 className="h-4 w-4 mr-2 animate-spin" />
-									Creating...
-								</>
-							) : (
-								"Create Key"
-							)}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+						/>
+					</LabelWrapper>
+					<LabelWrapper
+						label="Groups (optional)"
+						id="api-key-groups"
+						helperText="Comma-separated list of groups this key can access"
+					>
+						<Input
+							id="api-key-groups"
+							placeholder="e.g., finance, hr, engineering"
+							value={newKeyGroups}
+							onChange={(e) => setNewKeyGroups(e.target.value)}
+							onKeyDown={(e) => {
+								if (e.key === "Enter") {
+									handleCreateApiKey();
+								}
+							}}
+						/>
+					</LabelWrapper>
+				</div>
+				<DialogFooter>
+					<Button
+						variant="ghost"
+						onClick={() => {
+							setCreateKeyDialogOpen(false);
+							setNewKeyName("");
+							setNewKeyGroups("");
+						}}
+						size="sm"
+					>
+						Cancel
+					</Button>
+					<Button
+						onClick={handleCreateApiKey}
+						disabled={createApiKeyMutation.isPending || !newKeyName.trim()}
+						size="sm"
+					>
+						{createApiKeyMutation.isPending ? (
+							<>
+								<Loader2 className="h-4 w-4 mr-2 animate-spin" />
+								Creating...
+							</>
+						) : (
+							"Create Key"
+						)}
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 
 			{/* Show Created API Key Dialog */}
 			<Dialog

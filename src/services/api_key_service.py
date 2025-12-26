@@ -52,15 +52,19 @@ class APIKeyService:
         user_email: str,
         name: str,
         jwt_token: str = None,
+        roles: List[str] = None,
+        groups: List[str] = None,
     ) -> Dict[str, Any]:
         """
-        Create a new API key for a user.
+        Create a new API key for a user with optional RBAC restrictions.
 
         Args:
             user_id: The user's ID
             user_email: The user's email
             name: A friendly name for the key
             jwt_token: JWT token for OpenSearch authentication
+            roles: Optional list of roles to restrict this key to
+            groups: Optional list of groups this key can access
 
         Returns:
             Dict with success status, key info, and the full key (only shown once)
@@ -74,6 +78,14 @@ class APIKeyService:
 
             now = datetime.utcnow().isoformat()
 
+            # Default roles if not specified
+            if roles is None:
+                roles = ["openrag_user"]
+            
+            # Default groups to empty if not specified
+            if groups is None:
+                groups = []
+
             # Create the document to store
             key_doc = {
                 "key_id": key_id,
@@ -85,6 +97,9 @@ class APIKeyService:
                 "created_at": now,
                 "last_used_at": None,
                 "revoked": False,
+                # RBAC fields
+                "roles": roles,
+                "groups": groups,
             }
 
             # Get OpenSearch client
@@ -105,6 +120,8 @@ class APIKeyService:
                     user_id=user_id,
                     key_id=key_id,
                     key_prefix=key_prefix,
+                    roles=roles,
+                    groups=groups,
                 )
                 return {
                     "success": True,
@@ -112,6 +129,8 @@ class APIKeyService:
                     "key_prefix": key_prefix,
                     "name": name,
                     "created_at": now,
+                    "roles": roles,
+                    "groups": groups,
                     "api_key": full_key,  # Only returned once!
                 }
             else:
@@ -123,13 +142,13 @@ class APIKeyService:
 
     async def validate_key(self, api_key: str) -> Optional[Dict[str, Any]]:
         """
-        Validate an API key and return user info if valid.
+        Validate an API key and return user info with RBAC claims if valid.
 
         Args:
             api_key: The full API key to validate
 
         Returns:
-            Dict with user info if valid, None if invalid
+            Dict with user info including roles and groups if valid, None if invalid
         """
         try:
             # Check key format
@@ -181,11 +200,15 @@ class APIKeyService:
             except Exception:
                 pass  # Don't fail validation if update fails
 
+            # Return user info with RBAC claims
             return {
                 "key_id": key_doc["key_id"],
                 "user_id": key_doc["user_id"],
                 "user_email": key_doc["user_email"],
                 "name": key_doc["name"],
+                # RBAC fields - provide defaults for backward compatibility
+                "roles": key_doc.get("roles", ["openrag_user"]),
+                "groups": key_doc.get("groups", []),
             }
 
         except Exception as e:
@@ -225,6 +248,8 @@ class APIKeyService:
                     "created_at",
                     "last_used_at",
                     "revoked",
+                    "roles",
+                    "groups",
                 ],
                 "size": 100,
             }

@@ -6,6 +6,8 @@ import {
 
 export interface CreateApiKeyRequest {
   name: string;
+  roles?: string[];
+  groups?: string[];
 }
 
 export interface CreateApiKeyResponse {
@@ -14,6 +16,8 @@ export interface CreateApiKeyResponse {
   name: string;
   key_prefix: string;
   created_at: string;
+  roles?: string[];
+  groups?: string[];
 }
 
 export const useCreateApiKeyMutation = (

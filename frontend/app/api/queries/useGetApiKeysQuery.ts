@@ -6,6 +6,8 @@ export interface ApiKey {
   key_prefix: string;
   created_at: string;
   last_used_at: string | null;
+  roles?: string[];
+  groups?: string[];
 }
 
 export interface GetApiKeysResponse {

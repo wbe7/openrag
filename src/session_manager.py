@@ -2,8 +2,8 @@ import json
 import jwt
 import httpx
 from datetime import datetime, timedelta
-from typing import Dict, Optional, Any
-from dataclasses import dataclass, asdict
+from typing import Dict, Optional, Any, List
+from dataclasses import dataclass, field
 from cryptography.hazmat.primitives import serialization
 import os
 from utils.logging_config import get_logger
@@ -24,12 +24,19 @@ class User:
     provider: str = "google"
     created_at: datetime = None
     last_login: datetime = None
+    # RBAC fields
+    roles: List[str] = field(default_factory=lambda: ["openrag_user"])
+    groups: List[str] = field(default_factory=list)
 
     def __post_init__(self):
         if self.created_at is None:
             self.created_at = datetime.now()
         if self.last_login is None:
             self.last_login = datetime.now()
+        if self.roles is None:
+            self.roles = ["openrag_user"]
+        if self.groups is None:
+            self.groups = []
 
 class AnonymousUser(User):
     """Anonymous user"""
@@ -136,10 +143,30 @@ class SessionManager:
         # Create JWT token using the shared method
         return self.create_jwt_token(user)
 
-    def create_jwt_token(self, user: User) -> str:
-        """Create JWT token for an existing user"""
+    def create_jwt_token(
+        self,
+        user: User,
+        roles: Optional[List[str]] = None,
+        groups: Optional[List[str]] = None,
+        expiration_days: int = 7,
+    ) -> str:
+        """Create JWT token for an existing user.
+        
+        Args:
+            user: The User object to create a token for
+            roles: Optional roles override (for restricted API key tokens)
+            groups: Optional groups override (for restricted API key tokens)
+            expiration_days: Token expiration in days (default 7)
+        
+        Returns:
+            Encoded JWT token string
+        """
         # Use OpenSearch-compatible issuer for OIDC validation
         oidc_issuer = "http://openrag-backend:8000"
+
+        # Use provided roles/groups or fall back to user's defaults
+        effective_roles = roles if roles is not None else user.roles
+        effective_groups = groups if groups is not None else user.groups
 
         # Create JWT token with OIDC-compliant claims
         now = datetime.utcnow()
@@ -148,7 +175,7 @@ class SessionManager:
             "iss": oidc_issuer,  # Fixed issuer for OpenSearch OIDC
             "sub": user.user_id,  # Subject (user ID)
             "aud": ["opensearch", "openrag"],  # Audience
-            "exp": now + timedelta(days=7),  # Expiration
+            "exp": now + timedelta(days=expiration_days),  # Expiration
             "iat": now,  # Issued at
             "auth_time": int(now.timestamp()),  # Authentication time
             # Custom claims
@@ -157,7 +184,9 @@ class SessionManager:
             "name": user.name,
             "preferred_username": user.email,
             "email_verified": True,
-            "roles": ["openrag_user"],  # Backend role for OpenSearch
+            # RBAC claims
+            "roles": effective_roles,  # Backend roles for OpenSearch/tools
+            "groups": effective_groups,  # Group-based access control
         }
 
         token = jwt.encode(token_payload, self.private_key, algorithm="RS256")

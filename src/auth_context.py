@@ -4,7 +4,7 @@ Uses contextvars to safely pass user auth info through async calls.
 """
 
 from contextvars import ContextVar
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 # Context variables for current request authentication
 _current_user_id: ContextVar[Optional[str]] = ContextVar(
@@ -12,6 +12,12 @@ _current_user_id: ContextVar[Optional[str]] = ContextVar(
 )
 _current_jwt_token: ContextVar[Optional[str]] = ContextVar(
     "current_jwt_token", default=None
+)
+_current_user_groups: ContextVar[Optional[List[str]]] = ContextVar(
+    "current_user_groups", default=None
+)
+_current_user_roles: ContextVar[Optional[List[str]]] = ContextVar(
+    "current_user_roles", default=None
 )
 _current_search_filters: ContextVar[Optional[Dict[str, Any]]] = ContextVar(
     "current_search_filters", default=None
@@ -24,10 +30,24 @@ _current_score_threshold: ContextVar[Optional[float]] = ContextVar(
 )
 
 
-def set_auth_context(user_id: str, jwt_token: str):
-    """Set authentication context for the current async context"""
+def set_auth_context(
+    user_id: str,
+    jwt_token: str,
+    groups: Optional[List[str]] = None,
+    roles: Optional[List[str]] = None,
+):
+    """Set authentication context for the current async context
+    
+    Args:
+        user_id: The user's ID
+        jwt_token: The JWT token for authentication
+        groups: Optional list of groups the user belongs to (for RBAC)
+        roles: Optional list of roles the user has (for RBAC)
+    """
     _current_user_id.set(user_id)
     _current_jwt_token.set(jwt_token)
+    _current_user_groups.set(groups or [])
+    _current_user_roles.set(roles or [])
 
 
 def get_current_user_id() -> Optional[str]:
@@ -38,6 +58,16 @@ def get_current_user_id() -> Optional[str]:
 def get_current_jwt_token() -> Optional[str]:
     """Get current JWT token from context"""
     return _current_jwt_token.get()
+
+
+def get_current_user_groups() -> List[str]:
+    """Get current user's groups from context (for RBAC)"""
+    return _current_user_groups.get() or []
+
+
+def get_current_user_roles() -> List[str]:
+    """Get current user's roles from context (for RBAC)"""
+    return _current_user_roles.get() or []
 
 
 def get_auth_context() -> tuple[Optional[str], Optional[str]]:

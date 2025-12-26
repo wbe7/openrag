@@ -35,6 +35,10 @@ async def chat_endpoint(request: Request, chat_service, session_manager):
     set_search_limit(limit)
     set_score_threshold(score_threshold)
 
+    # Get RBAC groups and roles from user for access control
+    user_groups = getattr(user, "groups", [])
+    user_roles = getattr(user, "roles", [])
+
     if stream:
         return StreamingResponse(
             await chat_service.chat(
@@ -44,6 +48,8 @@ async def chat_endpoint(request: Request, chat_service, session_manager):
                 previous_response_id=previous_response_id,
                 stream=True,
                 filter_id=filter_id,
+                groups=user_groups,
+                roles=user_roles,
             ),
             media_type="text/event-stream",
             headers={
@@ -61,6 +67,8 @@ async def chat_endpoint(request: Request, chat_service, session_manager):
             previous_response_id=previous_response_id,
             stream=False,
             filter_id=filter_id,
+            groups=user_groups,
+            roles=user_roles,
         )
         return JSONResponse(result)
 
@@ -80,6 +88,10 @@ async def langflow_endpoint(request: Request, chat_service, session_manager):
     user_id = user.user_id
 
     jwt_token = session_manager.get_effective_jwt_token(user_id, request.state.jwt_token)
+
+    # Get RBAC groups and roles from user for access control
+    user_groups = getattr(user, "groups", [])
+    user_roles = getattr(user, "roles", [])
 
     if not prompt:
         return JSONResponse({"error": "Prompt is required"}, status_code=400)
@@ -105,6 +117,8 @@ async def langflow_endpoint(request: Request, chat_service, session_manager):
                     previous_response_id=previous_response_id,
                     stream=True,
                     filter_id=filter_id,
+                    groups=user_groups,
+                    roles=user_roles,
                 ),
                 media_type="text/event-stream",
                 headers={
@@ -122,6 +136,8 @@ async def langflow_endpoint(request: Request, chat_service, session_manager):
                 previous_response_id=previous_response_id,
                 stream=False,
                 filter_id=filter_id,
+                groups=user_groups,
+                roles=user_roles,
             )
             return JSONResponse(result)
 

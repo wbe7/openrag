@@ -16,6 +16,8 @@ class ChatService:
         previous_response_id: str = None,
         stream: bool = False,
         filter_id: str = None,
+        groups: list = None,
+        roles: list = None,
     ):
         """Handle chat requests using the patched OpenAI client"""
         if not prompt:
@@ -23,7 +25,7 @@ class ChatService:
 
         # Set authentication context for this request so tools can access it
         if user_id and jwt_token:
-            set_auth_context(user_id, jwt_token)
+            set_auth_context(user_id, jwt_token, groups=groups, roles=roles)
 
         if stream:
             return async_chat_stream(
@@ -54,6 +56,8 @@ class ChatService:
         previous_response_id: str = None,
         stream: bool = False,
         filter_id: str = None,
+        groups: list = None,
+        roles: list = None,
     ):
         """Handle Langflow chat requests"""
         if not prompt:
@@ -346,9 +350,9 @@ class ChatService:
                 previous_response_id=previous_response_id,
             )
         else:  # chat
-            # Set auth context for chat tools and provide user_id
+            # Set auth context for chat tools and provide user_id with RBAC
             if user_id and jwt_token:
-                set_auth_context(user_id, jwt_token)
+                set_auth_context(user_id, jwt_token, groups=groups, roles=roles)
             response_text, response_id = await async_chat(
                 clients.patched_llm_client,
                 document_prompt,

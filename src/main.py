@@ -1314,7 +1314,7 @@ async def create_app():
         # Chat endpoints
         Route(
             "/v1/chat",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_chat.chat_create_endpoint,
                     chat_service=services["chat_service"],
@@ -1325,7 +1325,7 @@ async def create_app():
         ),
         Route(
             "/v1/chat",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_chat.chat_list_endpoint,
                     chat_service=services["chat_service"],
@@ -1336,7 +1336,7 @@ async def create_app():
         ),
         Route(
             "/v1/chat/{chat_id}",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_chat.chat_get_endpoint,
                     chat_service=services["chat_service"],
@@ -1347,7 +1347,7 @@ async def create_app():
         ),
         Route(
             "/v1/chat/{chat_id}",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_chat.chat_delete_endpoint,
                     chat_service=services["chat_service"],
@@ -1359,7 +1359,7 @@ async def create_app():
         # Search endpoint
         Route(
             "/v1/search",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_search.search_endpoint,
                     search_service=services["search_service"],
@@ -1371,7 +1371,7 @@ async def create_app():
         # Documents endpoints
         Route(
             "/v1/documents/ingest",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_documents.ingest_endpoint,
                     document_service=services["document_service"],
@@ -1384,7 +1384,7 @@ async def create_app():
         ),
         Route(
             "/v1/tasks/{task_id}",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_documents.task_status_endpoint,
                     task_service=services["task_service"],
@@ -1395,7 +1395,7 @@ async def create_app():
         ),
         Route(
             "/v1/documents",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_documents.delete_document_endpoint,
                     document_service=services["document_service"],
@@ -1407,14 +1407,14 @@ async def create_app():
         # Settings endpoints
         Route(
             "/v1/settings",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(v1_settings.get_settings_endpoint)
             ),
             methods=["GET"],
         ),
         Route(
             "/v1/settings",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_settings.update_settings_endpoint,
                     session_manager=services["session_manager"],
@@ -1425,7 +1425,7 @@ async def create_app():
         # Knowledge filters endpoints
         Route(
             "/v1/knowledge-filters",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_knowledge_filters.create_endpoint,
                     knowledge_filter_service=services["knowledge_filter_service"],
@@ -1436,7 +1436,7 @@ async def create_app():
         ),
         Route(
             "/v1/knowledge-filters/search",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_knowledge_filters.search_endpoint,
                     knowledge_filter_service=services["knowledge_filter_service"],
@@ -1447,7 +1447,7 @@ async def create_app():
         ),
         Route(
             "/v1/knowledge-filters/{filter_id}",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_knowledge_filters.get_endpoint,
                     knowledge_filter_service=services["knowledge_filter_service"],
@@ -1458,7 +1458,7 @@ async def create_app():
         ),
         Route(
             "/v1/knowledge-filters/{filter_id}",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_knowledge_filters.update_endpoint,
                     knowledge_filter_service=services["knowledge_filter_service"],
@@ -1469,7 +1469,7 @@ async def create_app():
         ),
         Route(
             "/v1/knowledge-filters/{filter_id}",
-            require_api_key(services["api_key_service"])(
+            require_api_key(services["api_key_service"], services["session_manager"])(
                 partial(
                     v1_knowledge_filters.delete_endpoint,
                     knowledge_filter_service=services["knowledge_filter_service"],

@@ -158,6 +158,7 @@ class TaskProcessor:
         connector_type: str = "local",
         embedding_model: str = None,
         is_sample_data: bool = False,
+        allowed_groups: list = None,
     ):
         """
         Standard processing pipeline for non-Langflow processors:
@@ -166,6 +167,8 @@ class TaskProcessor:
         Args:
             embedding_model: Embedding model to use (defaults to the current
                 embedding model from settings)
+            allowed_groups: List of groups that can access this document (RBAC).
+                Empty list or None means no group restrictions.
         """
         import datetime
         from config.settings import INDEX_NAME, clients, get_embedding_model
@@ -259,6 +262,11 @@ class TaskProcessor:
             if owner_email is not None:
                 chunk_doc["owner_email"] = owner_email
 
+            # RBAC: Set allowed groups for access control
+            # If allowed_groups is provided and non-empty, store it for DLS filtering
+            if allowed_groups:
+                chunk_doc["allowed_groups"] = allowed_groups
+
             # Mark as sample data if specified
             if is_sample_data:
                 chunk_doc["is_sample_data"] = "true"
@@ -309,6 +317,7 @@ class DocumentFileProcessor(TaskProcessor):
         owner_name: str = None,
         owner_email: str = None,
         is_sample_data: bool = False,
+        allowed_groups: list = None,
     ):
         super().__init__(document_service)
         self.owner_user_id = owner_user_id
@@ -316,6 +325,7 @@ class DocumentFileProcessor(TaskProcessor):
         self.owner_name = owner_name
         self.owner_email = owner_email
         self.is_sample_data = is_sample_data
+        self.allowed_groups = allowed_groups
 
     async def process_item(
         self, upload_task: UploadTask, item: str, file_task: FileTask
@@ -351,6 +361,7 @@ class DocumentFileProcessor(TaskProcessor):
                 file_size=file_size,
                 connector_type="local",
                 is_sample_data=self.is_sample_data,
+                allowed_groups=self.allowed_groups,
             )
 
             file_task.status = TaskStatus.COMPLETED
@@ -382,6 +393,7 @@ class ConnectorFileProcessor(TaskProcessor):
         owner_name: str = None,
         owner_email: str = None,
         document_service=None,
+        allowed_groups: list = None,
     ):
         super().__init__(document_service=document_service)
         self.connector_service = connector_service
@@ -391,6 +403,7 @@ class ConnectorFileProcessor(TaskProcessor):
         self.jwt_token = jwt_token
         self.owner_name = owner_name
         self.owner_email = owner_email
+        self.allowed_groups = allowed_groups
 
     async def process_item(
         self, upload_task: UploadTask, item: str, file_task: FileTask
@@ -445,6 +458,7 @@ class ConnectorFileProcessor(TaskProcessor):
                     owner_email=self.owner_email,
                     file_size=len(document.content),
                     connector_type=connection.connector_type,
+                    allowed_groups=self.allowed_groups,
                 )
 
                 # Add connector-specific metadata
@@ -478,6 +492,7 @@ class LangflowConnectorFileProcessor(TaskProcessor):
         jwt_token: str = None,
         owner_name: str = None,
         owner_email: str = None,
+        allowed_groups: list = None,
     ):
         super().__init__()
         self.langflow_connector_service = langflow_connector_service
@@ -487,6 +502,7 @@ class LangflowConnectorFileProcessor(TaskProcessor):
         self.jwt_token = jwt_token
         self.owner_name = owner_name
         self.owner_email = owner_email
+        self.allowed_groups = allowed_groups
 
     async def process_item(
         self, upload_task: UploadTask, item: str, file_task: FileTask
@@ -580,6 +596,7 @@ class S3FileProcessor(TaskProcessor):
         jwt_token: str = None,
         owner_name: str = None,
         owner_email: str = None,
+        allowed_groups: list = None,
     ):
         import boto3
 
@@ -590,6 +607,7 @@ class S3FileProcessor(TaskProcessor):
         self.jwt_token = jwt_token
         self.owner_name = owner_name
         self.owner_email = owner_email
+        self.allowed_groups = allowed_groups
 
     async def process_item(
         self, upload_task: UploadTask, item: str, file_task: FileTask
@@ -638,6 +656,7 @@ class S3FileProcessor(TaskProcessor):
                     owner_email=self.owner_email,
                     file_size=file_size,
                     connector_type="s3",
+                    allowed_groups=self.allowed_groups,
                 )
 
                 result["path"] = f"s3://{self.bucket}/{item}"
@@ -669,6 +688,7 @@ class LangflowFileProcessor(TaskProcessor):
         settings: dict = None,
         delete_after_ingest: bool = True,
         replace_duplicates: bool = False,
+        allowed_groups: list = None,
     ):
         super().__init__()
         self.langflow_file_service = langflow_file_service
@@ -682,6 +702,7 @@ class LangflowFileProcessor(TaskProcessor):
         self.settings = settings
         self.delete_after_ingest = delete_after_ingest
         self.replace_duplicates = replace_duplicates
+        self.allowed_groups = allowed_groups
 
     async def process_item(
         self, upload_task: UploadTask, item: str, file_task: FileTask
@@ -765,6 +786,10 @@ class LangflowFileProcessor(TaskProcessor):
                 metadata_tweaks.append({"key": "owner_email", "value": self.owner_email})
             # Mark as local upload for connector_type
             metadata_tweaks.append({"key": "connector_type", "value": "local"})
+            # RBAC: Add allowed_groups for access control
+            if self.allowed_groups:
+                # Store as comma-separated string for Langflow metadata
+                metadata_tweaks.append({"key": "allowed_groups", "value": ",".join(self.allowed_groups)})
 
             if metadata_tweaks:
                 # Initialize the OpenSearch component tweaks if not already present

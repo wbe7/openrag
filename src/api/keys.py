@@ -42,10 +42,14 @@ async def list_keys_endpoint(request: Request, api_key_service):
 
 async def create_key_endpoint(request: Request, api_key_service):
     """
-    Create a new API key for the authenticated user.
+    Create a new API key for the authenticated user with optional RBAC restrictions.
 
     POST /keys
-    Body: {"name": "My API Key"}
+    Body: {
+        "name": "My API Key",
+        "roles": ["openrag_user"],  // Optional: restrict key to specific roles
+        "groups": ["finance", "hr"]  // Optional: restrict key to specific groups
+    }
 
     Response:
         {
@@ -53,6 +57,8 @@ async def create_key_endpoint(request: Request, api_key_service):
             "key_id": "...",
             "key_prefix": "orag_abc12345",
             "name": "My API Key",
+            "roles": ["openrag_user"],
+            "groups": ["finance", "hr"],
             "created_at": "2024-01-01T00:00:00",
             "api_key": "orag_abc12345..." // Full key, only shown once!
         }
@@ -78,11 +84,29 @@ async def create_key_endpoint(request: Request, api_key_service):
                 status_code=400,
             )
 
+        # Extract optional RBAC fields
+        roles = data.get("roles")
+        groups = data.get("groups")
+
+        # Validate roles and groups are lists if provided
+        if roles is not None and not isinstance(roles, list):
+            return JSONResponse(
+                {"success": False, "error": "roles must be a list"},
+                status_code=400,
+            )
+        if groups is not None and not isinstance(groups, list):
+            return JSONResponse(
+                {"success": False, "error": "groups must be a list"},
+                status_code=400,
+            )
+
         result = await api_key_service.create_key(
             user_id=user_id,
             user_email=user_email,
             name=name,
             jwt_token=jwt_token,
+            roles=roles,
+            groups=groups,
         )
 
         if result.get("success"):
