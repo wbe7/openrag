@@ -58,6 +58,10 @@ from auth_middleware import optional_auth, require_auth
 from api_key_middleware import require_api_key
 from services.api_key_service import APIKeyService
 from api import keys as api_keys
+
+# User Groups management
+from services.group_service import GroupService
+from api import groups as api_groups
 from api.v1 import chat as v1_chat, search as v1_search, documents as v1_documents, settings as v1_settings, knowledge_filters as v1_knowledge_filters
 
 # Configuration and setup
@@ -665,6 +669,9 @@ async def initialize_services():
     # API Key service for public API authentication
     api_key_service = APIKeyService(session_manager)
 
+    # Group service for RBAC management
+    group_service = GroupService(session_manager)
+
     return {
         "document_service": document_service,
         "search_service": search_service,
@@ -679,6 +686,7 @@ async def initialize_services():
         "monitor_service": monitor_service,
         "session_manager": session_manager,
         "api_key_service": api_key_service,
+        "group_service": group_service,
     }
 
 
@@ -1306,6 +1314,37 @@ async def create_app():
                 partial(
                     api_keys.revoke_key_endpoint,
                     api_key_service=services["api_key_service"],
+                )
+            ),
+            methods=["DELETE"],
+        ),
+        # ===== User Groups Management Endpoints (JWT auth for UI) =====
+        Route(
+            "/groups",
+            require_auth(services["session_manager"])(
+                partial(
+                    api_groups.list_groups_endpoint,
+                    group_service=services["group_service"],
+                )
+            ),
+            methods=["GET"],
+        ),
+        Route(
+            "/groups",
+            require_auth(services["session_manager"])(
+                partial(
+                    api_groups.create_group_endpoint,
+                    group_service=services["group_service"],
+                )
+            ),
+            methods=["POST"],
+        ),
+        Route(
+            "/groups/{group_id}",
+            require_auth(services["session_manager"])(
+                partial(
+                    api_groups.delete_group_endpoint,
+                    group_service=services["group_service"],
                 )
             ),
             methods=["DELETE"],

@@ -165,6 +165,23 @@ API_KEYS_INDEX_BODY = {
     },
 }
 
+# User Groups index for RBAC management
+GROUPS_INDEX_NAME = "openrag_groups"
+GROUPS_INDEX_BODY = {
+    "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+    },
+    "mappings": {
+        "properties": {
+            "group_id": {"type": "keyword"},
+            "name": {"type": "keyword"},
+            "description": {"type": "text"},
+            "created_at": {"type": "date"},
+        }
+    },
+}
+
 # Convenience base URL for Langflow REST API
 LANGFLOW_BASE_URL = f"{LANGFLOW_URL}/api/v1"
 

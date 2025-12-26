@@ -12,8 +12,11 @@ import {
 	useGetOpenAIModelsQuery,
 } from "@/app/api/queries/useGetModelsQuery";
 import { useGetApiKeysQuery } from "@/app/api/queries/useGetApiKeysQuery";
+import { useGetGroupsQuery } from "@/app/api/queries/useGetGroupsQuery";
 import { useCreateApiKeyMutation } from "@/app/api/mutations/useCreateApiKeyMutation";
 import { useRevokeApiKeyMutation } from "@/app/api/mutations/useRevokeApiKeyMutation";
+import { ManageGroupsModal } from "@/components/ManageGroupsModal";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
 import { ConfirmationDialog } from "@/components/confirmation-dialog";
 import {
@@ -136,9 +139,10 @@ function KnowledgeSourcesPage() {
 	// API Keys state
 	const [createKeyDialogOpen, setCreateKeyDialogOpen] = useState(false);
 	const [newKeyName, setNewKeyName] = useState("");
-	const [newKeyGroups, setNewKeyGroups] = useState("");
+	const [newKeyGroups, setNewKeyGroups] = useState<string[]>([]);
 	const [newlyCreatedKey, setNewlyCreatedKey] = useState<string | null>(null);
 	const [showKeyDialogOpen, setShowKeyDialogOpen] = useState(false);
+	const [manageGroupsOpen, setManageGroupsOpen] = useState(false);
 
 	// Fetch settings using React Query
 	const { data: settings = {} } = useGetSettingsQuery({
@@ -150,6 +154,11 @@ function KnowledgeSourcesPage() {
 		enabled: isAuthenticated || isNoAuthMode,
 	});
 
+	// Fetch user groups
+	const { data: groupsData } = useGetGroupsQuery({
+		enabled: isAuthenticated || isNoAuthMode,
+	});
+
 	// API key mutations
 	const createApiKeyMutation = useCreateApiKeyMutation({
 		onSuccess: (data) => {
@@ -157,7 +166,7 @@ function KnowledgeSourcesPage() {
 			setCreateKeyDialogOpen(false);
 			setShowKeyDialogOpen(true);
 			setNewKeyName("");
-			setNewKeyGroups("");
+			setNewKeyGroups([]);
 			toast.success("API key created");
 		},
 		onError: (error) => {
@@ -440,15 +449,10 @@ function KnowledgeSourcesPage() {
 			toast.error("Please enter a name for the API key");
 			return;
 		}
-		// Parse groups from comma-separated string
-		const groups = newKeyGroups
-			.split(",")
-			.map((g) => g.trim())
-			.filter((g) => g.length > 0);
-
+		// Use selected groups directly (already an array)
 		createApiKeyMutation.mutate({
 			name: newKeyName.trim(),
-			groups: groups.length > 0 ? groups : undefined,
+			groups: newKeyGroups.length > 0 ? newKeyGroups : undefined,
 		});
 	};
 
@@ -1563,23 +1567,34 @@ function KnowledgeSourcesPage() {
 							}}
 						/>
 					</LabelWrapper>
+				<div className="space-y-2">
 					<LabelWrapper
 						label="Groups (optional)"
 						id="api-key-groups"
-						helperText="Comma-separated list of groups this key can access"
+						helperText="Restrict this key to specific groups"
 					>
-						<Input
-							id="api-key-groups"
-							placeholder="e.g., finance, hr, engineering"
+						<MultiSelect
+							options={(groupsData?.groups || []).map((g) => ({
+								value: g.name,
+								label: g.name,
+							}))}
 							value={newKeyGroups}
-							onChange={(e) => setNewKeyGroups(e.target.value)}
-							onKeyDown={(e) => {
-								if (e.key === "Enter") {
-									handleCreateApiKey();
-								}
-							}}
+							onValueChange={setNewKeyGroups}
+							placeholder="Select groups..."
+							showAllOption={false}
+							searchPlaceholder="Search groups..."
 						/>
 					</LabelWrapper>
+					<Button
+						variant="link"
+						size="sm"
+						className="h-auto p-0 text-xs"
+						onClick={() => setManageGroupsOpen(true)}
+					>
+						<Plus className="h-3 w-3 mr-1" />
+						Manage Groups
+					</Button>
+				</div>
 				</div>
 				<DialogFooter>
 					<Button
@@ -1587,7 +1602,7 @@ function KnowledgeSourcesPage() {
 						onClick={() => {
 							setCreateKeyDialogOpen(false);
 							setNewKeyName("");
-							setNewKeyGroups("");
+							setNewKeyGroups([]);
 						}}
 						size="sm"
 					>
@@ -1644,6 +1659,12 @@ function KnowledgeSourcesPage() {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+
+			{/* Manage Groups Modal */}
+			<ManageGroupsModal
+				open={manageGroupsOpen}
+				onOpenChange={setManageGroupsOpen}
+			/>
 		</div>
 	);
 }
