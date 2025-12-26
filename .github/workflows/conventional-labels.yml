@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Validate PR title follows Conventional Commits
         id: validate
-        uses: Namchee/conventional-pr@v0.15.6
+        uses: Namchee/conventional-pr@v0.15
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
           issue: false
