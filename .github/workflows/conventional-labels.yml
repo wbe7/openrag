@@ -1,4 +1,5 @@
-# Warning, do not check out untrusted code with
+# NOTE: pull_request_target is required to have write permissions to add labels on PRs from forks.
+# This workflow must not be modified to check out or execute untrusted PR code, as it runs with base repo permissions.
 # the pull_request_target event.
 name: Label PRs with Conventional Commits
 on:
