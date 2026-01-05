@@ -24,6 +24,7 @@ wheels/
 !src/tui/_assets/flows/*.json
 !src/tui/_assets/flows/components/*.json
 !frontend/*.json
+!docs/openapi/openapi.json
 .DS_Store
 
 config/

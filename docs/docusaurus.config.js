@@ -77,9 +77,30 @@ const config = {
         },
       }),
     ],
+    [
+      'redocusaurus',
+      {
+        openapi: {
+          path: 'openapi',
+          routeBasePath: '/api',
+        },
+        specs: [
+          {
+            id: 'api',
+            spec: 'openapi/openapi.json',
+            route: '/api',
+          },
+        ],
+        theme: {
+          primaryColor: '#25c2a0',
+        },
+      },
+    ],
   ],
 
-  plugins: [require.resolve('docusaurus-plugin-image-zoom')],
+  plugins: [
+    require.resolve('docusaurus-plugin-image-zoom'),
+  ],
 
   themes: ['@docusaurus/theme-mermaid'],
 

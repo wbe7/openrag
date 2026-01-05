@@ -5,6 +5,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
+    "generate:openapi": "cd .. && uv run python docs/openapi/generate_openapi.py",
     "build": "docusaurus build",
     "build:pdf": "rm -f ../openrag-documents/openrag-documentation.pdf && npm run build && npm run serve & sleep 10 && npx docusaurus-to-pdf && pkill -f 'docusaurus serve'",
     "swizzle": "docusaurus swizzle",
@@ -24,6 +25,7 @@
     "docusaurus-plugin-image-zoom": "^3.0.1",
     "lucide-react": "^0.555.0",
     "prism-react-renderer": "^2.3.0",
+    "redocusaurus": "^2.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

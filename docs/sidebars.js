@@ -74,7 +74,18 @@ const sidebars = {
       id: "core-components/chat",
       label: "Chat",
     },
-    "reference/configuration",
+    {
+      type: "category",
+      label: "Reference",
+      items: [
+        "reference/configuration",
+        {
+          type: "link",
+          label: "API Reference",
+          href: "/api",
+        },
+      ],
+    },
     "support/contribute",
     "support/troubleshoot",
   ],

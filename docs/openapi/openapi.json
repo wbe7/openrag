@@ -1,0 +1,1053 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "OpenRAG API v1",
+    "description": "OpenRAG Public API v1 provides a clean, versioned interface for external integrations.\nAll endpoints require API key authentication via the `X-API-Key` header.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "OpenRAG Support",
+      "url": "https://github.com/langflow-ai/openrag"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Local development server"
+    },
+    {
+      "url": "https://api.openr.ag",
+      "description": "Production server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for authentication"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/chat": {
+      "post": {
+        "operationId": "post_v1_chat",
+        "summary": "Send a chat message",
+        "description": "Send a chat message via Langflow. Supports both streaming and non-streaming responses.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "message"
+                ],
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "The chat message"
+                  },
+                  "chat_id": {
+                    "type": "string",
+                    "description": "Optional chat ID to continue a conversation"
+                  },
+                  "stream": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether to stream the response"
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Optional search filters"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Maximum number of search results"
+                  },
+                  "score_threshold": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Minimum relevance score"
+                  },
+                  "filter_id": {
+                    "type": "string",
+                    "description": "Optional knowledge filter ID"
+                  }
+                }
+              },
+              "example": {
+                "message": "What is RAG?",
+                "stream": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Chat response (non-streaming) or streaming response (when stream=true)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "response": {
+                      "type": "string"
+                    },
+                    "chat_id": {
+                      "type": "string"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "response": "RAG stands for Retrieval-Augmented Generation...",
+                  "chat_id": "abc123",
+                  "sources": []
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "Server-Sent Events stream"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Message is required"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Invalid API key"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "get_v1_chat",
+        "summary": "List conversations",
+        "description": "List all conversations for the authenticated user.",
+        "responses": {
+          "200": {
+            "description": "List of conversations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "conversations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "chat_id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "last_activity": {
+                            "type": "string"
+                          },
+                          "message_count": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "conversations": [
+                    {
+                      "chat_id": "abc123",
+                      "title": "What is RAG?",
+                      "created_at": "2024-01-01T00:00:00Z",
+                      "last_activity": "2024-01-01T00:00:00Z",
+                      "message_count": 5
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chat/{chat_id}": {
+      "get": {
+        "operationId": "get_v1_chat_chat_id",
+        "summary": "Get conversation",
+        "description": "Get a specific conversation with full message history.",
+        "responses": {
+          "200": {
+            "description": "Conversation details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "chat_id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "last_activity": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "user",
+                              "assistant"
+                            ]
+                          },
+                          "content": {
+                            "type": "string"
+                          },
+                          "timestamp": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Conversation not found"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "chat_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The chat id"
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "delete_v1_chat_chat_id",
+        "summary": "Delete conversation",
+        "description": "Delete a conversation.",
+        "responses": {
+          "200": {
+            "description": "Conversation deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "chat_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The chat id"
+          }
+        ]
+      }
+    },
+    "/v1/search": {
+      "post": {
+        "operationId": "post_v1_search",
+        "summary": "Semantic search",
+        "description": "Perform semantic search on documents.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "query"
+                ],
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "Search query"
+                  },
+                  "filters": {
+                    "type": "object",
+                    "properties": {
+                      "data_sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "document_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "Optional search filters"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Maximum number of results"
+                  },
+                  "score_threshold": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Minimum relevance score"
+                  }
+                }
+              },
+              "example": {
+                "query": "What is RAG?",
+                "limit": 10,
+                "score_threshold": 0.5
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "filename": {
+                            "type": "string"
+                          },
+                          "text": {
+                            "type": "string"
+                          },
+                          "score": {
+                            "type": "number"
+                          },
+                          "page": {
+                            "type": "integer"
+                          },
+                          "mimetype": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "results": [
+                    {
+                      "filename": "doc.pdf",
+                      "text": "RAG stands for...",
+                      "score": 0.85,
+                      "page": 1,
+                      "mimetype": "application/pdf"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Query is required"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/documents/ingest": {
+      "post": {
+        "operationId": "post_v1_documents_ingest",
+        "summary": "Ingest document",
+        "description": "Ingest a document into the knowledge base. Supports both async (via Langflow) and sync processing.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Document file to ingest"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Document ingestion initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "description": "Task ID for async processing"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "processing"
+                      ]
+                    },
+                    "filename": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "description": "Success flag for sync processing"
+                    },
+                    "document_id": {
+                      "type": "string",
+                      "description": "Document ID for sync processing"
+                    },
+                    "chunks": {
+                      "type": "integer",
+                      "description": "Number of chunks created"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tasks/{task_id}": {
+      "get": {
+        "operationId": "get_v1_tasks_task_id",
+        "summary": "Get task status",
+        "description": "Get the status of an ingestion task.",
+        "responses": {
+          "200": {
+            "description": "Task status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "processing",
+                        "completed",
+                        "failed"
+                      ]
+                    },
+                    "total_files": {
+                      "type": "integer"
+                    },
+                    "processed_files": {
+                      "type": "integer"
+                    },
+                    "successful_files": {
+                      "type": "integer"
+                    },
+                    "failed_files": {
+                      "type": "integer"
+                    },
+                    "files": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Task not found"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The task id"
+          }
+        ]
+      }
+    },
+    "/v1/documents": {
+      "delete": {
+        "operationId": "delete_v1_documents",
+        "summary": "Delete document",
+        "description": "Delete a document from the knowledge base.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "filename"
+                ],
+                "properties": {
+                  "filename": {
+                    "type": "string",
+                    "description": "Filename of the document to delete"
+                  }
+                }
+              },
+              "example": {
+                "filename": "doc.pdf"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Document deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "deleted_chunks": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "deleted_chunks": 5
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/settings": {
+      "get": {
+        "operationId": "get_v1_settings",
+        "summary": "Get settings",
+        "description": "Get current OpenRAG configuration (read-only). Sensitive information is never exposed.",
+        "responses": {
+          "200": {
+            "description": "Current settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "agent": {
+                      "type": "object",
+                      "properties": {
+                        "llm_provider": {
+                          "type": "string"
+                        },
+                        "llm_model": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "knowledge": {
+                      "type": "object",
+                      "properties": {
+                        "embedding_provider": {
+                          "type": "string"
+                        },
+                        "embedding_model": {
+                          "type": "string"
+                        },
+                        "chunk_size": {
+                          "type": "integer"
+                        },
+                        "chunk_overlap": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "agent": {
+                    "llm_provider": "openai",
+                    "llm_model": "gpt-4"
+                  },
+                  "knowledge": {
+                    "embedding_provider": "openai",
+                    "embedding_model": "text-embedding-3-small",
+                    "chunk_size": 1000,
+                    "chunk_overlap": 200
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "post_v1_settings",
+        "summary": "Update settings",
+        "description": "Update OpenRAG configuration settings. Only a limited subset of settings can be updated.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chunk_size": {
+                    "type": "integer",
+                    "description": "Chunk size for document processing"
+                  },
+                  "chunk_overlap": {
+                    "type": "integer",
+                    "description": "Chunk overlap for document processing"
+                  }
+                }
+              },
+              "example": {
+                "chunk_size": 1000,
+                "chunk_overlap": 200
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Settings updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Configuration updated successfully"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/knowledge-filters": {
+      "post": {
+        "operationId": "post_v1_knowledge-filters",
+        "summary": "Create knowledge filter",
+        "description": "Create a new knowledge filter.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "queryData"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the knowledge filter"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the knowledge filter"
+                  },
+                  "queryData": {
+                    "type": "object",
+                    "description": "Query data for the filter"
+                  },
+                  "allowedUsers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of allowed user IDs"
+                  },
+                  "allowedGroups": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of allowed group IDs"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Knowledge filter created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "filter": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/knowledge-filters/search": {
+      "post": {
+        "operationId": "post_v1_knowledge-filters_search",
+        "summary": "Search knowledge filters",
+        "description": "Search for knowledge filters by name, description, or query content.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "Search query"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "default": 20,
+                    "description": "Maximum number of results"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of matching knowledge filters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/knowledge-filters/{filter_id}": {
+      "get": {
+        "operationId": "get_v1_knowledge-filters_filter_id",
+        "summary": "Get knowledge filter",
+        "description": "Get a specific knowledge filter by ID.",
+        "responses": {
+          "200": {
+            "description": "Knowledge filter details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "filter": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Knowledge filter not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "filter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The filter id"
+          }
+        ]
+      },
+      "put": {
+        "operationId": "put_v1_knowledge-filters_filter_id",
+        "summary": "Update knowledge filter",
+        "description": "Update a knowledge filter.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "queryData": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Knowledge filter updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "filter": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "filter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The filter id"
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "delete_v1_knowledge-filters_filter_id",
+        "summary": "Delete knowledge filter",
+        "description": "Delete a knowledge filter.",
+        "responses": {
+          "200": {
+            "description": "Knowledge filter deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "filter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The filter id"
+          }
+        ]
+      }
+    }
+  }
+}
