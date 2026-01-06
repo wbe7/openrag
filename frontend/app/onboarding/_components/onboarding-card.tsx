@@ -173,8 +173,6 @@ const OnboardingCard = ({
 
   // Track which tasks we've already handled to prevent infinite loops
   const handledFailedTasksRef = useRef<Set<string>>(new Set());
-  
-  const updateOnboardingMutation = useUpdateOnboardingStateMutation();
 
   // Query tasks to track completion
   const { data: tasks } = useGetTasksQuery({
@@ -307,16 +305,6 @@ const OnboardingCard = ({
   const onboardingMutation = useOnboardingMutation({
     onSuccess: (data) => {
       console.log("Onboarding completed successfully", data);
-
-      // Save OpenRAG docs filter ID if sample data was ingested
-      if (data.openrag_docs_filter_id) {
-        // Save to backend
-        updateOnboardingMutation.mutateAsync({
-          openrag_docs_filter_id: data.openrag_docs_filter_id,
-        });
-        
-        console.log("Saved OpenRAG docs filter ID:", data.openrag_docs_filter_id);
-      }
 
       // Update provider health cache to healthy since backend just validated
       const provider =
