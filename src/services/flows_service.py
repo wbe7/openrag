@@ -6,28 +6,15 @@ from config.settings import (
     LANGFLOW_URL,
     LANGFLOW_CHAT_FLOW_ID,
     LANGFLOW_INGEST_FLOW_ID,
-    OLLAMA_LLM_TEXT_COMPONENT_PATH,
     OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME,
     OPENAI_LLM_COMPONENT_DISPLAY_NAME,
-    WATSONX_LLM_TEXT_COMPONENT_PATH,
     clients,
-    WATSONX_LLM_COMPONENT_PATH,
-    WATSONX_EMBEDDING_COMPONENT_PATH,
-    OLLAMA_LLM_COMPONENT_PATH,
-    OLLAMA_EMBEDDING_COMPONENT_PATH,
-    WATSONX_EMBEDDING_COMPONENT_DISPLAY_NAME,
-    WATSONX_LLM_COMPONENT_DISPLAY_NAME,
-    OLLAMA_EMBEDDING_COMPONENT_DISPLAY_NAME,
-    OLLAMA_LLM_COMPONENT_DISPLAY_NAME,
     get_openrag_config,
 )
 import json
 import os
-import re
-import copy
 from datetime import datetime
 from utils.logging_config import get_logger
-from utils.container_utils import transform_localhost_url
 from utils.telemetry import TelemetryClient, Category, MessageId
 
 logger = get_logger(__name__)
@@ -1308,27 +1295,30 @@ class FlowsService:
 
         updated = False
 
-        provider_name = "IBM watsonx.ai" if provider == "watsonx" else "Ollama" if provider == "ollama" else "Anthropic" if provider == "anthropic" else "OpenAI"
-
-        field_name = "provider" if "provider" in template else "agent_llm"
+        provider_name = "IBM WatsonX" if provider == "watsonx" else "Ollama" if provider == "ollama" else "Anthropic" if provider == "anthropic" else "OpenAI"
         
         # Update provider field and call custom_component/update endpoint
-        if field_name in template:
+        if "model" in template:
+            if "options" not in template["model"]:
+                return False
+
+            model = [item for item in template["model"]["options"] if item["provider"] == provider_name and item["name"] == model_value]
+
+
             # First, update the provider value
-            template[field_name]["value"] = provider_name
+            template["model"]["value"] = model
             
             # Call custom_component/update endpoint to get updated template
             # Only call if code field exists (custom components should have code)
             if "code" in template and "value" in template["code"]:
                 code_value = template["code"]["value"]
-                field_value = provider_name
                                 
                 try:
                     update_payload = {
                         "code": code_value,
                         "template": template,
-                        "field": field_name,
-                        "field_value": field_value,
+                        "field": "model",
+                        "field_value": model,
                         "tool_mode": False,
                     }
                     
@@ -1356,96 +1346,21 @@ class FlowsService:
                     # Continue with manual updates even if API call fails
             
             updated = True
-        
-
-        # Update model_name field (common to all providers)
-        if "model" in template:
-            template["model"]["value"] = model_value
-            template["model"]["options"] = [model_value]
-            template["model"]["advanced"] = False
-            updated = True
-        elif "model_name" in template:
-            template["model_name"]["value"] = model_value
-            template["model_name"]["options"] = [model_value]
-            template["model_name"]["advanced"] = False
-            updated = True
 
         # Update endpoint/URL field based on provider
         if endpoint:
-            if provider == "watsonx" and "base_url" in template:
-                # Watson uses "url" field
-                template["base_url"]["value"] = endpoint
-                template["base_url"]["options"] = [endpoint]
-                template["base_url"]["show"] = True
-                template["base_url"]["advanced"] = False
-                updated = True
             if provider == "watsonx" and "base_url_ibm_watsonx" in template:
                 # Watson uses "url" field
                 template["base_url_ibm_watsonx"]["value"] = endpoint
                 template["base_url_ibm_watsonx"]["show"] = True
                 template["base_url_ibm_watsonx"]["advanced"] = False
                 updated = True
-
-        if provider == "openai" and "api_key" in template:
-            template["api_key"]["value"] = "OPENAI_API_KEY"
-            template["api_key"]["load_from_db"] = True
-            template["api_key"]["show"] = True
-            template["api_key"]["advanced"] = False
-            updated = True
-        if provider == "openai" and "api_base" in template:
-            template["api_base"]["value"] = ""
-            template["api_base"]["load_from_db"] = False
-            template["api_base"]["show"] = True
-            template["api_base"]["advanced"] = False
-            updated = True
-
-        if provider == "anthropic" and "api_key" in template:
-            template["api_key"]["value"] = "ANTHROPIC_API_KEY"
-            template["api_key"]["load_from_db"] = True
-            template["api_key"]["show"] = True
-            template["api_key"]["advanced"] = False
-            updated = True
-        
-        if provider == "anthropic" and "base_url" in template:
-            template["base_url"]["value"] = "https://api.anthropic.com"
-            template["base_url"]["load_from_db"] = False
-            template["base_url"]["show"] = True
-            template["base_url"]["advanced"] = True
-            updated = True
-
-        if provider == "ollama" and "base_url" in template:
-            template["base_url"]["value"] = "OLLAMA_BASE_URL"
-            template["base_url"]["load_from_db"] = True
-            template["base_url"]["show"] = True
-            template["base_url"]["advanced"] = False
-            updated = True
-        
-        if provider == "ollama" and "api_base" in template:
-            template["api_base"]["value"] = "OLLAMA_BASE_URL"
-            template["api_base"]["load_from_db"] = True
-            template["api_base"]["show"] = True
-            template["api_base"]["advanced"] = False
-            updated = True
-
-        if provider == "ollama" and "ollama_base_url" in template:
-            template["ollama_base_url"]["value"] = "OLLAMA_BASE_URL"
-            template["ollama_base_url"]["load_from_db"] = True
-            template["ollama_base_url"]["show"] = True
-            template["ollama_base_url"]["advanced"] = False
-            updated = True
-
+    
         if provider == "watsonx" and "project_id" in template:
             template["project_id"]["value"] = "WATSONX_PROJECT_ID"
             template["project_id"]["load_from_db"] = True
             template["project_id"]["show"] = True
             template["project_id"]["advanced"] = False
-            updated = True
-        
-        if provider == "watsonx" and "api_key" in template:
-            template["api_key"]["value"] = "WATSONX_API_KEY"
-            template["api_key"]["load_from_db"] = True
-            template["api_key"]["show"] = True
-            template["api_key"]["advanced"] = False
             updated = True
 
         return updated
