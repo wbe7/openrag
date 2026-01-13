@@ -239,11 +239,16 @@ async def chat_get_endpoint(request: Request, chat_service, session_manager):
         # Transform to public API format
         messages = []
         for msg in conversation.get("messages", []):
-            messages.append({
+            message_data = {
                 "role": msg.get("role"),
                 "content": msg.get("content"),
                 "timestamp": msg.get("timestamp"),
-            })
+            }
+            # Include token usage if available (from Responses API)
+            usage = msg.get("response_data", {}).get("usage") if isinstance(msg.get("response_data"), dict) else None
+            if usage:
+                message_data["usage"] = usage
+            messages.append(message_data)
 
         response_data = {
             "chat_id": conversation.get("response_id"),
