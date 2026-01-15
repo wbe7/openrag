@@ -11,7 +11,7 @@ ifneq (,$(wildcard .env))
 endif
 
 .PHONY: help dev dev-cpu dev-local infra stop clean build logs shell-backend shell-frontend install \
-       test test-integration test-ci test-ci-local \
+       test test-integration test-ci test-ci-local test-sdk \
        backend frontend install-be install-fe build-be build-fe logs-be logs-fe logs-lf logs-os \
        shell-be shell-lf shell-os restart status health db-reset flow-upload quick setup
 
@@ -46,15 +46,19 @@ help:
 	@echo "Testing:"
 	@echo "  test             - Run all backend tests"
 	@echo "  test-integration - Run integration tests (requires infra)"
-	@echo "  test-ci          - Start infra, run integration tests, tear down (uses DockerHub images)"
+	@echo "  test-ci          - Start infra, run integration + SDK tests, tear down (uses DockerHub images)"
 	@echo "  test-ci-local    - Same as test-ci but builds all images locally"
+	@echo "  test-sdk         - Run SDK integration tests (requires running OpenRAG at localhost:3000)"
 	@echo "  lint         - Run linting checks"
 	@echo ""
 
 # Development environments
+# Use centralized env file from TUI if it exists, otherwise fall back to local .env
+OPENRAG_ENV_FILE := $(shell if [ -f ~/.openrag/tui/.env ]; then echo "--env-file ~/.openrag/tui/.env"; fi)
+
 dev:
 	@echo "🚀 Starting OpenRAG with GPU support..."
-	docker compose up -d
+	docker compose $(OPENRAG_ENV_FILE) -f docker-compose.yml -f docker-compose.gpu.yml up -d
 	@echo "✅ Services started!"
 	@echo "   Backend: http://localhost:8000"
 	@echo "   Frontend: http://localhost:3000"
@@ -64,7 +68,7 @@ dev:
 
 dev-cpu:
 	@echo "🚀 Starting OpenRAG with CPU only..."
-	docker compose -f docker-compose-cpu.yml up -d
+	docker compose $(OPENRAG_ENV_FILE) up -d
 	@echo "✅ Services started!"
 	@echo "   Backend: http://localhost:8000"
 	@echo "   Frontend: http://localhost:3000"
@@ -74,7 +78,7 @@ dev-cpu:
 
 dev-local:
 	@echo "🔧 Starting infrastructure only (for local development)..."
-	docker compose up -d opensearch dashboards langflow
+	docker compose $(OPENRAG_ENV_FILE) up -d opensearch dashboards langflow
 	@echo "✅ Infrastructure started!"
 	@echo "   Langflow: http://localhost:7860"
 	@echo "   OpenSearch: http://localhost:9200"
@@ -84,7 +88,7 @@ dev-local:
 
 infra:
 	@echo "🔧 Starting infrastructure services only..."
-	docker compose up -d opensearch dashboards langflow
+	docker compose $(OPENRAG_ENV_FILE) up -d opensearch dashboards langflow
 	@echo "✅ Infrastructure services started!"
 	@echo "   Langflow: http://localhost:7860"
 	@echo "   OpenSearch: http://localhost:9200"
@@ -92,7 +96,7 @@ infra:
 
 infra-cpu:
 	@echo "🔧 Starting infrastructure services only..."
-	docker-compose -f docker-compose-cpu.yml up -d opensearch dashboards langflow
+	docker compose $(OPENRAG_ENV_FILE) up -d opensearch dashboards langflow
 	@echo "✅ Infrastructure services started!"
 	@echo "   Langflow: http://localhost:7860"
 	@echo "   OpenSearch: http://localhost:9200"
@@ -101,15 +105,13 @@ infra-cpu:
 # Container management
 stop:
 	@echo "🛑 Stopping all containers..."
-	docker compose down
-	docker compose -f docker-compose-cpu.yml down 2>/dev/null || true
+	docker compose $(OPENRAG_ENV_FILE) down
 
 restart: stop dev
 
 clean: stop
 	@echo "🧹 Cleaning up containers and volumes..."
-	docker compose down -v --remove-orphans
-	docker compose -f docker-compose-cpu.yml down -v --remove-orphans 2>/dev/null || true
+	docker compose $(OPENRAG_ENV_FILE) down -v --remove-orphans
 	docker system prune -f
 
 # Local development
@@ -137,50 +139,53 @@ install-fe:
 
 # Building
 build:
-	@echo "🔨 Building Docker images..."
-	docker compose build
+	@echo "Building all Docker images locally..."
+	docker build -t langflowai/openrag-opensearch:latest -f Dockerfile .
+	docker build -t langflowai/openrag-backend:latest -f Dockerfile.backend .
+	docker build -t langflowai/openrag-frontend:latest -f Dockerfile.frontend .
+	docker build -t langflowai/openrag-langflow:latest -f Dockerfile.langflow .
 
 build-be:
-	@echo "🔨 Building backend image..."
-	docker build -t openrag-backend -f Dockerfile.backend .
+	@echo "Building backend image..."
+	docker build -t langflowai/openrag-backend:latest -f Dockerfile.backend .
 
 build-fe:
-	@echo "🔨 Building frontend image..."
-	docker build -t openrag-frontend -f Dockerfile.frontend .
+	@echo "Building frontend image..."
+	docker build -t langflowai/openrag-frontend:latest -f Dockerfile.frontend .
 
 # Logging and debugging
 logs:
 	@echo "📋 Showing all container logs..."
-	docker compose logs -f
+	docker compose $(OPENRAG_ENV_FILE) logs -f
 
 logs-be:
 	@echo "📋 Showing backend logs..."
-	docker compose logs -f openrag-backend
+	docker compose $(OPENRAG_ENV_FILE) logs -f openrag-backend
 
 logs-fe:
 	@echo "📋 Showing frontend logs..."
-	docker compose logs -f openrag-frontend
+	docker compose $(OPENRAG_ENV_FILE) logs -f openrag-frontend
 
 logs-lf:
 	@echo "📋 Showing langflow logs..."
-	docker compose logs -f langflow
+	docker compose $(OPENRAG_ENV_FILE) logs -f langflow
 
 logs-os:
 	@echo "📋 Showing opensearch logs..."
-	docker compose logs -f opensearch
+	docker compose $(OPENRAG_ENV_FILE) logs -f opensearch
 
 # Shell access
 shell-be:
 	@echo "🐚 Opening shell in backend container..."
-	docker compose exec openrag-backend /bin/bash
+	docker compose $(OPENRAG_ENV_FILE) exec openrag-backend /bin/bash
 
 shell-lf:
 	@echo "🐚 Opening shell in langflow container..."
-	docker compose exec langflow /bin/bash
+	docker compose $(OPENRAG_ENV_FILE) exec langflow /bin/bash
 
 shell-os:
 	@echo "🐚 Opening shell in opensearch container..."
-	docker compose exec opensearch /bin/bash
+	docker compose $(OPENRAG_ENV_FILE) exec opensearch /bin/bash
 
 # Testing and quality
 test:
@@ -206,13 +211,13 @@ test-ci:
 		chmod 644 keys/public_key.pem 2>/dev/null || true; \
 	fi; \
 	echo "Cleaning up old containers and volumes..."; \
-	docker compose -f docker-compose-cpu.yml down -v 2>/dev/null || true; \
+	docker compose down -v 2>/dev/null || true; \
 	echo "Pulling latest images..."; \
-	docker compose -f docker-compose-cpu.yml pull; \
+	docker compose pull; \
 	echo "Building OpenSearch image override..."; \
 	docker build --no-cache -t langflowai/openrag-opensearch:latest -f Dockerfile .; \
-	echo "Starting infra (OpenSearch + Dashboards + Langflow) with CPU containers"; \
-	docker compose -f docker-compose-cpu.yml up -d opensearch dashboards langflow; \
+	echo "Starting infra (OpenSearch + Dashboards + Langflow + Backend + Frontend) with CPU containers"; \
+	docker compose up -d opensearch dashboards langflow openrag-backend openrag-frontend; \
 	echo "Starting docling-serve..."; \
 	DOCLING_ENDPOINT=$$(uv run python scripts/docling_ctl.py start --port 5001 | grep "Endpoint:" | awk '{print $$2}'); \
 	echo "Docling-serve started at $$DOCLING_ENDPOINT"; \
@@ -257,6 +262,21 @@ test-ci:
 	uv run pytest tests/integration -vv -s -o log_cli=true --log-cli-level=DEBUG; \
 	TEST_RESULT=$$?; \
 	echo ""; \
+	echo "Waiting for frontend at http://localhost:3000..."; \
+	for i in $$(seq 1 60); do \
+		curl -s http://localhost:3000/ >/dev/null 2>&1 && break || sleep 2; \
+	done; \
+	echo "Running Python SDK integration tests"; \
+	cd sdks/python && \
+	uv sync --extra dev && \
+	OPENRAG_URL=http://localhost:3000 uv run pytest tests/test_integration.py -vv -s || TEST_RESULT=1; \
+	cd ../..; \
+	echo "Running TypeScript SDK integration tests"; \
+	cd sdks/typescript && \
+	npm install && npm run build && \
+	OPENRAG_URL=http://localhost:3000 npm test || TEST_RESULT=1; \
+	cd ../..; \
+	echo ""; \
 	echo "=== Post-test JWT diagnostics ==="; \
 	echo "Generating test JWT token..."; \
 	TEST_TOKEN=$$(uv run python -c "from src.session_manager import SessionManager, AnonymousUser; sm = SessionManager('test'); print(sm.create_jwt_token(AnonymousUser()))" 2>/dev/null || echo ""); \
@@ -269,7 +289,7 @@ test-ci:
 	echo ""; \
 	echo "Tearing down infra"; \
 	uv run python scripts/docling_ctl.py stop || true; \
-	docker compose -f docker-compose-cpu.yml down -v 2>/dev/null || true; \
+	docker compose down -v 2>/dev/null || true; \
 	exit $$TEST_RESULT
 
 # CI-friendly integration test target with local builds: builds all images, brings up infra, waits, runs tests, tears down
@@ -286,14 +306,14 @@ test-ci-local:
 		chmod 644 keys/public_key.pem 2>/dev/null || true; \
 	fi; \
 	echo "Cleaning up old containers and volumes..."; \
-	docker compose -f docker-compose-cpu.yml down -v 2>/dev/null || true; \
+	docker compose down -v 2>/dev/null || true; \
 	echo "Building all images locally..."; \
 	docker build -t langflowai/openrag-opensearch:latest -f Dockerfile .; \
 	docker build -t langflowai/openrag-backend:latest -f Dockerfile.backend .; \
 	docker build -t langflowai/openrag-frontend:latest -f Dockerfile.frontend .; \
 	docker build -t langflowai/openrag-langflow:latest -f Dockerfile.langflow .; \
-	echo "Starting infra (OpenSearch + Dashboards + Langflow) with CPU containers"; \
-	docker compose -f docker-compose-cpu.yml up -d opensearch dashboards langflow; \
+	echo "Starting infra (OpenSearch + Dashboards + Langflow + Backend + Frontend) with CPU containers"; \
+	docker compose up -d opensearch dashboards langflow openrag-backend openrag-frontend; \
 	echo "Starting docling-serve..."; \
 	DOCLING_ENDPOINT=$$(uv run python scripts/docling_ctl.py start --port 5001 | grep "Endpoint:" | awk '{print $$2}'); \
 	echo "Docling-serve started at $$DOCLING_ENDPOINT"; \
@@ -338,6 +358,21 @@ test-ci-local:
 	uv run pytest tests/integration -vv -s -o log_cli=true --log-cli-level=DEBUG; \
 	TEST_RESULT=$$?; \
 	echo ""; \
+	echo "Waiting for frontend at http://localhost:3000..."; \
+	for i in $$(seq 1 60); do \
+		curl -s http://localhost:3000/ >/dev/null 2>&1 && break || sleep 2; \
+	done; \
+	echo "Running Python SDK integration tests"; \
+	cd sdks/python && \
+	uv sync --extra dev && \
+	OPENRAG_URL=http://localhost:3000 uv run pytest tests/test_integration.py -vv -s || TEST_RESULT=1; \
+	cd ../..; \
+	echo "Running TypeScript SDK integration tests"; \
+	cd sdks/typescript && \
+	npm install && npm run build && \
+	OPENRAG_URL=http://localhost:3000 npm test || TEST_RESULT=1; \
+	cd ../..; \
+	echo ""; \
 	echo "=== Post-test JWT diagnostics ==="; \
 	echo "Generating test JWT token..."; \
 	TEST_TOKEN=$$(uv run python -c "from src.session_manager import SessionManager, AnonymousUser; sm = SessionManager('test'); print(sm.create_jwt_token(AnonymousUser()))" 2>/dev/null || echo ""); \
@@ -348,10 +383,31 @@ test-ci-local:
 	fi; \
 	echo "================================="; \
 	echo ""; \
+	if [ $$TEST_RESULT -ne 0 ]; then \
+		echo "=== Tests failed, dumping container logs ==="; \
+		echo ""; \
+		echo "=== Langflow logs (last 500 lines) ==="; \
+		docker logs langflow 2>&1 | tail -500 || echo "Could not get Langflow logs"; \
+		echo ""; \
+		echo "=== Backend logs (last 200 lines) ==="; \
+		docker logs openrag-backend 2>&1 | tail -200 || echo "Could not get backend logs"; \
+		echo ""; \
+	fi; \
 	echo "Tearing down infra"; \
 	uv run python scripts/docling_ctl.py stop || true; \
-	docker compose -f docker-compose-cpu.yml down -v 2>/dev/null || true; \
+	docker compose down -v 2>/dev/null || true; \
 	exit $$TEST_RESULT
+
+# SDK integration tests (requires running OpenRAG instance)
+test-sdk:
+	@echo "Running SDK integration tests..."
+	@echo "Make sure OpenRAG is running at localhost:3000 (make up)"
+	@echo ""
+	@echo "Running Python SDK tests..."
+	cd sdks/python && uv sync --extra dev && OPENRAG_URL=http://localhost:3000 uv run pytest tests/test_integration.py -vv -s
+	@echo ""
+	@echo "Running TypeScript SDK tests..."
+	cd sdks/typescript && npm install && npm run build && OPENRAG_URL=http://localhost:3000 npm test
 
 lint:
 	@echo "🔍 Running linting checks..."
@@ -361,7 +417,7 @@ lint:
 # Service status
 status:
 	@echo "📊 Container status:"
-	@docker compose ps 2>/dev/null || echo "No containers running"
+	@docker compose $(OPENRAG_ENV_FILE) ps 2>/dev/null || echo "No containers running"
 
 health:
 	@echo "🏥 Health check:"
