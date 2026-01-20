@@ -40,11 +40,11 @@ For extended configuration, including ingestion and optional variables, see [doc
 3. Start OpenRAG.
 
 ```bash
-# Full stack with GPU support
-make dev
-
-# Or CPU only
+# If you're on a MacBook or some hardware without a dedicated GPU, run
 make dev-cpu
+
+# Or, run OpenRAG with GPU support
+make dev
 ```
 
 Access the services:
