@@ -3,6 +3,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-fetch";
 
 export interface AgentSettings {
   llm_model?: string;
@@ -67,7 +68,7 @@ export const useGetSettingsQuery = (
   const queryClient = useQueryClient();
 
   async function getSettings(): Promise<Settings> {
-    const response = await fetch("/api/settings");
+    const response = await apiFetch("/api/settings");
     if (response.ok) {
       // Merge with defaults to ensure all properties exist
       return await response.json();

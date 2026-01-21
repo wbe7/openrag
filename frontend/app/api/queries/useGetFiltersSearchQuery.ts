@@ -3,6 +3,7 @@ import {
   useQueryClient,
   type UseQueryOptions,
 } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-fetch";
 
 export interface KnowledgeFilter {
   id: string;
@@ -22,9 +23,8 @@ export const useGetFiltersSearchQuery = (
   const queryClient = useQueryClient();
 
   async function getFilters(): Promise<KnowledgeFilter[]> {
-    const response = await fetch("/api/knowledge-filter/search", {
+    const response = await apiFetch("/api/knowledge-filter/search", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: search, limit }),
     });
 

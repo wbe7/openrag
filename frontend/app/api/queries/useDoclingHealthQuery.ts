@@ -3,6 +3,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-fetch";
 
 export interface DoclingHealthResponse {
   status: "healthy" | "unhealthy" | "backend-unavailable";
@@ -20,11 +21,8 @@ export const useDoclingHealthQuery = (
   async function checkDoclingHealth(): Promise<DoclingHealthResponse> {
     try {
       // Call backend proxy endpoint instead of direct localhost
-      const response = await fetch("/api/docling/health", {
+      const response = await apiFetch("/api/docling/health", {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
 
       if (response.ok) {

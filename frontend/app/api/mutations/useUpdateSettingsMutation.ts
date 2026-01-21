@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-query";
 import type { Settings } from "../queries/useGetSettingsQuery";
 import { useGetCurrentProviderModelsQuery } from "../queries/useGetModelsQuery";
+import { apiFetch } from "@/lib/api-fetch";
 
 export interface UpdateSettingsRequest {
   // Agent settings
@@ -53,11 +54,8 @@ export const useUpdateSettingsMutation = (
   async function updateSettings(
     variables: UpdateSettingsRequest,
   ): Promise<UpdateSettingsResponse> {
-    const response = await fetch("/api/settings", {
+    const response = await apiFetch("/api/settings", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(variables),
     });
 

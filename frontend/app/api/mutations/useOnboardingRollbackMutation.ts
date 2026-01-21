@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-fetch";
 
 interface OnboardingRollbackResponse {
   message: string;
@@ -17,11 +18,8 @@ export const useOnboardingRollbackMutation = (
   const queryClient = useQueryClient();
 
   async function rollbackOnboarding(): Promise<OnboardingRollbackResponse> {
-    const response = await fetch("/api/onboarding/rollback", {
+    const response = await apiFetch("/api/onboarding/rollback", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     if (!response.ok) {

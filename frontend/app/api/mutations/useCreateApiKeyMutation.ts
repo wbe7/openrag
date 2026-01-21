@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-fetch";
 
 export interface CreateApiKeyRequest {
   name: string;
@@ -27,11 +28,8 @@ export const useCreateApiKeyMutation = (
   async function createApiKey(
     variables: CreateApiKeyRequest,
   ): Promise<CreateApiKeyResponse> {
-    const response = await fetch("/api/keys", {
+    const response = await apiFetch("/api/keys", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(variables),
     });
 

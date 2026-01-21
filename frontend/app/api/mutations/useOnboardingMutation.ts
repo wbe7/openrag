@@ -4,6 +4,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { ONBOARDING_OPENRAG_DOCS_FILTER_ID_KEY } from "@/lib/constants";
+import { apiFetch } from "@/lib/api-fetch";
 
 export interface OnboardingVariables {
   // Provider selection
@@ -43,11 +44,8 @@ export const useOnboardingMutation = (
   async function submitOnboarding(
     variables: OnboardingVariables,
   ): Promise<OnboardingResponse> {
-    const response = await fetch("/api/onboarding", {
+    const response = await apiFetch("/api/onboarding", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(variables),
     });
 

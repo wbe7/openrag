@@ -1,4 +1,5 @@
 import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-fetch";
 
 export interface ApiKey {
   key_id: string;
@@ -16,7 +17,7 @@ export const useGetApiKeysQuery = (
   options?: Omit<UseQueryOptions<GetApiKeysResponse>, "queryKey" | "queryFn">,
 ) => {
   async function getApiKeys(): Promise<GetApiKeysResponse> {
-    const response = await fetch("/api/keys");
+    const response = await apiFetch("/api/keys");
     if (response.ok) {
       return await response.json();
     }

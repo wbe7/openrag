@@ -3,6 +3,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-fetch";
 
 export interface TaskFileEntry {
   status?:
@@ -57,7 +58,7 @@ export const useGetTasksQuery = (
   const queryClient = useQueryClient();
 
   async function getTasks(): Promise<Task[]> {
-    const response = await fetch("/api/tasks");
+    const response = await apiFetch("/api/tasks");
 
     if (!response.ok) {
       throw new Error("Failed to fetch tasks");
