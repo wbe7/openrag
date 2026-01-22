@@ -68,7 +68,7 @@ jobs:
     needs: [validate-pr-title]
     name: Label PR
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.user.type != 'Bot'}}
+    if: ${{ github.event.pull_request.user.type != 'Bot' }}
     steps:
       - uses: bcoe/conventional-release-labels@v1
         with:
