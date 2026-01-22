@@ -10,7 +10,7 @@
 <script>!function(){function e(){if(void 0!==window.truste&&window.truste.cma){var e=window.truste.cma.callApi("getConsent",window.location.href)||{},n=1===e[2],t=1===e[3];gtag("consent","update",{ad_storage:n?"granted":"denied",ad_user_data:n?"granted":"denied",ad_personalization:n?"granted":"denied",analytics_storage:t?"granted":"denied"})}}window.addEventListener&&(window.addEventListener("cm_data_subject_consent_changed",e),window.addEventListener("cm_consent_preferences_set",e)),"complete"===document.readyState?e():window.addEventListener("load",e)}()</script>
 <script>window._ibmAnalytics={settings:{name:"DataStax",tealiumProfileName:"ibm-subsidiary"},trustarc:{privacyPolicyLink:"https://ibm.com/privacy"}},window.digitalData={page:{pageInfo:{ibm:{siteId:"IBM_DataStax"}},category:{primaryCategory:"PC230"}}}</script>
 <script src="//1.www.s81c.com/common/stats/ibm-common.js" async="true"></script><link rel="stylesheet" href="/assets/css/styles.29e42e49.css">
-<script src="/assets/js/runtime~main.a09b72d8.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.7d242fd9.js" defer="defer"></script>
 <script src="/assets/js/main.e1ba3126.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -40,8 +40,10 @@ The script installs OpenRAG dependencies, including Docker or Podman, and then i
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">mkdir</span><span class="token plain"> openrag-workspace</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token builtin class-name">cd</span><span class="token plain"> openrag-workspace</span><br></span></code></pre></div></div>
 </li>
 <li class="">
-<p><a href="https://docs.openr.ag/files/run_openrag_with_prereqs.sh" target="_blank" rel="noopener noreferrer" class="">Download the OpenRAG install script</a>, move it to your OpenRAG directory, and then run it:</p>
-<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">bash</span><span class="token plain"> run_openrag_with_prereqs.sh</span><br></span></code></pre></div></div>
+<p>Download and run the OpenRAG install script:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">curl</span><span class="token plain"> </span><span class="token parameter variable" style="color:#36acaa">-O</span><span class="token plain"> https://docs.openr.ag/files/run_openrag_with_prereqs.sh</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token function" style="color:#d73a49">bash</span><span class="token plain"> run_openrag_with_prereqs.sh</span><br></span></code></pre></div></div>
+</li>
+<li class="">
 <p>Wait while the installer script prepares your environment and installs OpenRAG.
 You might be prompted to install certain dependencies if they aren&#x27;t already present in your environment.</p>
 <p>The entire process can take a few minutes.
@@ -122,32 +124,55 @@ If a document was chunked improperly, you might need to tweak the ingestion or m
 </li>
 </ol>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="change-components">Change the language model and chat settings<a href="#change-components" class="hash-link" aria-label="Direct link to Change the language model and chat settings" title="Direct link to Change the language model and chat settings" translate="no">​</a></h2>
+<p>In OpenRAG, you can change some chat and ingestion settings directly on the <strong>Settings</strong> page.
+For full customization capabilities, you can edit the underlying <a class="" href="/agents">Langflow flows</a> in the OpenRAG&#x27;s embedded Langflow visual editor.</p>
+<p>For this quickstart, try changing the <strong>Language Model</strong> or <strong>Agent Instructions</strong>.
+Editing the flow in Langflow is optional.</p>
 <ol>
 <li class="">
-<p>To change the knowledge ingestion settings, agent behavior, or language model, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings2 lucide-settings-2" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg> <strong>Settings</strong>.</p>
-<p>The <strong>Settings</strong> page provides quick access to commonly used parameters like the <strong>Language model</strong> and <strong>Agent Instructions</strong>.</p>
+<p>In OpenRAG, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings2 lucide-settings-2" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg> <strong>Settings</strong>, and then find the <strong>Agent</strong> section.</p>
 </li>
 <li class="">
-<p>For greater insight into the underlying <a class="" href="/agents">Langflow flow</a> that drives the OpenRAG chat, click <strong>Edit in Langflow</strong> and then click <strong>Proceed</strong> to launch the Langflow visual editor in a new browser window.</p>
-<p>If Langflow requests login information, enter the <code>LANGFLOW_SUPERUSER</code> and <code>LANGFLOW_SUPERUSER_PASSWORD</code> from the <code>.env</code> file at <code>~/.openrag/tui</code>.</p>
-<p>The <strong>OpenRAG OpenSearch Agent</strong> flow opens in a new browser window.</p>
+<p>If you only need to edit the language model or agent instructions, edit those fields directly on the <strong>Settings</strong> page.
+Language model changes are saved automatically.
+To apply new instructions, click <strong>Save Agent Instructions</strong>.</p>
+</li>
+<li class="">
+<p>To edit all flow settings and components with full customization capabilities, edit the flow in the Langflow visual editor:</p>
+<ol>
+<li class="">
+<p>Click <strong>Edit in Langflow</strong> to launch the Langflow visual editor in a new browser tab.</p>
+</li>
+<li class="">
+<p>If prompted to acknowledge that you are entering Langflow, click <strong>Proceed</strong>.</p>
+</li>
+<li class="">
+<p>If Langflow requests login information, enter the <code>LANGFLOW_SUPERUSER</code> and <code>LANGFLOW_SUPERUSER_PASSWORD</code> from your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>.</p>
+</li>
+<li class="">
+<p>In the Langflow header, click <strong>Starter Project</strong> to go to the <a href="https://docs.langflow.org/concepts-flows#projects" target="_blank" rel="noopener noreferrer" class="">Langflow <strong>Projects</strong> page</a>, and then <a href="https://docs.langflow.org/concepts-flows#lock-a-flow" target="_blank" rel="noopener noreferrer" class="">unlock the flow</a>.</p>
+</li>
+<li class="">
+<p>On the <strong>Projects</strong> page, click the <strong>OpenRAG OpenSearch Agent</strong> flow to open the visual editor with the flow unlocked.</p>
 <p><img decoding="async" loading="lazy" alt="OpenRAG OpenSearch Agent flow" src="/assets/images/opensearch-agent-flow-f3b279e02425cd043002eb7749067108.png" width="4084" height="2176" class="img_ev3q"></p>
 </li>
 <li class="">
-<p>For this quickstart, try changing the model.
-Click the <strong>Language Model</strong> component, and then change the <strong>Model Name</strong> to a different OpenAI model.</p>
-<p>After you edit a built-in flow, you can click <strong>Restore flow</strong> on the <strong>Settings</strong> page to revert the flow to its original state when you first installed OpenRAG.</p>
+<p>Modify the flow as desired, and then press <kbd>Command</kbd>+<kbd>S</kbd> (<kbd>Ctrl</kbd>+<kbd>S</kbd>) to save your changes.
+Then, you can close the Langflow browser tab, or leave it open if you want to continue experimenting with the flow editor.</p>
+</li>
+</ol>
 </li>
 <li class="">
-<p>Press <kbd>Command</kbd>+<kbd>S</kbd> (<kbd>Ctrl</kbd>+<kbd>S</kbd>) to save your changes.</p>
-<p>You can close the Langflow browser window, or leave it open if you want to continue experimenting with the flow editor.</p>
+<p>After you modify any <strong>Agent</strong> flow settings, go to the OpenRAG <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square" aria-hidden="true"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path></svg> <strong>Chat</strong>, and then click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg> <strong>Start new conversation</strong> in the <strong>Conversations</strong> list.
+This ensures that the chat doesn&#x27;t persist any context from the previous conversation with the original flow settings.</p>
+</li>
+</ol>
+<ol start="5">
+<li class="">
+<p>Ask the same question you asked in <a href="#chat-with-documents" class="">Load and chat with documents</a> to see how the response differs from the original settings.</p>
 </li>
 <li class="">
-<p>Switch to your OpenRAG browser window, and then click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg> in the <strong>Conversations</strong> tab to start a new conversation.
-This ensures that the chat doesn&#x27;t persist any context from the previous conversation with the original model.</p>
-</li>
-<li class="">
-<p>Ask the same question you asked in <a href="#chat-with-documents" class="">Load and chat with documents</a> to see how the response differs from the original model.</p>
+<p>To undo your changes, go to <strong>Settings</strong>, and then click <strong>Restore flow</strong> to revert the flow to its original state when you first installed OpenRAG.</p>
 </li>
 </ol>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="integrate-openrag-into-an-application">Integrate OpenRAG into an application<a href="#integrate-openrag-into-an-application" class="hash-link" aria-label="Direct link to Integrate OpenRAG into an application" title="Direct link to Integrate OpenRAG into an application" translate="no">​</a></h2>
@@ -156,7 +181,12 @@ You can use these flows as-is or modify them to better suit your needs, as demon
 <p>You can send and receive requests with the Langflow API using Python, TypeScript, or curl.</p>
 <ol>
 <li class="">
-<p>Open the <strong>OpenRAG OpenSearch Agent</strong> flow in the Langflow visual editor: Click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings2 lucide-settings-2" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg> <strong>Settings</strong>, click <strong>Edit in Langflow</strong>, and then click <strong>Proceed</strong>.</p>
+<p>Open the <strong>OpenRAG OpenSearch Agent</strong> flow in the Langflow visual editor:</p>
+<ol>
+<li class="">In OpenRAG, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings2 lucide-settings-2" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg> <strong>Settings</strong>.</li>
+<li class="">Click <strong>Edit in Langflow</strong>, and then click <strong>Proceed</strong> to launch the Langflow visual editor.</li>
+<li class="">If Langflow requests login information, enter the <code>LANGFLOW_SUPERUSER</code> and <code>LANGFLOW_SUPERUSER_PASSWORD</code> from your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>.</li>
+</ol>
 </li>
 <li class="">
 <p>Optional: If you don&#x27;t want to use the Langflow API key that is generated automatically when you install OpenRAG, you can create a <a href="https://docs.langflow.org/api-keys-and-authentication" target="_blank" rel="noopener noreferrer" class="">Langflow API key</a>.

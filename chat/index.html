@@ -10,7 +10,7 @@
 <script>!function(){function e(){if(void 0!==window.truste&&window.truste.cma){var e=window.truste.cma.callApi("getConsent",window.location.href)||{},n=1===e[2],t=1===e[3];gtag("consent","update",{ad_storage:n?"granted":"denied",ad_user_data:n?"granted":"denied",ad_personalization:n?"granted":"denied",analytics_storage:t?"granted":"denied"})}}window.addEventListener&&(window.addEventListener("cm_data_subject_consent_changed",e),window.addEventListener("cm_consent_preferences_set",e)),"complete"===document.readyState?e():window.addEventListener("load",e)}()</script>
 <script>window._ibmAnalytics={settings:{name:"DataStax",tealiumProfileName:"ibm-subsidiary"},trustarc:{privacyPolicyLink:"https://ibm.com/privacy"}},window.digitalData={page:{pageInfo:{ibm:{siteId:"IBM_DataStax"}},category:{primaryCategory:"PC230"}}}</script>
 <script src="//1.www.s81c.com/common/stats/ibm-common.js" async="true"></script><link rel="stylesheet" href="/assets/css/styles.29e42e49.css">
-<script src="/assets/js/runtime~main.a09b72d8.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.7d242fd9.js" defer="defer"></script>
 <script src="/assets/js/main.e1ba3126.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -87,7 +87,12 @@ To simplify this integration, you can get pre-configured code snippets directly 
 <p>The following example demonstrates how to generate and use code snippets for the <strong>OpenRAG OpenSearch Agent</strong> flow:</p>
 <ol>
 <li class="">
-<p>Open the <strong>OpenRAG OpenSearch Agent</strong> flow in the Langflow visual editor: Click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings2 lucide-settings-2" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg> <strong>Settings</strong>, click <strong>Edit in Langflow</strong>, and then click <strong>Proceed</strong>.</p>
+<p>Open the <strong>OpenRAG OpenSearch Agent</strong> flow in the Langflow visual editor:</p>
+<ol>
+<li class="">In OpenRAG, click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings2 lucide-settings-2" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg> <strong>Settings</strong>.</li>
+<li class="">Click <strong>Edit in Langflow</strong>, and then click <strong>Proceed</strong> to launch the Langflow visual editor.</li>
+<li class="">If Langflow requests login information, enter the <code>LANGFLOW_SUPERUSER</code> and <code>LANGFLOW_SUPERUSER_PASSWORD</code> from your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>.</li>
+</ol>
 </li>
 <li class="">
 <p>Optional: If you don&#x27;t want to use the Langflow API key that is generated automatically when you install OpenRAG, you can create a <a href="https://docs.langflow.org/api-keys-and-authentication" target="_blank" rel="noopener noreferrer" class="">Langflow API key</a>.
