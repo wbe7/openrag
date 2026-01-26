@@ -95,6 +95,11 @@ async function proxyRequest(request: NextRequest, params: { path: string[] }) {
     const init: RequestInit = {
       method: request.method,
       headers,
+      // @ts-expect-error - undici-specific options for timeout and HTTP version
+      headersTimeout: 60000, // 60s for headers
+      bodyTimeout: 300000, // 5 minutes for body (matches next.config proxyTimeout)
+      // Force HTTP/1.1 to avoid HTTP/2 multiplexing issues with port forwarding
+      allowH2: false,
     };
     if (willSendBody) {
       // Convert ArrayBuffer to Uint8Array to satisfy BodyInit in all environments
