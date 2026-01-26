@@ -1097,6 +1097,10 @@ async def onboarding(request, flows_service, session_manager=None):
                         "Created OpenRAG Docs knowledge filter",
                         filter_id=openrag_docs_filter_id,
                     )
+                    # Save the filter ID to the config
+                    current_config.onboarding.openrag_docs_filter_id = openrag_docs_filter_id
+                    if not config_manager.save_config_file(current_config):
+                        logger.error("Failed to save openrag_docs_filter_id to config")
             except Exception as e:
                 logger.error(
                     "Failed to create OpenRAG Docs knowledge filter", error=str(e)

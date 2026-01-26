@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -34,6 +35,7 @@ export function ChatRenderer({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const queryClient = useQueryClient(); // Move hook to component level
   const { isAuthenticated, isNoAuthMode } = useAuth();
   const {
     endpoint,
@@ -86,13 +88,18 @@ export function ChatRenderer({
 
   // Helper to store default filter ID for new conversations after onboarding
   const storeDefaultFilterForNewConversations = useCallback(
-    async (preferUserDoc: boolean) => {
-      if (typeof window === "undefined") return;
+    async (preferUserDoc: boolean, settingsToUse?: Settings) => {
+      // Use provided settings or fall back to prop
+      const currentSettings = settingsToUse || settings;
+      
+      if (typeof window === "undefined") {
+        return;
+      }
 
       // Check if we already have a default filter set
       const existingDefault = localStorage.getItem("default_conversation_filter_id");
+      
       if (existingDefault) {
-        console.log("[FILTER] Default filter already set:", existingDefault);
         // Try to apply it to context state (don't save to localStorage to avoid overwriting)
         try {
           const filter = await getFilterById(existingDefault);
@@ -113,17 +120,14 @@ export function ChatRenderer({
 
       if (preferUserDoc) {
         // Completed full onboarding - prefer user document filter
-        filterId = settings?.onboarding?.user_doc_filter_id || null;
-        console.log("[FILTER] User doc filter ID:", filterId);
+        filterId = currentSettings?.onboarding?.user_doc_filter_id || null;
       }
 
       // Fall back to OpenRAG docs filter
       if (!filterId) {
-        filterId = settings?.onboarding?.openrag_docs_filter_id || null;
-        console.log("[FILTER] OpenRAG docs filter ID:", filterId);
+        filterId = currentSettings?.onboarding?.openrag_docs_filter_id || null;
       }
 
-      console.log("[FILTER] Final filter ID to use:", filterId);
 
       if (filterId) {
         // Store this as the default filter for new conversations
@@ -133,20 +137,16 @@ export function ChatRenderer({
         // The default_conversation_filter_id will be used when a new conversation is started
         try {
           const filter = await getFilterById(filterId);
-          console.log("[FILTER] Loaded filter:", filter);
           if (filter) {
             // Pass null to skip localStorage save - this prevents overwriting existing conversation filters
             setConversationFilter(filter, null);
-            console.log("[FILTER] Set conversation filter (no save):", filter.id);
           }
         } catch (error) {
-          console.error("Failed to set onboarding filter:", error);
+          console.error("[FILTER] Failed to set onboarding filter:", error);
         }
-      } else {
-        console.log("[FILTER] No filter ID found, not setting default");
       }
     },
-    [setConversationFilter]
+    [setConversationFilter, settings?.onboarding?.user_doc_filter_id, settings?.onboarding?.openrag_docs_filter_id]
   );
 
   // Note: Current step is now saved to backend via handleStepComplete
@@ -161,24 +161,31 @@ export function ChatRenderer({
       // Save step to backend
       await updateOnboardingMutation.mutateAsync({ current_step: nextStep });
     } else {
+
+      // IMPORTANT: Refetch settings to get the latest filter IDs that were saved during onboarding
+      // The filter IDs are saved asynchronously by mutations, so we need fresh data
+      await queryClient.refetchQueries({ queryKey: ["settings"] });
+      
+      // Get the fresh settings after refetch
+      const freshSettings = queryClient.getQueryData(["settings"]) as Settings | undefined;
+
+      // Store the user document filter as default for new conversations
+      // Pass fresh settings to ensure we have the latest filter IDs
+      await storeDefaultFilterForNewConversations(true, freshSettings);
+
       // Onboarding is complete - set step to TOTAL_ONBOARDING_STEPS to indicate completion
-      // and clear intermediate state in backend
+      // and clear intermediate state in backend (but keep filter IDs for reference)
       await updateOnboardingMutation.mutateAsync({
         current_step: TOTAL_ONBOARDING_STEPS,
         assistant_message: null,
         selected_nudge: null,
         card_steps: null,
         upload_steps: null,
-        openrag_docs_filter_id: null,
-        user_doc_filter_id: null,
+        // Keep filter IDs - they're useful for reference and don't need to be cleared
       });
 
       // Mark onboarding as complete in context
       setOnboardingComplete(true);
-
-      // Store the user document filter as default for new conversations FIRST
-      // This must happen before startNewConversation() so the filter is available
-      await storeDefaultFilterForNewConversations(true);
 
       // Clear ALL conversation state so next message starts fresh
       // This will pick up the default filter we just set
