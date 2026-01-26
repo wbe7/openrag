@@ -32,6 +32,18 @@ const nextConfig: NextConfig = {
   },
   // Allow cross-origin requests in development
   allowedDevOrigins: getAllowedDevOrigins(),
+  // Force HTTP/1.1 to avoid connection reuse issues with port forwarding
+  headers: async () => [
+    {
+      source: "/:path*",
+      headers: [
+        {
+          key: "Connection",
+          value: "close", // Force new connection per request
+        },
+      ],
+    },
+  ],
 };
 
 export default nextConfig;
