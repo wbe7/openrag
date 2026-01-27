@@ -10,7 +10,7 @@
 <script>!function(){function e(){if(void 0!==window.truste&&window.truste.cma){var e=window.truste.cma.callApi("getConsent",window.location.href)||{},n=1===e[2],t=1===e[3];gtag("consent","update",{ad_storage:n?"granted":"denied",ad_user_data:n?"granted":"denied",ad_personalization:n?"granted":"denied",analytics_storage:t?"granted":"denied"})}}window.addEventListener&&(window.addEventListener("cm_data_subject_consent_changed",e),window.addEventListener("cm_consent_preferences_set",e)),"complete"===document.readyState?e():window.addEventListener("load",e)}()</script>
 <script>window._ibmAnalytics={settings:{name:"DataStax",tealiumProfileName:"ibm-subsidiary"},trustarc:{privacyPolicyLink:"https://ibm.com/privacy"}},window.digitalData={page:{pageInfo:{ibm:{siteId:"IBM_DataStax"}},category:{primaryCategory:"PC230"}}}</script>
 <script src="//1.www.s81c.com/common/stats/ibm-common.js" async="true"></script><link rel="stylesheet" href="/assets/css/styles.29e42e49.css">
-<script src="/assets/js/runtime~main.48907f5f.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.4b273cad.js" defer="defer"></script>
 <script src="/assets/js/main.e1ba3126.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -33,39 +33,19 @@ See <a class="" href="/install-windows">Install OpenRAG on Windows</a> before pr
 </ul>
 <ul>
 <li class="">
-<p>Gather the credentials and connection details for your preferred model providers.
-You must have access to at least one language model and one embedding model.
-If a provider offers both types, you can use the same provider for both models.
-If a provider offers only one type, you must select two providers.</p>
+<p>Gather the credentials and connection details for one or more supported model providers:</p>
 <ul>
-<li class="">
-<p><strong>OpenAI</strong>: Create an <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="">OpenAI API key</a>.</p>
-</li>
-<li class="">
-<p><strong>Anthropic</strong>: Create an <a href="https://www.anthropic.com/docs/api/reference" target="_blank" rel="noopener noreferrer" class="">Anthropic API key</a>.
-Anthropic provides language models only; you must select an additional provider for embeddings.</p>
-</li>
-<li class="">
-<p><strong>IBM watsonx.ai</strong>: Get your watsonx.ai API endpoint, IBM project ID, and IBM API key from your watsonx deployment.</p>
-</li>
-<li class="">
-<p><strong>Ollama</strong>: Deploy an <a href="https://docs.ollama.com/" target="_blank" rel="noopener noreferrer" class="">Ollama instance and models</a> locally, in the cloud, or on a remote server. Then, get your Ollama server&#x27;s base URL and the names of the models that you want to use.</p>
-<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>OpenRAG isn&#x27;t guaranteed to be compatible with all models that are available through Ollama.
-Some models might produce unexpected results, such as JSON-formatted output instead of natural language responses, and some models aren&#x27;t appropriate for the types of tasks that OpenRAG performs, such as those that generate media.</p>
-<ul>
-<li class="">
-<p><strong>Language models</strong>: Ollama-hosted language models must support tool calling to be compatible with OpenRAG.
-The OpenRAG team recommends <code>gpt-oss:20b</code> or <code>mistral-nemo:12b</code>.
-If you choose <code>gpt-oss:20b</code>, consider using Ollama Cloud or running Ollama on a remote machine because this model requires at least 16GB of RAM.</p>
-</li>
-<li class="">
-<p><strong>Embedding models</strong>: The OpenRAG team recommends <a href="https://ollama.com/library/nomic-embed-text" target="_blank" rel="noopener noreferrer" class=""><code>nomic-embed-text:latest</code></a>, <code>mxbai-embed-large:latest</code>, or <code>embeddinggemma:latest</code>.</p>
-</li>
+<li class=""><strong>OpenAI</strong>: Create an <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="">OpenAI API key</a>.</li>
+<li class=""><strong>Anthropic</strong>: Create an <a href="https://www.anthropic.com/docs/api/reference" target="_blank" rel="noopener noreferrer" class="">Anthropic API key</a>.
+Anthropic provides language models only; you must select an additional provider for embeddings.</li>
+<li class=""><strong>IBM watsonx.ai</strong>: Get your watsonx.ai API endpoint, IBM project ID, and IBM API key from your watsonx deployment.</li>
+<li class=""><strong>Ollama</strong>: Deploy an <a href="https://docs.ollama.com/" target="_blank" rel="noopener noreferrer" class="">Ollama instance and models</a> locally, in the cloud, or on a remote server. Then, get your Ollama server&#x27;s base URL and the names of the models that you want to use.</li>
 </ul>
-<p>You can experiment with other models, but if you encounter issues that you are unable to resolve through other RAG best practices (like context filters and prompt engineering), try switching to one of the recommended models.
-You can submit an <a href="https://github.com/langflow-ai/openrag/issues" target="_blank" rel="noopener noreferrer" class="">OpenRAG GitHub issue</a> to request support for specific models.</p></div></div>
-</li>
-</ul>
+<p>OpenRAG requires at least one language model and one embedding model.
+If a provider offers both types of models, then you can use the same provider for both models.
+If a provider offers only one type, then you must configure two providers.</p>
+<p>Language models must support tool calling to be compatible with OpenRAG.</p>
+<p>For more information, see <a href="#application-onboarding" class="">Application Onboarding</a>.</p>
 </li>
 <li class="">
 <p>Optional: Install GPU support with an NVIDIA GPU, <a href="https://docs.nvidia.com/cuda/" target="_blank" rel="noopener noreferrer" class="">CUDA</a> support, and compatible NVIDIA drivers on the OpenRAG host machine.
@@ -226,18 +206,19 @@ If all services start successfully, the TUI prints a confirmation message:</p>
 </ol></div></div></div>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="application-onboarding">Complete the application onboarding process<a href="#application-onboarding" class="hash-link" aria-label="Direct link to Complete the application onboarding process" title="Direct link to Complete the application onboarding process" translate="no">​</a></h2>
 <p>The first time you start the OpenRAG application, you must complete the application onboarding process to select language and embedding models that are essential for OpenRAG features like the <a class="" href="/chat"><strong>Chat</strong></a>.</p>
-<p>Some of these variables, such as the embedding models, can be changed seamlessly after onboarding.
-Others are immutable and require you to destroy and recreate the OpenRAG containers.
-For more information, see the <a class="" href="/reference/configuration">OpenRAG environment variables reference</a>.</p>
+<p>Some of these options, such as the models, can be changed in OpenRAG&#x27;s <strong>Settings</strong> after onboarding is complete.
+Other options are immutable and require you to destroy and recreate the OpenRAG containers, as explained in the <a class="" href="/reference/configuration">OpenRAG environment variables reference</a>.</p>
+<p>To complete onboarding, you must configure at least one language model and one embedding model.</p>
 <p>You can use different providers for your language model and embedding model, such as Anthropic for the language model and OpenAI for the embedding model.
-Additionally, you can set multiple embedding models.</p>
-<p>You only need to complete onboarding for your preferred providers.</p>
+Additionally, you can select multiple embedding models.</p>
 <div class="theme-tabs-container tabs-container tabList__CuJ"><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active">Anthropic</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">IBM watsonx.ai</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Ollama</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">OpenAI (default)</li></ul><div class="margin-top--md"><div role="tabpanel" class="tabItem_Ymn6"><div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>Anthropic doesn&#x27;t provide embedding models. If you select Anthropic for your language model, you must select a different provider for the embedding model.</p></div></div><ol>
 <li class="">
 <p>Enter your Anthropic API key, or enable <strong>Use environment API key</strong> to pull the key from your <a class="" href="/reference/configuration">OpenRAG <code>.env</code> file</a>.</p>
 </li>
 <li class="">
 <p>Under <strong>Advanced settings</strong>, select the language model that you want to use.</p>
+<p>Language models must support tool calling to be compatible with OpenRAG.
+Incompatible models aren&#x27;t listed.</p>
 </li>
 <li class="">
 <p>Click <strong>Complete</strong>.</p>
@@ -256,7 +237,13 @@ Verify that the credential is valid and has access to the selected model, and th
 <p>Continue through the overview slides for a brief introduction to OpenRAG, or click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg> <strong>Skip overview</strong>.
 The overview demonstrates some basic functionality that is covered in the <a class="" href="/quickstart#chat-with-documents">quickstart</a> and in other parts of the OpenRAG documentation.</p>
 </li>
-</ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><ol>
+</ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>OpenRAG isn&#x27;t guaranteed to be compatible with all models that are available through IBM watsonx.ai.</p>
+<p>Language models must support tool calling to be compatible with OpenRAG.
+Incompatible models aren&#x27;t listed in OpenRAG&#x27;s settings or onboarding.</p>
+<p>Additionally, models must be able to handle the agentic reasoning tasks required by OpenRAG.
+Models that are too small or not designed for agentic RAG tasks can return low quality, incorrect, or improperly formatted responses.
+For more information, see <a class="" href="/chat#troubleshoot-chat">Troubleshoot chat</a>.</p>
+<p>You can submit an <a href="https://github.com/langflow-ai/openrag/issues" target="_blank" rel="noopener noreferrer" class="">OpenRAG GitHub issue</a> to request support for specific models.</p></div></div><ol>
 <li class="">
 <p>For <strong>watsonx.ai API Endpoint</strong>, select the base URL for your watsonx.ai model deployment.</p>
 </li>
@@ -266,6 +253,8 @@ The overview demonstrates some basic functionality that is covered in the <a cla
 </li>
 <li class="">
 <p>Under <strong>Advanced settings</strong>, select the language model that you want to use.</p>
+<p>Language models must support tool calling to be compatible with OpenRAG.
+Incompatible models aren&#x27;t listed.</p>
 </li>
 <li class="">
 <p>Click <strong>Complete</strong>.</p>
@@ -344,6 +333,8 @@ The overview demonstrates some basic functionality that is covered in the <a cla
 </li>
 <li class="">
 <p>Under <strong>Advanced settings</strong>, select the language model that you want to use.</p>
+<p>Language models must support tool calling to be compatible with OpenRAG.
+Incompatible models aren&#x27;t listed.</p>
 </li>
 <li class="">
 <p>Click <strong>Complete</strong>.</p>
