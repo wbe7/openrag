@@ -10,7 +10,7 @@
 <script>!function(){function e(){if(void 0!==window.truste&&window.truste.cma){var e=window.truste.cma.callApi("getConsent",window.location.href)||{},n=1===e[2],t=1===e[3];gtag("consent","update",{ad_storage:n?"granted":"denied",ad_user_data:n?"granted":"denied",ad_personalization:n?"granted":"denied",analytics_storage:t?"granted":"denied"})}}window.addEventListener&&(window.addEventListener("cm_data_subject_consent_changed",e),window.addEventListener("cm_consent_preferences_set",e)),"complete"===document.readyState?e():window.addEventListener("load",e)}()</script>
 <script>window._ibmAnalytics={settings:{name:"DataStax",tealiumProfileName:"ibm-subsidiary"},trustarc:{privacyPolicyLink:"https://ibm.com/privacy"}},window.digitalData={page:{pageInfo:{ibm:{siteId:"IBM_DataStax"}},category:{primaryCategory:"PC230"}}}</script>
 <script src="//1.www.s81c.com/common/stats/ibm-common.js" async="true"></script><link rel="stylesheet" href="/assets/css/styles.29e42e49.css">
-<script src="/assets/js/runtime~main.c0e09e51.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.48907f5f.js" defer="defer"></script>
 <script src="/assets/js/main.e1ba3126.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -82,10 +82,15 @@ These files aren&#x27;t stored in the knowledge base permanently.</p>
 <p>If documents in your knowledge base seem to be missing or interpreted incorrectly, see <a class="" href="/ingestion#troubleshoot-ingestion">Troubleshoot ingestion</a>.</p>
 <p>If tool calls and knowledge appear normal, but the agent&#x27;s responses seem off-topic or incorrect, consider changing the agent&#x27;s language model or prompt, as explained in <a class="" href="/agents#inspect-and-modify-flows">Inspect and modify flows</a>.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="integrate-openrag-chat-into-an-application">Integrate OpenRAG chat into an application<a href="#integrate-openrag-chat-into-an-application" class="hash-link" aria-label="Direct link to Integrate OpenRAG chat into an application" title="Direct link to Integrate OpenRAG chat into an application" translate="no">​</a></h2>
-<p>You can integrate OpenRAG flows into your applications using the <a href="https://docs.langflow.org/api-reference-api-examples" target="_blank" rel="noopener noreferrer" class="">Langflow API</a>.
-To simplify this integration, you can get pre-configured code snippets directly from the embedded Langflow visual editor.</p>
-<p>The following example demonstrates how to generate and use code snippets for the <strong>OpenRAG OpenSearch Agent</strong> flow:</p>
-<ol>
+<p>You can integrate OpenRAG flows into your applications using the OpenRAG SDKs (recommended) or the Langflow API.</p>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>It is strongly recommended that you use the OpenRAG SDKs to interact with OpenRAG programmatically or integrate OpenRAG into an application.
+This is because OpenRAG passes specific configuration settings to the Langflow API when it runs a flow or conducts a chat session.
+For more information, see the following:</p><ul>
+<li class=""><a href="https://github.com/langflow-ai/openrag/tree/main/sdks/python" target="_blank" rel="noopener noreferrer" class="">Python SDK README</a></li>
+<li class=""><a href="https://github.com/langflow-ai/openrag/tree/main/sdks/typescript" target="_blank" rel="noopener noreferrer" class="">TypeScript/JavaScript SDK README</a></li>
+</ul></div></div>
+<details class="details_lb9f alert alert--info details_b_Ee" data-collapsed="true"><summary>Use the Langflow API (Not recommended)</summary><div><div class="collapsibleContent_i85q"><p>To trigger a flow with the <a href="https://docs.langflow.org/api-reference-api-examples" target="_blank" rel="noopener noreferrer" class="">Langflow API</a>, you can get pre-configured code snippets directly from the embedded Langflow visual editor.
+However, these snippets don&#x27;t include OpenRAG-specific configuration settings, so the behavior won&#x27;t be identical to using OpenRAG directly.</p><p>The following example demonstrates how to generate and use code snippets for the <strong>OpenRAG OpenSearch Agent</strong> flow:</p><ol>
 <li class="">
 <p>Open the <strong>OpenRAG OpenSearch Agent</strong> flow in the Langflow visual editor:</p>
 <ol>
@@ -119,12 +124,10 @@ This key doesn&#x27;t grant access to OpenRAG; it is only for authenticating wit
 <li class=""><strong>curl</strong>: Paste and run snippet directly in your terminal.</li>
 </ul>
 </li>
-</ol>
-<p>If the request is successful, the response includes many details about the flow run, including the session ID, inputs, outputs, components, durations, and more.</p>
-<p>In production, you won&#x27;t pass the raw response to the user in its entirety.
+</ol><p>If the request is successful, the response includes many details about the flow run, including the session ID, inputs, outputs, components, durations, and more.</p><p>In production, you won&#x27;t pass the raw response to the user in its entirety.
 Instead, you extract and reformat relevant fields for different use cases, as demonstrated in the <a href="https://docs.langflow.org/get-started-quickstart#extract-data-from-the-response" target="_blank" rel="noopener noreferrer" class="">Langflow quickstart</a>.
 For example, you could pass the chat output text to a front-end user-facing application, and store specific fields in logs and backend data stores for monitoring, chat history, or analytics.
-You could also pass the output from one flow as input to another flow.</p>
+You could also pass the output from one flow as input to another flow.</p></div></div></details>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="troubleshoot-chat">Troubleshoot chat<a href="#troubleshoot-chat" class="hash-link" aria-label="Direct link to Troubleshoot chat" title="Direct link to Troubleshoot chat" translate="no">​</a></h2>
 <p>The following issues can occur when using the OpenRAG <strong>Chat</strong> feature:</p>
 <ul>
