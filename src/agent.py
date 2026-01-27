@@ -135,14 +135,13 @@ async def async_response_stream(
 
         full_response = ""
         chunk_count = 0
-        detected_tool_call = False  # Track if we've detected a tool call
+        detected_tool_call = False
         async for chunk in response:
             chunk_count += 1
             logger.debug(
                 "Stream chunk received", chunk_count=chunk_count, chunk=str(chunk)
             )
 
-            # Yield the raw event as JSON for the UI to process
             import json
 
             # Also extract text content for logging
@@ -186,7 +185,7 @@ async def async_response_stream(
                 if isinstance(chunk_data, dict):
                     # Check for any fields that might indicate tool usage
                     potential_tool_fields = {
-                        k: v for k, v in chunk_data.items() 
+                        k: v for k, v in chunk_data.items()
                         if any(keyword in str(k).lower() for keyword in ['tool', 'call', 'retrieval', 'function', 'result', 'output'])
                     }
                     if potential_tool_fields:
@@ -223,8 +222,8 @@ async def async_response_stream(
                                 "tool_name": "Retrieval",
                                 "status": "completed",
                                 "inputs": {"implicit": True, "backend_detected": True},
-                                "results": chunk_data.get('results') or chunk_data.get('outputs') or 
-                                         chunk_data.get('retrieved_documents') or 
+                                "results": chunk_data.get('results') or chunk_data.get('outputs') or
+                                         chunk_data.get('retrieved_documents') or
                                          chunk_data.get('retrieval_results') or []
                             }
                         }
@@ -677,61 +676,97 @@ async def async_langflow_chat_stream(
     full_response = ""
     response_id = None
     collected_chunks = []  # Store all chunks for function call data
+    error_occurred = False
 
-    async for chunk in async_stream(
-        langflow_client,
-        prompt,
-        flow_id,
-        extra_headers=extra_headers,
-        previous_response_id=previous_response_id,
-        log_prefix="langflow",
-    ):
-        # Extract text content to build full response for history
-        try:
-            import json
+    try:
+        async for chunk in async_stream(
+            langflow_client,
+            prompt,
+            flow_id,
+            extra_headers=extra_headers,
+            previous_response_id=previous_response_id,
+            log_prefix="langflow",
+        ):
+            # Extract text content to build full response for history
+            try:
+                import json
 
-            chunk_data = json.loads(chunk.decode("utf-8"))
-            collected_chunks.append(chunk_data)  # Collect all chunk data
+                chunk_data = json.loads(chunk.decode("utf-8"))
+                collected_chunks.append(chunk_data)  # Collect all chunk data
 
-            if "delta" in chunk_data and "content" in chunk_data["delta"]:
-                full_response += chunk_data["delta"]["content"]
-            # Extract response_id from chunk
-            if "id" in chunk_data:
-                response_id = chunk_data["id"]
-            elif "response_id" in chunk_data:
-                response_id = chunk_data["response_id"]
-        except:
-            pass
-        yield chunk
+                if "delta" in chunk_data and "content" in chunk_data["delta"]:
+                    full_response += chunk_data["delta"]["content"]
+                # Extract response_id from chunk
+                if "id" in chunk_data:
+                    response_id = chunk_data["id"]
+                elif "response_id" in chunk_data:
+                    response_id = chunk_data["response_id"]
+                
+                # Check for error status
+                if chunk_data.get("finish_reason") == "error" or chunk_data.get("status") == "failed":
+                    error_occurred = True
+                    logger.error("Error detected in Langflow stream chunk")
+            except:
+                pass
+            yield chunk
 
-    # Add the complete assistant response to message history with response_id, timestamp, and function call data
-    if full_response:
-        assistant_message = {
+        # Add the complete assistant response to message history with response_id, timestamp, and function call data
+        if full_response:
+            assistant_message = {
+                "role": "assistant",
+                "content": full_response,
+                "response_id": response_id,
+                "timestamp": datetime.now(),
+                "chunks": collected_chunks,  # Store complete chunk data for function calls
+                "error": error_occurred,  # Mark if this was an error response
+            }
+            conversation_state["messages"].append(assistant_message)
+
+            # Store the conversation thread with its response_id
+            if response_id:
+                conversation_state["last_activity"] = datetime.now()
+                await store_conversation_thread(user_id, response_id, conversation_state)
+
+                # Claim session ownership for this user
+            try:
+                from services.session_ownership_service import session_ownership_service
+
+                session_ownership_service.claim_session(user_id, response_id)
+                logger.debug(f"Claimed session {response_id} for user {user_id}")
+            except Exception as e:
+                logger.warning(f"Failed to claim session ownership: {e}")
+
+                logger.debug(
+                    f"Stored langflow conversation thread for user {user_id} with response_id: {response_id}"
+                )
+    except Exception as e:
+        # Log the error
+        logger.error(f"Error in langflow chat stream: {e}", exc_info=True)
+        error_occurred = True
+        
+        # Store error message in conversation history so it persists
+        error_message = {
             "role": "assistant",
-            "content": full_response,
-            "response_id": response_id,
+            "content": f"Sorry, I encountered an error: {str(e)}",
             "timestamp": datetime.now(),
-            "chunks": collected_chunks,  # Store complete chunk data for function calls
+            "error": True,
         }
-        conversation_state["messages"].append(assistant_message)
-
-        # Store the conversation thread with its response_id
-        if response_id:
+        conversation_state["messages"].append(error_message)
+        
+        # Try to store the conversation with error message
+        # Use a temporary response_id if we don't have one
+        if not response_id:
+            response_id = f"error_{user_id}_{int(datetime.now().timestamp())}"
+        
+        try:
             conversation_state["last_activity"] = datetime.now()
             await store_conversation_thread(user_id, response_id, conversation_state)
-
-            # Claim session ownership for this user
-        try:
-            from services.session_ownership_service import session_ownership_service
-
-            session_ownership_service.claim_session(user_id, response_id)
-            logger.debug(f"Claimed session {response_id} for user {user_id}")
-        except Exception as e:
-            logger.warning(f"Failed to claim session ownership: {e}")
-
-            logger.debug(
-                f"Stored langflow conversation thread for user {user_id} with response_id: {response_id}"
-            )
+            logger.debug(f"Stored conversation with error for user {user_id}")
+        except Exception as store_error:
+            logger.error(f"Failed to store error conversation: {store_error}")
+        
+        # Re-raise the exception so it propagates to the API layer
+        raise
 
 
 async def delete_user_conversation(user_id: str, response_id: str) -> bool:

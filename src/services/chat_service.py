@@ -516,6 +516,9 @@ class ChatService:
                             "source": "langflow",
                         }
 
+                        if msg.get("error"):
+                            message_data["error"] = True
+
                         # Include function call data if present
                         if msg.get("chunks"):
                             message_data["chunks"] = msg["chunks"]
