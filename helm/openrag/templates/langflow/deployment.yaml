@@ -133,6 +133,9 @@ spec:
               value: {{ .Values.global.opensearch.port | quote }}
             - name: OPENSEARCH_URL
               value: {{ include "openrag.opensearch.url" . | quote }}
+            # Docling service URL (for document processing in flows)
+            - name: DOCLING_SERVE_URL
+              value: "http://host.docker.internal:5001"
             {{- if .Values.global.opensearch.password }}
             - name: OPENSEARCH_PASSWORD
               valueFrom:
