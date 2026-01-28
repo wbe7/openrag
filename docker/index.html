@@ -10,7 +10,7 @@
 <script>!function(){function e(){if(void 0!==window.truste&&window.truste.cma){var e=window.truste.cma.callApi("getConsent",window.location.href)||{},n=1===e[2],t=1===e[3];gtag("consent","update",{ad_storage:n?"granted":"denied",ad_user_data:n?"granted":"denied",ad_personalization:n?"granted":"denied",analytics_storage:t?"granted":"denied"})}}window.addEventListener&&(window.addEventListener("cm_data_subject_consent_changed",e),window.addEventListener("cm_consent_preferences_set",e)),"complete"===document.readyState?e():window.addEventListener("load",e)}()</script>
 <script>window._ibmAnalytics={settings:{name:"DataStax",tealiumProfileName:"ibm-subsidiary"},trustarc:{privacyPolicyLink:"https://ibm.com/privacy"}},window.digitalData={page:{pageInfo:{ibm:{siteId:"IBM_DataStax"}},category:{primaryCategory:"PC230"}}}</script>
 <script src="//1.www.s81c.com/common/stats/ibm-common.js" async="true"></script><link rel="stylesheet" href="/assets/css/styles.29e42e49.css">
-<script src="/assets/js/runtime~main.e68b2545.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.a88dc6f2.js" defer="defer"></script>
 <script src="/assets/js/main.e1ba3126.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -112,16 +112,38 @@ The following variables are required or recommended:</p>
 <li class=""><code>WATSONX_PROJECT_ID</code></li>
 </ul>
 </li>
-<li class="">
-<p><strong>OAuth provider credentials</strong>: To upload documents from external storage, such as Google Drive, set the required OAuth credentials for the connectors that you want to use. You can <a class="" href="/ingestion#oauth-ingestion">manage OAuth credentials</a> later, but it is recommended to configure them during initial set up so you don&#x27;t have to rebuild the containers.</p>
-<ul>
-<li class=""><strong>Google</strong>: Provide your Google OAuth Client ID and Google OAuth Client Secret. You can generate these in the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" class="">Google Cloud Console</a>. For more information, see the <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank" rel="noopener noreferrer" class="">Google OAuth client documentation</a>.</li>
-<li class=""><strong>Microsoft</strong>: For the Microsoft OAuth Client ID and Microsoft OAuth Client Secret, provide <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/app-registration?view=odsp-graph-online" target="_blank" rel="noopener noreferrer" class="">Azure application registration credentials for SharePoint and OneDrive</a>. For more information, see the <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/graph-oauth" target="_blank" rel="noopener noreferrer" class="">Microsoft Graph OAuth client documentation</a>.</li>
-<li class=""><strong>Amazon</strong>: Provide your AWS Access Key ID and AWS Secret Access Key with access to your S3 instance. For more information, see the AWS documentation on <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-applications.html" target="_blank" rel="noopener noreferrer" class="">Configuring access to AWS applications</a>.</li>
 </ul>
 </li>
+<li class="">
+<p>To enable <a class="" href="/knowledge#auth">OAuth mode</a> or <a class="" href="/ingestion#oauth-ingestion">cloud storage connectors</a>, do the following:</p>
+<ol>
+<li class="">
+<p>In your <code>.env</code> file, set the <a class="" href="/reference/configuration#oauth-and-cloud-storage-connector-settings">OAuth environment variables</a> for the providers that you want to use:</p>
+<div class="language-env codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-env codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">GOOGLE_OAUTH_CLIENT_ID=</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">GOOGLE_OAUTH_CLIENT_SECRET=</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">MICROSOFT_GRAPH_OAUTH_CLIENT_ID=</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">MICROSOFT_GRAPH_OAUTH_CLIENT_SECRET=</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">AWS_ACCESS_KEY_ID=</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">AWS_SECRET_ACCESS_KEY=</span><br></span></code></pre></div></div>
+<ul>
+<li class="">
+<p><strong>Google</strong>: Enter your <strong>Google OAuth Client ID</strong> and <strong>Google OAuth Client Secret</strong>. You can generate these in the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" class="">Google Cloud Console</a>. For more information, see the <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank" rel="noopener noreferrer" class="">Google OAuth client documentation</a>.</p>
+<p>Providing these Google credentials enables OAuth mode <em>and</em> the Google Drive cloud storage connector.</p>
+<div class="theme-admonition theme-admonition-warning admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg></span>warning</div><div class="admonitionContent_BuS1"><p>Google is the only supported OAuth provider for OpenRAG.</p><p>You must enter Google credentials if you want to enable OAuth mode.</p><p>The Microsoft and Amazon credentials are used only to authorize the cloud storage connectors.
+OpenRAG doesn&#x27;t offer OAuth provider integrations for Microsoft or Amazon.</p></div></div>
+</li>
+<li class="">
+<p><strong>Microsoft</strong>: For the <strong>Microsoft OAuth Client ID</strong> and <strong>Microsoft OAuth Client Secret</strong>, enter <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/app-registration?view=odsp-graph-online" target="_blank" rel="noopener noreferrer" class="">Azure application registration credentials for SharePoint and OneDrive</a>. For more information, see the <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/graph-oauth" target="_blank" rel="noopener noreferrer" class="">Microsoft Graph OAuth client documentation</a>.</p>
+</li>
+<li class="">
+<p><strong>Amazon</strong>: Enter your <strong>AWS Access Key ID</strong> and <strong>AWS Secret Access Key</strong> with access to your S3 instance. For more information, see the AWS documentation on <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-applications.html" target="_blank" rel="noopener noreferrer" class="">Configuring access to AWS applications</a>.</p>
+</li>
 </ul>
-<p>For more information and variables, see <a class="" href="/reference/configuration">OpenRAG environment variables</a>.</p>
+</li>
+<li class="">
+<p>Optional: Set the <code>WEBHOOK_BASE_URL</code> to the base address for your OAuth connector endpoints. If set, the OAuth connector webhook URLs are constructed as <code>WEBHOOK_BASE_URL/connectors/${provider}/webhook</code>. This option is required to enable automatic ingestion from cloud storage.</p>
+</li>
+<li class="">
+<p>For each provider, you must register an OpenRAG OAuth redirect URI in your cloud service&#x27;s OAuth configuration.</p>
+<p>For Google, this URL is used to redirect users back to OpenRAG after they sign in, and for the cloud storage connector webhooks.</p>
+<p>For Microsoft and Amazon, this URL is used for the cloud storage connector webhooks.</p>
+</li>
+</ol>
 </li>
 </ol>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="start-services">Start services<a href="#start-services" class="hash-link" aria-label="Direct link to Start services" title="Direct link to Start services" translate="no">​</a></h2>
@@ -171,6 +193,7 @@ For example, writing alternate ingest logic in OpenRAG that uses GPUs directly i
 </li>
 <li class="">
 <p>Access the OpenRAG frontend at <code>http://localhost:3000</code>, and then continue with the <a href="#application-onboarding" class="">application onboarding process</a>.</p>
+<p>If you provided Google OAuth credentials, you must sign in with Google before you are redirected to your OpenRAG instance.</p>
 </li>
 </ol>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="application-onboarding">Complete the application onboarding process<a href="#application-onboarding" class="hash-link" aria-label="Direct link to Complete the application onboarding process" title="Direct link to Complete the application onboarding process" translate="no">​</a></h2>
