@@ -465,6 +465,14 @@ class OpenSearchVectorStoreComponentMultimodalMultiEmbedding(LCVectorStoreCompon
             ef_construction: Construction parameter
             m: HNSW parameter
         """
+        # Check if field already exists before trying to add it
+        # This avoids the jvector engine bug in OpenSearch 3.x where put_mapping
+        # fails with null pointer exception for existing indexes
+        properties = self._get_index_properties(client)
+        if self._is_knn_vector_field(properties, field_name):
+            logger.info(f"Embedding field '{field_name}' already exists, skipping mapping update")
+            return
+
         try:
             mapping = {
                 "properties": {
@@ -486,9 +494,30 @@ class OpenSearchVectorStoreComponentMultimodalMultiEmbedding(LCVectorStoreCompon
             client.indices.put_mapping(index=index_name, body=mapping)
             logger.info(f"Added/updated embedding field mapping: {field_name}")
         except Exception as e:
+            # Check if field was added despite the exception (race condition)
+            properties_after = self._get_index_properties(client)
+            if self._is_knn_vector_field(properties_after, field_name):
+                logger.info(f"Field '{field_name}' exists after put_mapping attempt (possibly added concurrently)")
+                return
+            
+            error_msg = str(e).lower()
+            # Handle jvector engine bug in OpenSearch 3.x
+            if "null_pointer_exception" in error_msg or "knnmethodconfigcontext" in error_msg:
+                logger.error(
+                    f"Failed to add embedding field '{field_name}' due to jvector engine bug. "
+                    f"This is a known issue with OpenSearch 3.x when adding knn_vector fields to existing indexes. "
+                    f"Please delete and recreate the index, or ensure the field exists before ingestion."
+                )
+                raise ValueError(
+                    f"Cannot add knn_vector field '{field_name}' to existing index. "
+                    f"This is a jvector engine limitation in OpenSearch 3.x. "
+                    f"Please delete the index and let it be recreated, or ensure the field exists in the index mapping."
+                ) from e
+            
             logger.warning(f"Could not add embedding field mapping for {field_name}: {e}")
             raise
 
+        # Verify the field was added correctly
         properties = self._get_index_properties(client)
         if not self._is_knn_vector_field(properties, field_name):
             msg = f"Field '{field_name}' is not mapped as knn_vector. Current mapping: {properties.get(field_name)}"
