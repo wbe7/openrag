@@ -394,7 +394,7 @@
             ],
             "frozen": false,
             "icon": "braces",
-            "last_updated": "2026-02-05T04:24:29.583Z",
+            "last_updated": "2026-02-05T15:22:55.809Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {},
@@ -1452,9 +1452,7 @@
                   "bz2",
                   "gz"
                 ],
-                "file_path": [
-                  "e278d6a2-65ab-421e-b66c-f4f0258f40c9/ULTABEAUTY_2023Q4_EARNINGS.pdf"
-                ],
+                "file_path": [],
                 "info": "Supported file extensions: adoc, asciidoc, asc, bmp, csv, dotx, dotm, docm, docx, htm, html, jpeg, jpg, json, md, pdf, png, potx, ppsx, pptm, potm, ppsm, pptx, tiff, txt, xls, xlsx, xhtml, xml, webp; optionally bundled in file extensions: zip, tar, tgz, bz2, gz",
                 "list": true,
                 "list_add_label": "Add More",
@@ -1521,12 +1519,12 @@
         "dragging": false,
         "id": "DoclingRemote-Dp3PX",
         "measured": {
-          "height": 316,
+          "height": 312,
           "width": 320
         },
         "position": {
-          "x": -32.29834135984382,
-          "y": 1602.5217556985535
+          "x": -0.2871317656367012,
+          "y": 1594.9000391285042
         },
         "selected": false,
         "type": "genericNode"
@@ -1563,7 +1561,7 @@
             ],
             "frozen": false,
             "icon": "table",
-            "last_updated": "2026-02-05T04:24:29.784Z",
+            "last_updated": "2026-02-05T15:22:55.931Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -1976,8 +1974,8 @@
           "width": 320
         },
         "position": {
-          "x": 818.9617962759838,
-          "y": 1598.1861241752215
+          "x": 826.5835128460332,
+          "y": 1595.137437547202
         },
         "selected": false,
         "type": "genericNode"
@@ -2014,7 +2012,7 @@
             ],
             "frozen": false,
             "icon": "table",
-            "last_updated": "2026-02-05T04:24:29.784Z",
+            "last_updated": "2026-02-05T15:22:55.932Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -2427,7 +2425,7 @@
           "width": 320
         },
         "position": {
-          "x": 1636.3521500953036,
+          "x": 1697.325882655698,
           "y": 1600.122711477673
         },
         "selected": false,
@@ -2465,7 +2463,7 @@
             ],
             "frozen": false,
             "icon": "table",
-            "last_updated": "2026-02-05T04:24:29.785Z",
+            "last_updated": "2026-02-05T15:22:55.932Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -2878,8 +2876,8 @@
           "width": 320
         },
         "position": {
-          "x": 1222.0057906254049,
-          "y": 1592.9379556218487
+          "x": 1252.4926569056022,
+          "y": 1589.889268993829
         },
         "selected": false,
         "type": "genericNode"
@@ -3666,7 +3664,7 @@
             ],
             "frozen": false,
             "icon": "binary",
-            "last_updated": "2026-02-05T04:24:29.584Z",
+            "last_updated": "2026-02-05T15:22:55.812Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -4191,7 +4189,7 @@
             ],
             "frozen": false,
             "icon": "binary",
-            "last_updated": "2026-02-05T04:24:29.585Z",
+            "last_updated": "2026-02-05T15:22:55.813Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -4717,7 +4715,7 @@
             ],
             "frozen": false,
             "icon": "binary",
-            "last_updated": "2026-02-05T04:24:29.585Z",
+            "last_updated": "2026-02-05T15:22:55.814Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -5233,7 +5231,7 @@
             ],
             "frozen": false,
             "icon": "Docling",
-            "last_updated": "2026-02-04T17:56:53.100Z",
+            "last_updated": "2026-02-05T15:22:20.975Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -5485,17 +5483,17 @@
           "width": 320
         },
         "position": {
-          "x": 383.4363765185066,
-          "y": 1602.9945490955463
+          "x": 410.87455617068423,
+          "y": 1595.372832525497
         },
         "selected": false,
         "type": "genericNode"
       }
     ],
     "viewport": {
-      "x": 257.7690459293176,
-      "y": -154.96170253117464,
-      "zoom": 0.38900766436126777
+      "x": 492.2079532383307,
+      "y": -215.27371168994932,
+      "zoom": 0.5404962259634922
     }
   },
   "description": "Load your data for chat context with Retrieval Augmented Generation.",
