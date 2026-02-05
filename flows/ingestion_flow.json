@@ -122,93 +122,6 @@
         "className": "",
         "data": {
           "sourceHandle": {
-            "dataType": "DoclingRemote",
-            "id": "DoclingRemote-Dp3PX",
-            "name": "dataframe",
-            "output_types": [
-              "DataFrame"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "data_inputs",
-            "id": "ExportDoclingDocument-zZdRg",
-            "inputTypes": [
-              "Data",
-              "DataFrame"
-            ],
-            "type": "other"
-          }
-        },
-        "id": "xy-edge__DoclingRemote-Dp3PX{œdataTypeœ:œDoclingRemoteœ,œidœ:œDoclingRemote-Dp3PXœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}-ExportDoclingDocument-zZdRg{œfieldNameœ:œdata_inputsœ,œidœ:œExportDoclingDocument-zZdRgœ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}",
-        "selected": false,
-        "source": "DoclingRemote-Dp3PX",
-        "sourceHandle": "{œdataTypeœ:œDoclingRemoteœ,œidœ:œDoclingRemote-Dp3PXœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}",
-        "target": "ExportDoclingDocument-zZdRg",
-        "targetHandle": "{œfieldNameœ:œdata_inputsœ,œidœ:œExportDoclingDocument-zZdRgœ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
-            "dataType": "ExportDoclingDocument",
-            "id": "ExportDoclingDocument-zZdRg",
-            "name": "dataframe",
-            "output_types": [
-              "DataFrame"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "df",
-            "id": "DataFrameOperations-1BWXB",
-            "inputTypes": [
-              "DataFrame"
-            ],
-            "type": "other"
-          }
-        },
-        "id": "xy-edge__ExportDoclingDocument-zZdRg{œdataTypeœ:œExportDoclingDocumentœ,œidœ:œExportDoclingDocument-zZdRgœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}-DataFrameOperations-1BWXB{œfieldNameœ:œdfœ,œidœ:œDataFrameOperations-1BWXBœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}",
-        "selected": false,
-        "source": "ExportDoclingDocument-zZdRg",
-        "sourceHandle": "{œdataTypeœ:œExportDoclingDocumentœ,œidœ:œExportDoclingDocument-zZdRgœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}",
-        "target": "DataFrameOperations-1BWXB",
-        "targetHandle": "{œfieldNameœ:œdfœ,œidœ:œDataFrameOperations-1BWXBœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
-            "dataType": "DataFrameOperations",
-            "id": "DataFrameOperations-N80fC",
-            "name": "output",
-            "output_types": [
-              "DataFrame"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "data_inputs",
-            "id": "SplitText-QIKhg",
-            "inputTypes": [
-              "Data",
-              "DataFrame",
-              "Message"
-            ],
-            "type": "other"
-          }
-        },
-        "id": "xy-edge__DataFrameOperations-N80fC{œdataTypeœ:œDataFrameOperationsœ,œidœ:œDataFrameOperations-N80fCœ,œnameœ:œoutputœ,œoutput_typesœ:[œDataFrameœ]}-SplitText-QIKhg{œfieldNameœ:œdata_inputsœ,œidœ:œSplitText-QIKhgœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}",
-        "selected": false,
-        "source": "DataFrameOperations-N80fC",
-        "sourceHandle": "{œdataTypeœ:œDataFrameOperationsœ,œidœ:œDataFrameOperations-N80fCœ,œnameœ:œoutputœ,œoutput_typesœ:[œDataFrameœ]}",
-        "target": "SplitText-QIKhg",
-        "targetHandle": "{œfieldNameœ:œdata_inputsœ,œidœ:œSplitText-QIKhgœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
             "dataType": "DataFrameOperations",
             "id": "DataFrameOperations-1BWXB",
             "name": "output",
@@ -293,35 +206,6 @@
         "className": "",
         "data": {
           "sourceHandle": {
-            "dataType": "SplitText",
-            "id": "SplitText-QIKhg",
-            "name": "dataframe",
-            "output_types": [
-              "DataFrame"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "ingest_data",
-            "id": "OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4",
-            "inputTypes": [
-              "Data",
-              "DataFrame"
-            ],
-            "type": "other"
-          }
-        },
-        "id": "xy-edge__SplitText-QIKhg{œdataTypeœ:œSplitTextœ,œidœ:œSplitText-QIKhgœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{œfieldNameœ:œingest_dataœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}",
-        "selected": false,
-        "source": "SplitText-QIKhg",
-        "sourceHandle": "{œdataTypeœ:œSplitTextœ,œidœ:œSplitText-QIKhgœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}",
-        "target": "OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4",
-        "targetHandle": "{œfieldNameœ:œingest_dataœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
             "dataType": "EmbeddingModel",
             "id": "EmbeddingModel-3LsIP",
             "name": "embeddings",
@@ -400,252 +284,95 @@
         "sourceHandle": "{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-EAo9iœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}",
         "target": "OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4",
         "targetHandle": "{œfieldNameœ:œembeddingœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "DoclingRemote",
+            "id": "DoclingRemote-Dp3PX",
+            "name": "dataframe",
+            "output_types": [
+              "DataFrame"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "data_inputs",
+            "id": "ChunkDoclingDocument-7Tsav",
+            "inputTypes": [
+              "Data",
+              "DataFrame"
+            ],
+            "type": "other"
+          }
+        },
+        "id": "xy-edge__DoclingRemote-Dp3PX{œdataTypeœ:œDoclingRemoteœ,œidœ:œDoclingRemote-Dp3PXœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}-ChunkDoclingDocument-7Tsav{œfieldNameœ:œdata_inputsœ,œidœ:œChunkDoclingDocument-7Tsavœ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}",
+        "selected": false,
+        "source": "DoclingRemote-Dp3PX",
+        "sourceHandle": "{œdataTypeœ:œDoclingRemoteœ,œidœ:œDoclingRemote-Dp3PXœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}",
+        "target": "ChunkDoclingDocument-7Tsav",
+        "targetHandle": "{œfieldNameœ:œdata_inputsœ,œidœ:œChunkDoclingDocument-7Tsavœ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "DataFrameOperations",
+            "id": "DataFrameOperations-N80fC",
+            "name": "output",
+            "output_types": [
+              "DataFrame"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "ingest_data",
+            "id": "OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4",
+            "inputTypes": [
+              "Data",
+              "DataFrame"
+            ],
+            "type": "other"
+          }
+        },
+        "id": "xy-edge__DataFrameOperations-N80fC{œdataTypeœ:œDataFrameOperationsœ,œidœ:œDataFrameOperations-N80fCœ,œnameœ:œoutputœ,œoutput_typesœ:[œDataFrameœ]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{œfieldNameœ:œingest_dataœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}",
+        "selected": false,
+        "source": "DataFrameOperations-N80fC",
+        "sourceHandle": "{œdataTypeœ:œDataFrameOperationsœ,œidœ:œDataFrameOperations-N80fCœ,œnameœ:œoutputœ,œoutput_typesœ:[œDataFrameœ]}",
+        "target": "OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4",
+        "targetHandle": "{œfieldNameœ:œingest_dataœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "ChunkDoclingDocument",
+            "id": "ChunkDoclingDocument-7Tsav",
+            "name": "dataframe",
+            "output_types": [
+              "DataFrame"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "df",
+            "id": "DataFrameOperations-1BWXB",
+            "inputTypes": [
+              "DataFrame"
+            ],
+            "type": "other"
+          }
+        },
+        "id": "xy-edge__ChunkDoclingDocument-7Tsav{œdataTypeœ:œChunkDoclingDocumentœ,œidœ:œChunkDoclingDocument-7Tsavœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}-DataFrameOperations-1BWXB{œfieldNameœ:œdfœ,œidœ:œDataFrameOperations-1BWXBœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}",
+        "selected": false,
+        "source": "ChunkDoclingDocument-7Tsav",
+        "sourceHandle": "{œdataTypeœ:œChunkDoclingDocumentœ,œidœ:œChunkDoclingDocument-7Tsavœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}",
+        "target": "DataFrameOperations-1BWXB",
+        "targetHandle": "{œfieldNameœ:œdfœ,œidœ:œDataFrameOperations-1BWXBœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}"
       }
     ],
     "nodes": [
-      {
-        "data": {
-          "description": "Split text into chunks based on specified criteria.",
-          "display_name": "Split Text",
-          "id": "SplitText-QIKhg",
-          "node": {
-            "base_classes": [
-              "DataFrame"
-            ],
-            "beta": false,
-            "conditional_paths": [],
-            "custom_fields": {},
-            "description": "Split text into chunks based on specified criteria.",
-            "display_name": "Split Text",
-            "documentation": "https://docs.langflow.org/components-processing#split-text",
-            "edited": true,
-            "field_order": [
-              "data_inputs",
-              "chunk_overlap",
-              "chunk_size",
-              "separator",
-              "text_key",
-              "keep_separator"
-            ],
-            "frozen": false,
-            "icon": "scissors-line-dashed",
-            "legacy": false,
-            "lf_version": "1.7.0.dev21",
-            "metadata": {
-              "code_hash": "f2867efda61f",
-              "dependencies": {
-                "dependencies": [
-                  {
-                    "name": "langchain_text_splitters",
-                    "version": "0.3.9"
-                  },
-                  {
-                    "name": "lfx",
-                    "version": null
-                  }
-                ],
-                "total_dependencies": 2
-              },
-              "module": "custom_components.split_text"
-            },
-            "minimized": false,
-            "output_types": [],
-            "outputs": [
-              {
-                "allows_loop": false,
-                "cache": true,
-                "display_name": "Chunks",
-                "group_outputs": false,
-                "hidden": null,
-                "method": "split_text",
-                "name": "dataframe",
-                "options": null,
-                "required_inputs": null,
-                "selected": "DataFrame",
-                "tool_mode": true,
-                "types": [
-                  "DataFrame"
-                ],
-                "value": "__UNDEFINED__"
-              }
-            ],
-            "pinned": false,
-            "template": {
-              "_type": "Component",
-              "chunk_overlap": {
-                "_input_type": "IntInput",
-                "advanced": false,
-                "display_name": "Chunk Overlap",
-                "dynamic": false,
-                "info": "Number of characters to overlap between chunks.",
-                "list": false,
-                "list_add_label": "Add More",
-                "name": "chunk_overlap",
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "type": "int",
-                "value": 200
-              },
-              "chunk_size": {
-                "_input_type": "IntInput",
-                "advanced": false,
-                "display_name": "Chunk Size",
-                "dynamic": false,
-                "info": "The maximum length of each chunk. Text is first split by separator, then chunks are merged up to this size. Individual splits larger than this won't be further divided.",
-                "list": false,
-                "list_add_label": "Add More",
-                "name": "chunk_size",
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "type": "int",
-                "value": 1000
-              },
-              "code": {
-                "advanced": true,
-                "dynamic": true,
-                "fileTypes": [],
-                "file_path": "",
-                "info": "",
-                "list": false,
-                "load_from_db": false,
-                "multiline": true,
-                "name": "code",
-                "password": false,
-                "placeholder": "",
-                "required": true,
-                "show": true,
-                "title_case": false,
-                "type": "code",
-                "value": "from langchain_text_splitters import CharacterTextSplitter\n\nfrom lfx.custom.custom_component.component import Component\nfrom lfx.io import DropdownInput, HandleInput, IntInput, MessageTextInput, Output\nfrom lfx.schema.data import Data\nfrom lfx.schema.dataframe import DataFrame\nfrom lfx.schema.message import Message\nfrom lfx.utils.util import unescape_string\n\n\nclass SplitTextComponent(Component):\n    display_name: str = \"Split Text\"\n    description: str = \"Split text into chunks based on specified criteria.\"\n    documentation: str = \"https://docs.langflow.org/components-processing#split-text\"\n    icon = \"scissors-line-dashed\"\n    name = \"SplitText\"\n\n    inputs = [\n        HandleInput(\n            name=\"data_inputs\",\n            display_name=\"Input\",\n            info=\"The data with texts to split in chunks.\",\n            input_types=[\"Data\", \"DataFrame\", \"Message\"],\n            required=True,\n        ),\n        IntInput(\n            name=\"chunk_overlap\",\n            display_name=\"Chunk Overlap\",\n            info=\"Number of characters to overlap between chunks.\",\n            value=200,\n        ),\n        IntInput(\n            name=\"chunk_size\",\n            display_name=\"Chunk Size\",\n            info=(\n                \"The maximum length of each chunk. Text is first split by separator, \"\n                \"then chunks are merged up to this size. \"\n                \"Individual splits larger than this won't be further divided.\"\n            ),\n            value=1000,\n        ),\n        MessageTextInput(\n            name=\"separator\",\n            display_name=\"Separator\",\n            info=(\n                \"The character to split on. Use \\\\n for newline. \"\n                \"Examples: \\\\n\\\\n for paragraphs, \\\\n for lines, . for sentences\"\n            ),\n            value=\"\\n\",\n        ),\n        MessageTextInput(\n            name=\"text_key\",\n            display_name=\"Text Key\",\n            info=\"The key to use for the text column.\",\n            value=\"text\",\n            advanced=True,\n        ),\n        DropdownInput(\n            name=\"keep_separator\",\n            display_name=\"Keep Separator\",\n            info=\"Whether to keep the separator in the output chunks and where to place it.\",\n            options=[\"False\", \"True\", \"Start\", \"End\"],\n            value=\"False\",\n            advanced=True,\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Chunks\", name=\"dataframe\", method=\"split_text\"),\n    ]\n\n    def _docs_to_data(self, docs) -> list[Data]:\n        return [Data(text=doc.page_content, data=doc.metadata) for doc in docs]\n\n    def _fix_separator(self, separator: str) -> str:\n        \"\"\"Fix common separator issues and convert to proper format.\"\"\"\n        if separator == \"/n\":\n            return \"\\n\"\n        if separator == \"/t\":\n            return \"\\t\"\n        return separator\n\n    def split_text_base(self):\n        separator = self._fix_separator(self.separator)\n        separator = unescape_string(separator)\n\n        if isinstance(self.data_inputs, DataFrame):\n            if not len(self.data_inputs):\n                msg = \"DataFrame is empty\"\n                raise TypeError(msg)\n\n            self.data_inputs.text_key = self.text_key\n            try:\n                documents = self.data_inputs.to_lc_documents()\n            except Exception as e:\n                msg = f\"Error converting DataFrame to documents: {e}\"\n                raise TypeError(msg) from e\n        elif isinstance(self.data_inputs, Message):\n            self.data_inputs = [self.data_inputs.to_data()]\n            return self.split_text_base()\n        else:\n            if not self.data_inputs:\n                msg = \"No data inputs provided\"\n                raise TypeError(msg)\n\n            documents = []\n            if isinstance(self.data_inputs, Data):\n                self.data_inputs.text_key = self.text_key\n                documents = [self.data_inputs.to_lc_document()]\n            else:\n                try:\n                    documents = [input_.to_lc_document() for input_ in self.data_inputs if isinstance(input_, Data)]\n                    if not documents:\n                        msg = f\"No valid Data inputs found in {type(self.data_inputs)}\"\n                        raise TypeError(msg)\n                except AttributeError as e:\n                    msg = f\"Invalid input type in collection: {e}\"\n                    raise TypeError(msg) from e\n        try:\n            # Convert string 'False'/'True' to boolean\n            keep_sep = self.keep_separator\n            if isinstance(keep_sep, str):\n                if keep_sep.lower() == \"false\":\n                    keep_sep = False\n                elif keep_sep.lower() == \"true\":\n                    keep_sep = True\n                # 'start' and 'end' are kept as strings\n\n            splitter = CharacterTextSplitter(\n                chunk_overlap=self.chunk_overlap,\n                chunk_size=self.chunk_size,\n                separator=separator,\n                keep_separator=keep_sep,\n            )\n            return splitter.split_documents(documents)\n        except Exception as e:\n            msg = f\"Error splitting text: {e}\"\n            raise TypeError(msg) from e\n\n    def split_text(self) -> DataFrame:\n        return DataFrame(self._docs_to_data(self.split_text_base()))\n"
-              },
-              "data_inputs": {
-                "_input_type": "HandleInput",
-                "advanced": false,
-                "display_name": "Input",
-                "dynamic": false,
-                "info": "The data with texts to split in chunks.",
-                "input_types": [
-                  "Data",
-                  "DataFrame",
-                  "Message"
-                ],
-                "list": false,
-                "list_add_label": "Add More",
-                "name": "data_inputs",
-                "placeholder": "",
-                "required": true,
-                "show": true,
-                "title_case": false,
-                "trace_as_metadata": true,
-                "type": "other",
-                "value": ""
-              },
-              "keep_separator": {
-                "_input_type": "DropdownInput",
-                "advanced": true,
-                "combobox": false,
-                "dialog_inputs": {},
-                "display_name": "Keep Separator",
-                "dynamic": false,
-                "external_options": {},
-                "info": "Whether to keep the separator in the output chunks and where to place it.",
-                "name": "keep_separator",
-                "options": [
-                  "False",
-                  "True",
-                  "Start",
-                  "End"
-                ],
-                "options_metadata": [],
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "toggle": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "type": "str",
-                "value": "False"
-              },
-              "separator": {
-                "_input_type": "MessageTextInput",
-                "advanced": false,
-                "display_name": "Separator",
-                "dynamic": false,
-                "info": "The character to split on. Use \\n for newline. Examples: \\n\\n for paragraphs, \\n for lines, . for sentences",
-                "input_types": [
-                  "Message"
-                ],
-                "list": false,
-                "list_add_label": "Add More",
-                "load_from_db": false,
-                "name": "separator",
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_input": true,
-                "trace_as_metadata": true,
-                "type": "str",
-                "value": "\n"
-              },
-              "text_key": {
-                "_input_type": "MessageTextInput",
-                "advanced": true,
-                "display_name": "Text Key",
-                "dynamic": false,
-                "info": "The key to use for the text column.",
-                "input_types": [
-                  "Message"
-                ],
-                "list": false,
-                "list_add_label": "Add More",
-                "load_from_db": false,
-                "name": "text_key",
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_input": true,
-                "trace_as_metadata": true,
-                "type": "str",
-                "value": "text"
-              }
-            },
-            "tool_mode": false
-          },
-          "selected_output": "chunks",
-          "type": "SplitText"
-        },
-        "dragging": false,
-        "height": 475,
-        "id": "SplitText-QIKhg",
-        "measured": {
-          "height": 475,
-          "width": 320
-        },
-        "position": {
-          "x": 1711.934915237861,
-          "y": 1637.2034518030887
-        },
-        "positionAbsolute": {
-          "x": 1683.4543896546102,
-          "y": 1350.7871623588553
-        },
-        "selected": false,
-        "type": "genericNode",
-        "width": 320
-      },
       {
         "data": {
           "id": "AdvancedDynamicFormBuilder-81Exw",
@@ -667,7 +394,7 @@
             ],
             "frozen": false,
             "icon": "braces",
-            "last_updated": "2025-12-12T20:12:18.129Z",
+            "last_updated": "2026-02-05T04:24:29.583Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {},
@@ -717,7 +444,7 @@
                 "value": "5488df7c-b93f-4f87-a446-b67028bc0813"
               },
               "_frontend_node_folder_id": {
-                "value": "75fd27c1-8f4b-46a1-88bb-a8a8e72719e3"
+                "value": "15acea35-7c03-488d-8702-13327d5a4cea"
               },
               "_type": "Component",
               "code": {
@@ -1417,6 +1144,7 @@
             "frozen": false,
             "icon": "Docling",
             "legacy": false,
+            "lf_version": "1.7.0.dev21",
             "metadata": {
               "code_hash": "5723576d00e5",
               "dependencies": {
@@ -1724,7 +1452,9 @@
                   "bz2",
                   "gz"
                 ],
-                "file_path": [],
+                "file_path": [
+                  "e278d6a2-65ab-421e-b66c-f4f0258f40c9/ULTABEAUTY_2023Q4_EARNINGS.pdf"
+                ],
                 "info": "Supported file extensions: adoc, asciidoc, asc, bmp, csv, dotx, dotm, docm, docx, htm, html, jpeg, jpg, json, md, pdf, png, potx, ppsx, pptm, potm, ppsm, pptx, tiff, txt, xls, xlsx, xhtml, xml, webp; optionally bundled in file extensions: zip, tar, tgz, bz2, gz",
                 "list": true,
                 "list_add_label": "Add More",
@@ -1791,269 +1521,12 @@
         "dragging": false,
         "id": "DoclingRemote-Dp3PX",
         "measured": {
-          "height": 312,
+          "height": 316,
           "width": 320
         },
         "position": {
-          "x": -175.49741984154275,
-          "y": 1505.0245107748437
-        },
-        "selected": false,
-        "type": "genericNode"
-      },
-      {
-        "data": {
-          "id": "ExportDoclingDocument-zZdRg",
-          "node": {
-            "base_classes": [
-              "Data",
-              "DataFrame"
-            ],
-            "beta": false,
-            "conditional_paths": [],
-            "custom_fields": {},
-            "description": "Export DoclingDocument to markdown, html or other formats.",
-            "display_name": "Export DoclingDocument",
-            "documentation": "https://docling-project.github.io/docling/",
-            "edited": false,
-            "field_order": [
-              "data_inputs",
-              "export_format",
-              "image_mode",
-              "md_image_placeholder",
-              "md_page_break_placeholder",
-              "doc_key"
-            ],
-            "frozen": false,
-            "icon": "Docling",
-            "last_updated": "2025-10-04T01:42:10.290Z",
-            "legacy": false,
-            "lf_version": "1.7.0.dev21",
-            "metadata": {
-              "code_hash": "4de16ddd37ac",
-              "dependencies": {
-                "dependencies": [
-                  {
-                    "name": "docling_core",
-                    "version": "2.48.4"
-                  },
-                  {
-                    "name": "lfx",
-                    "version": "0.1.12.dev31"
-                  }
-                ],
-                "total_dependencies": 2
-              },
-              "module": "lfx.components.docling.export_docling_document.ExportDoclingDocumentComponent"
-            },
-            "minimized": false,
-            "output_types": [],
-            "outputs": [
-              {
-                "allows_loop": false,
-                "cache": true,
-                "display_name": "Exported data",
-                "group_outputs": false,
-                "method": "export_document",
-                "name": "data",
-                "options": null,
-                "required_inputs": null,
-                "selected": "Data",
-                "tool_mode": true,
-                "types": [
-                  "Data"
-                ],
-                "value": "__UNDEFINED__"
-              },
-              {
-                "allows_loop": false,
-                "cache": true,
-                "display_name": "DataFrame",
-                "group_outputs": false,
-                "method": "as_dataframe",
-                "name": "dataframe",
-                "options": null,
-                "required_inputs": null,
-                "selected": "DataFrame",
-                "tool_mode": true,
-                "types": [
-                  "DataFrame"
-                ],
-                "value": "__UNDEFINED__"
-              }
-            ],
-            "pinned": false,
-            "template": {
-              "_type": "Component",
-              "code": {
-                "advanced": true,
-                "dynamic": true,
-                "fileTypes": [],
-                "file_path": "",
-                "info": "",
-                "list": false,
-                "load_from_db": false,
-                "multiline": true,
-                "name": "code",
-                "password": false,
-                "placeholder": "",
-                "required": true,
-                "show": true,
-                "title_case": false,
-                "type": "code",
-                "value": "from typing import Any\n\nfrom docling_core.types.doc import ImageRefMode\n\nfrom lfx.base.data.docling_utils import extract_docling_documents\nfrom lfx.custom import Component\nfrom lfx.io import DropdownInput, HandleInput, MessageTextInput, Output, StrInput\nfrom lfx.schema import Data, DataFrame\n\n\nclass ExportDoclingDocumentComponent(Component):\n    display_name: str = \"Export DoclingDocument\"\n    description: str = \"Export DoclingDocument to markdown, html or other formats.\"\n    documentation = \"https://docling-project.github.io/docling/\"\n    icon = \"Docling\"\n    name = \"ExportDoclingDocument\"\n\n    inputs = [\n        HandleInput(\n            name=\"data_inputs\",\n            display_name=\"Data or DataFrame\",\n            info=\"The data with documents to export.\",\n            input_types=[\"Data\", \"DataFrame\"],\n            required=True,\n        ),\n        DropdownInput(\n            name=\"export_format\",\n            display_name=\"Export format\",\n            options=[\"Markdown\", \"HTML\", \"Plaintext\", \"DocTags\"],\n            info=\"Select the export format to convert the input.\",\n            value=\"Markdown\",\n            real_time_refresh=True,\n        ),\n        DropdownInput(\n            name=\"image_mode\",\n            display_name=\"Image export mode\",\n            options=[\"placeholder\", \"embedded\"],\n            info=(\n                \"Specify how images are exported in the output. Placeholder will replace the images with a string, \"\n                \"whereas Embedded will include them as base64 encoded images.\"\n            ),\n            value=\"placeholder\",\n        ),\n        StrInput(\n            name=\"md_image_placeholder\",\n            display_name=\"Image placeholder\",\n            info=\"Specify the image placeholder for markdown exports.\",\n            value=\"<!-- image -->\",\n            advanced=True,\n        ),\n        StrInput(\n            name=\"md_page_break_placeholder\",\n            display_name=\"Page break placeholder\",\n            info=\"Add this placeholder betweek pages in the markdown output.\",\n            value=\"\",\n            advanced=True,\n        ),\n        MessageTextInput(\n            name=\"doc_key\",\n            display_name=\"Doc Key\",\n            info=\"The key to use for the DoclingDocument column.\",\n            value=\"doc\",\n            advanced=True,\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Exported data\", name=\"data\", method=\"export_document\"),\n        Output(display_name=\"DataFrame\", name=\"dataframe\", method=\"as_dataframe\"),\n    ]\n\n    def update_build_config(self, build_config: dict, field_value: Any, field_name: str | None = None) -> dict:\n        if field_name == \"export_format\" and field_value == \"Markdown\":\n            build_config[\"md_image_placeholder\"][\"show\"] = True\n            build_config[\"md_page_break_placeholder\"][\"show\"] = True\n            build_config[\"image_mode\"][\"show\"] = True\n        elif field_name == \"export_format\" and field_value == \"HTML\":\n            build_config[\"md_image_placeholder\"][\"show\"] = False\n            build_config[\"md_page_break_placeholder\"][\"show\"] = False\n            build_config[\"image_mode\"][\"show\"] = True\n        elif field_name == \"export_format\" and field_value in {\"Plaintext\", \"DocTags\"}:\n            build_config[\"md_image_placeholder\"][\"show\"] = False\n            build_config[\"md_page_break_placeholder\"][\"show\"] = False\n            build_config[\"image_mode\"][\"show\"] = False\n\n        return build_config\n\n    def export_document(self) -> list[Data]:\n        documents = extract_docling_documents(self.data_inputs, self.doc_key)\n\n        results: list[Data] = []\n        try:\n            image_mode = ImageRefMode(self.image_mode)\n            for doc in documents:\n                content = \"\"\n                if self.export_format == \"Markdown\":\n                    content = doc.export_to_markdown(\n                        image_mode=image_mode,\n                        image_placeholder=self.md_image_placeholder,\n                        page_break_placeholder=self.md_page_break_placeholder,\n                    )\n                elif self.export_format == \"HTML\":\n                    content = doc.export_to_html(image_mode=image_mode)\n                elif self.export_format == \"Plaintext\":\n                    content = doc.export_to_text()\n                elif self.export_format == \"DocTags\":\n                    content = doc.export_to_doctags()\n\n                results.append(Data(text=content))\n        except Exception as e:\n            msg = f\"Error splitting text: {e}\"\n            raise TypeError(msg) from e\n\n        return results\n\n    def as_dataframe(self) -> DataFrame:\n        return DataFrame(self.export_document())\n"
-              },
-              "data_inputs": {
-                "_input_type": "HandleInput",
-                "advanced": false,
-                "display_name": "Data or DataFrame",
-                "dynamic": false,
-                "info": "The data with documents to export.",
-                "input_types": [
-                  "Data",
-                  "DataFrame"
-                ],
-                "list": false,
-                "list_add_label": "Add More",
-                "name": "data_inputs",
-                "placeholder": "",
-                "required": true,
-                "show": true,
-                "title_case": false,
-                "trace_as_metadata": true,
-                "type": "other",
-                "value": ""
-              },
-              "doc_key": {
-                "_input_type": "MessageTextInput",
-                "advanced": true,
-                "display_name": "Doc Key",
-                "dynamic": false,
-                "info": "The key to use for the DoclingDocument column.",
-                "input_types": [
-                  "Message"
-                ],
-                "list": false,
-                "list_add_label": "Add More",
-                "load_from_db": false,
-                "name": "doc_key",
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_input": true,
-                "trace_as_metadata": true,
-                "type": "str",
-                "value": "doc"
-              },
-              "export_format": {
-                "_input_type": "DropdownInput",
-                "advanced": false,
-                "combobox": false,
-                "dialog_inputs": {},
-                "display_name": "Export format",
-                "dynamic": false,
-                "external_options": {},
-                "info": "Select the export format to convert the input.",
-                "name": "export_format",
-                "options": [
-                  "Markdown",
-                  "HTML",
-                  "Plaintext",
-                  "DocTags"
-                ],
-                "options_metadata": [],
-                "placeholder": "",
-                "real_time_refresh": true,
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "toggle": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "type": "str",
-                "value": "Markdown"
-              },
-              "image_mode": {
-                "_input_type": "DropdownInput",
-                "advanced": false,
-                "combobox": false,
-                "dialog_inputs": {},
-                "display_name": "Image export mode",
-                "dynamic": false,
-                "external_options": {},
-                "info": "Specify how images are exported in the output. Placeholder will replace the images with a string, whereas Embedded will include them as base64 encoded images.",
-                "name": "image_mode",
-                "options": [
-                  "placeholder",
-                  "embedded"
-                ],
-                "options_metadata": [],
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "toggle": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "type": "str",
-                "value": "placeholder"
-              },
-              "md_image_placeholder": {
-                "_input_type": "StrInput",
-                "advanced": true,
-                "display_name": "Image placeholder",
-                "dynamic": false,
-                "info": "Specify the image placeholder for markdown exports.",
-                "list": false,
-                "list_add_label": "Add More",
-                "load_from_db": false,
-                "name": "md_image_placeholder",
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "type": "str",
-                "value": "<!-- image -->"
-              },
-              "md_page_break_placeholder": {
-                "_input_type": "StrInput",
-                "advanced": true,
-                "display_name": "Page break placeholder",
-                "dynamic": false,
-                "info": "Add this placeholder betweek pages in the markdown output.",
-                "list": false,
-                "list_add_label": "Add More",
-                "load_from_db": false,
-                "name": "md_page_break_placeholder",
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "type": "str",
-                "value": ""
-              }
-            },
-            "tool_mode": false
-          },
-          "selected_output": "dataframe",
-          "showNode": true,
-          "type": "ExportDoclingDocument"
-        },
-        "dragging": false,
-        "id": "ExportDoclingDocument-zZdRg",
-        "measured": {
-          "height": 347,
-          "width": 320
-        },
-        "position": {
-          "x": 206.97755086947473,
-          "y": 1610.6498167995744
+          "x": -32.29834135984382,
+          "y": 1602.5217556985535
         },
         "selected": false,
         "type": "genericNode"
@@ -2090,7 +1563,7 @@
             ],
             "frozen": false,
             "icon": "table",
-            "last_updated": "2025-12-12T20:12:18.208Z",
+            "last_updated": "2026-02-05T04:24:29.784Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -2137,7 +1610,7 @@
                 "value": "5488df7c-b93f-4f87-a446-b67028bc0813"
               },
               "_frontend_node_folder_id": {
-                "value": "75fd27c1-8f4b-46a1-88bb-a8a8e72719e3"
+                "value": "15acea35-7c03-488d-8702-13327d5a4cea"
               },
               "_type": "Component",
               "ascending": {
@@ -2503,8 +1976,8 @@
           "width": 320
         },
         "position": {
-          "x": 575.218683966709,
-          "y": 1607.3264908868193
+          "x": 818.9617962759838,
+          "y": 1598.1861241752215
         },
         "selected": false,
         "type": "genericNode"
@@ -2541,7 +2014,7 @@
             ],
             "frozen": false,
             "icon": "table",
-            "last_updated": "2025-12-12T20:12:18.209Z",
+            "last_updated": "2026-02-05T04:24:29.784Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -2588,7 +2061,7 @@
                 "value": "5488df7c-b93f-4f87-a446-b67028bc0813"
               },
               "_frontend_node_folder_id": {
-                "value": "75fd27c1-8f4b-46a1-88bb-a8a8e72719e3"
+                "value": "15acea35-7c03-488d-8702-13327d5a4cea"
               },
               "_type": "Component",
               "ascending": {
@@ -2954,8 +2427,8 @@
           "width": 320
         },
         "position": {
-          "x": 1330.149865256777,
-          "y": 1619.9268393528012
+          "x": 1636.3521500953036,
+          "y": 1600.122711477673
         },
         "selected": false,
         "type": "genericNode"
@@ -2992,7 +2465,7 @@
             ],
             "frozen": false,
             "icon": "table",
-            "last_updated": "2025-12-12T20:12:18.209Z",
+            "last_updated": "2026-02-05T04:24:29.785Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -3039,7 +2512,7 @@
                 "value": "5488df7c-b93f-4f87-a446-b67028bc0813"
               },
               "_frontend_node_folder_id": {
-                "value": "75fd27c1-8f4b-46a1-88bb-a8a8e72719e3"
+                "value": "15acea35-7c03-488d-8702-13327d5a4cea"
               },
               "_type": "Component",
               "ascending": {
@@ -3405,8 +2878,8 @@
           "width": 320
         },
         "position": {
-          "x": 937.1310281139399,
-          "y": 1611.2186890450444
+          "x": 1222.0057906254049,
+          "y": 1592.9379556218487
         },
         "selected": false,
         "type": "genericNode"
@@ -4193,7 +3666,7 @@
             ],
             "frozen": false,
             "icon": "binary",
-            "last_updated": "2025-12-12T20:12:18.131Z",
+            "last_updated": "2026-02-05T04:24:29.584Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -4261,13 +3734,13 @@
                 "value": "5488df7c-b93f-4f87-a446-b67028bc0813"
               },
               "_frontend_node_folder_id": {
-                "value": "75fd27c1-8f4b-46a1-88bb-a8a8e72719e3"
+                "value": "15acea35-7c03-488d-8702-13327d5a4cea"
               },
               "_type": "Component",
               "api_base": {
                 "_input_type": "MessageTextInput",
-                "advanced": true,
-                "display_name": "API Base URL",
+                "advanced": false,
+                "display_name": "OpenAI API Base URL",
                 "dynamic": false,
                 "info": "Base URL for the API. Leave empty for default.",
                 "input_types": [
@@ -4280,7 +3753,7 @@
                 "override_skip": false,
                 "placeholder": "",
                 "required": false,
-                "show": false,
+                "show": true,
                 "title_case": false,
                 "tool_mode": false,
                 "trace_as_input": true,
@@ -4292,7 +3765,7 @@
               "api_key": {
                 "_input_type": "SecretStrInput",
                 "advanced": false,
-                "display_name": "IBM watsonx.ai API Key",
+                "display_name": "OpenAI API Key",
                 "dynamic": false,
                 "info": "Model Provider API key",
                 "input_types": [],
@@ -4307,7 +3780,7 @@
                 "title_case": false,
                 "track_in_telemetry": false,
                 "type": "str",
-                "value": "WATSONX_API_KEY"
+                "value": "OPENAI_API_KEY"
               },
               "base_url_ibm_watsonx": {
                 "_input_type": "DropdownInput",
@@ -4332,7 +3805,7 @@
                 "placeholder": "",
                 "real_time_refresh": true,
                 "required": false,
-                "show": true,
+                "show": false,
                 "title_case": false,
                 "toggle": false,
                 "tool_mode": false,
@@ -4433,7 +3906,7 @@
                 "override_skip": false,
                 "placeholder": "",
                 "required": false,
-                "show": true,
+                "show": false,
                 "title_case": false,
                 "tool_mode": false,
                 "trace_as_metadata": true,
@@ -4474,7 +3947,7 @@
                 "load_from_db": false,
                 "name": "model",
                 "options": [
-                  "ibm/granite-embedding-278m-multilingual"
+                  "text-embedding-3-small"
                 ],
                 "options_metadata": [],
                 "override_skip": false,
@@ -4489,7 +3962,7 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": true,
                 "type": "str",
-                "value": "ibm/granite-embedding-278m-multilingual"
+                "value": "text-embedding-3-small"
               },
               "model_kwargs": {
                 "_input_type": "DictInput",
@@ -4553,7 +4026,7 @@
                 "override_skip": false,
                 "placeholder": "",
                 "required": false,
-                "show": true,
+                "show": false,
                 "title_case": false,
                 "tool_mode": false,
                 "trace_as_input": true,
@@ -4603,7 +4076,7 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": true,
                 "type": "str",
-                "value": "IBM watsonx.ai"
+                "value": "OpenAI"
               },
               "request_timeout": {
                 "_input_type": "FloatInput",
@@ -4657,7 +4130,7 @@
                 "override_skip": false,
                 "placeholder": "",
                 "required": false,
-                "show": true,
+                "show": false,
                 "title_case": false,
                 "tool_mode": false,
                 "trace_as_metadata": true,
@@ -4674,7 +4147,7 @@
         "dragging": false,
         "id": "EmbeddingModel-EAo9i",
         "measured": {
-          "height": 534,
+          "height": 451,
           "width": 320
         },
         "position": {
@@ -4718,7 +4191,7 @@
             ],
             "frozen": false,
             "icon": "binary",
-            "last_updated": "2025-12-12T20:12:18.132Z",
+            "last_updated": "2026-02-05T04:24:29.585Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -4786,7 +4259,7 @@
                 "value": "5488df7c-b93f-4f87-a446-b67028bc0813"
               },
               "_frontend_node_folder_id": {
-                "value": "75fd27c1-8f4b-46a1-88bb-a8a8e72719e3"
+                "value": "15acea35-7c03-488d-8702-13327d5a4cea"
               },
               "_type": "Component",
               "api_base": {
@@ -5244,7 +4717,7 @@
             ],
             "frozen": false,
             "icon": "binary",
-            "last_updated": "2025-12-12T20:12:18.133Z",
+            "last_updated": "2026-02-05T04:24:29.585Z",
             "legacy": false,
             "lf_version": "1.7.0.dev21",
             "metadata": {
@@ -5312,7 +4785,7 @@
                 "value": "5488df7c-b93f-4f87-a446-b67028bc0813"
               },
               "_frontend_node_folder_id": {
-                "value": "75fd27c1-8f4b-46a1-88bb-a8a8e72719e3"
+                "value": "15acea35-7c03-488d-8702-13327d5a4cea"
               },
               "_type": "Component",
               "api_base": {
@@ -5734,19 +5207,301 @@
         },
         "selected": false,
         "type": "genericNode"
+      },
+      {
+        "data": {
+          "id": "ChunkDoclingDocument-7Tsav",
+          "node": {
+            "base_classes": [
+              "DataFrame"
+            ],
+            "beta": false,
+            "conditional_paths": [],
+            "custom_fields": {},
+            "description": "Use the DocumentDocument chunkers to split the document into chunks.",
+            "display_name": "Chunk DoclingDocument",
+            "documentation": "https://docling-project.github.io/docling/concepts/chunking/",
+            "edited": false,
+            "field_order": [
+              "data_inputs",
+              "chunker",
+              "provider",
+              "hf_model_name",
+              "openai_model_name",
+              "max_tokens",
+              "doc_key"
+            ],
+            "frozen": false,
+            "icon": "Docling",
+            "last_updated": "2026-02-04T17:56:53.100Z",
+            "legacy": false,
+            "lf_version": "1.7.0.dev21",
+            "metadata": {
+              "code_hash": "397fa38f89d7",
+              "dependencies": {
+                "dependencies": [
+                  {
+                    "name": "tiktoken",
+                    "version": "0.12.0"
+                  },
+                  {
+                    "name": "docling_core",
+                    "version": "2.49.0"
+                  },
+                  {
+                    "name": "lfx",
+                    "version": "0.2.0.dev21"
+                  }
+                ],
+                "total_dependencies": 3
+              },
+              "module": "lfx.components.docling.chunk_docling_document.ChunkDoclingDocumentComponent"
+            },
+            "minimized": false,
+            "output_types": [],
+            "outputs": [
+              {
+                "allows_loop": false,
+                "cache": true,
+                "display_name": "DataFrame",
+                "group_outputs": false,
+                "loop_types": null,
+                "method": "chunk_documents",
+                "name": "dataframe",
+                "options": null,
+                "required_inputs": null,
+                "selected": "DataFrame",
+                "tool_mode": true,
+                "types": [
+                  "DataFrame"
+                ],
+                "value": "__UNDEFINED__"
+              }
+            ],
+            "pinned": false,
+            "template": {
+              "_frontend_node_flow_id": {
+                "value": "5488df7c-b93f-4f87-a446-b67028bc0813"
+              },
+              "_frontend_node_folder_id": {
+                "value": "15acea35-7c03-488d-8702-13327d5a4cea"
+              },
+              "_type": "Component",
+              "chunker": {
+                "_input_type": "DropdownInput",
+                "advanced": false,
+                "combobox": false,
+                "dialog_inputs": {},
+                "display_name": "Chunker",
+                "dynamic": false,
+                "external_options": {},
+                "info": "Which chunker to use.",
+                "name": "chunker",
+                "options": [
+                  "HybridChunker",
+                  "HierarchicalChunker"
+                ],
+                "options_metadata": [],
+                "override_skip": false,
+                "placeholder": "",
+                "real_time_refresh": true,
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "toggle": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": true,
+                "type": "str",
+                "value": "HierarchicalChunker"
+              },
+              "code": {
+                "advanced": true,
+                "dynamic": true,
+                "fileTypes": [],
+                "file_path": "",
+                "info": "",
+                "list": false,
+                "load_from_db": false,
+                "multiline": true,
+                "name": "code",
+                "password": false,
+                "placeholder": "",
+                "required": true,
+                "show": true,
+                "title_case": false,
+                "type": "code",
+                "value": "import json\n\nimport tiktoken\nfrom docling_core.transforms.chunker import BaseChunker, DocMeta\nfrom docling_core.transforms.chunker.hierarchical_chunker import HierarchicalChunker\n\nfrom lfx.base.data.docling_utils import extract_docling_documents\nfrom lfx.custom import Component\nfrom lfx.io import DropdownInput, HandleInput, IntInput, MessageTextInput, Output, StrInput\nfrom lfx.schema import Data, DataFrame\n\n\nclass ChunkDoclingDocumentComponent(Component):\n    display_name: str = \"Chunk DoclingDocument\"\n    description: str = \"Use the DocumentDocument chunkers to split the document into chunks.\"\n    documentation = \"https://docling-project.github.io/docling/concepts/chunking/\"\n    icon = \"Docling\"\n    name = \"ChunkDoclingDocument\"\n\n    inputs = [\n        HandleInput(\n            name=\"data_inputs\",\n            display_name=\"Data or DataFrame\",\n            info=\"The data with documents to split in chunks.\",\n            input_types=[\"Data\", \"DataFrame\"],\n            required=True,\n        ),\n        DropdownInput(\n            name=\"chunker\",\n            display_name=\"Chunker\",\n            options=[\"HybridChunker\", \"HierarchicalChunker\"],\n            info=(\"Which chunker to use.\"),\n            value=\"HybridChunker\",\n            real_time_refresh=True,\n        ),\n        DropdownInput(\n            name=\"provider\",\n            display_name=\"Provider\",\n            options=[\"Hugging Face\", \"OpenAI\"],\n            info=(\"Which tokenizer provider.\"),\n            value=\"Hugging Face\",\n            show=True,\n            real_time_refresh=True,\n            advanced=True,\n            dynamic=True,\n        ),\n        StrInput(\n            name=\"hf_model_name\",\n            display_name=\"HF model name\",\n            info=(\n                \"Model name of the tokenizer to use with the HybridChunker when Hugging Face is chosen as a tokenizer.\"\n            ),\n            value=\"sentence-transformers/all-MiniLM-L6-v2\",\n            show=True,\n            advanced=True,\n            dynamic=True,\n        ),\n        StrInput(\n            name=\"openai_model_name\",\n            display_name=\"OpenAI model name\",\n            info=(\"Model name of the tokenizer to use with the HybridChunker when OpenAI is chosen as a tokenizer.\"),\n            value=\"gpt-4o\",\n            show=False,\n            advanced=True,\n            dynamic=True,\n        ),\n        IntInput(\n            name=\"max_tokens\",\n            display_name=\"Maximum tokens\",\n            info=(\"Maximum number of tokens for the HybridChunker.\"),\n            show=True,\n            required=False,\n            advanced=True,\n            dynamic=True,\n        ),\n        MessageTextInput(\n            name=\"doc_key\",\n            display_name=\"Doc Key\",\n            info=\"The key to use for the DoclingDocument column.\",\n            value=\"doc\",\n            advanced=True,\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"DataFrame\", name=\"dataframe\", method=\"chunk_documents\"),\n    ]\n\n    def update_build_config(self, build_config: dict, field_value: str, field_name: str | None = None) -> dict:\n        if field_name == \"chunker\":\n            provider_type = build_config[\"provider\"][\"value\"]\n            is_hf = provider_type == \"Hugging Face\"\n            is_openai = provider_type == \"OpenAI\"\n            if field_value == \"HybridChunker\":\n                build_config[\"provider\"][\"show\"] = True\n                build_config[\"hf_model_name\"][\"show\"] = is_hf\n                build_config[\"openai_model_name\"][\"show\"] = is_openai\n                build_config[\"max_tokens\"][\"show\"] = True\n            else:\n                build_config[\"provider\"][\"show\"] = False\n                build_config[\"hf_model_name\"][\"show\"] = False\n                build_config[\"openai_model_name\"][\"show\"] = False\n                build_config[\"max_tokens\"][\"show\"] = False\n        elif field_name == \"provider\" and build_config[\"chunker\"][\"value\"] == \"HybridChunker\":\n            if field_value == \"Hugging Face\":\n                build_config[\"hf_model_name\"][\"show\"] = True\n                build_config[\"openai_model_name\"][\"show\"] = False\n            elif field_value == \"OpenAI\":\n                build_config[\"hf_model_name\"][\"show\"] = False\n                build_config[\"openai_model_name\"][\"show\"] = True\n\n        return build_config\n\n    def _docs_to_data(self, docs) -> list[Data]:\n        return [Data(text=doc.page_content, data=doc.metadata) for doc in docs]\n\n    def chunk_documents(self) -> DataFrame:\n        documents = extract_docling_documents(self.data_inputs, self.doc_key)\n\n        chunker: BaseChunker\n        if self.chunker == \"HybridChunker\":\n            try:\n                from docling_core.transforms.chunker.hybrid_chunker import HybridChunker\n            except ImportError as e:\n                msg = (\n                    \"HybridChunker is not installed. Please install it with `uv pip install docling-core[chunking] \"\n                    \"or `uv pip install transformers`\"\n                )\n                raise ImportError(msg) from e\n            max_tokens: int | None = self.max_tokens if self.max_tokens else None\n            if self.provider == \"Hugging Face\":\n                try:\n                    from docling_core.transforms.chunker.tokenizer.huggingface import HuggingFaceTokenizer\n                except ImportError as e:\n                    msg = (\n                        \"HuggingFaceTokenizer is not installed.\"\n                        \" Please install it with `uv pip install docling-core[chunking]`\"\n                    )\n                    raise ImportError(msg) from e\n                tokenizer = HuggingFaceTokenizer.from_pretrained(\n                    model_name=self.hf_model_name,\n                    max_tokens=max_tokens,\n                )\n            elif self.provider == \"OpenAI\":\n                try:\n                    from docling_core.transforms.chunker.tokenizer.openai import OpenAITokenizer\n                except ImportError as e:\n                    msg = (\n                        \"OpenAITokenizer is not installed.\"\n                        \" Please install it with `uv pip install docling-core[chunking]`\"\n                        \" or `uv pip install transformers`\"\n                    )\n                    raise ImportError(msg) from e\n                if max_tokens is None:\n                    max_tokens = 128 * 1024  # context window length required for OpenAI tokenizers\n                tokenizer = OpenAITokenizer(\n                    tokenizer=tiktoken.encoding_for_model(self.openai_model_name), max_tokens=max_tokens\n                )\n            chunker = HybridChunker(\n                tokenizer=tokenizer,\n            )\n        elif self.chunker == \"HierarchicalChunker\":\n            chunker = HierarchicalChunker()\n\n        results: list[Data] = []\n        try:\n            for doc in documents:\n                for chunk in chunker.chunk(dl_doc=doc):\n                    enriched_text = chunker.contextualize(chunk=chunk)\n                    meta = DocMeta.model_validate(chunk.meta)\n\n                    results.append(\n                        Data(\n                            data={\n                                \"text\": enriched_text,\n                                \"document_id\": f\"{doc.origin.binary_hash}\",\n                                \"doc_items\": json.dumps([item.self_ref for item in meta.doc_items]),\n                            }\n                        )\n                    )\n\n        except Exception as e:\n            msg = f\"Error splitting text: {e}\"\n            raise TypeError(msg) from e\n\n        return DataFrame(results)\n"
+              },
+              "data_inputs": {
+                "_input_type": "HandleInput",
+                "advanced": false,
+                "display_name": "Data or DataFrame",
+                "dynamic": false,
+                "info": "The data with documents to split in chunks.",
+                "input_types": [
+                  "Data",
+                  "DataFrame"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "data_inputs",
+                "override_skip": false,
+                "placeholder": "",
+                "required": true,
+                "show": true,
+                "title_case": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "other",
+                "value": ""
+              },
+              "doc_key": {
+                "_input_type": "MessageTextInput",
+                "advanced": false,
+                "display_name": "Doc Key",
+                "dynamic": false,
+                "info": "The key to use for the DoclingDocument column.",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "doc_key",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "str",
+                "value": "doc"
+              },
+              "hf_model_name": {
+                "_input_type": "StrInput",
+                "advanced": true,
+                "display_name": "HF model name",
+                "dynamic": true,
+                "info": "Model name of the tokenizer to use with the HybridChunker when Hugging Face is chosen as a tokenizer.",
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "hf_model_name",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": false,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "str",
+                "value": "sentence-transformers/all-MiniLM-L6-v2"
+              },
+              "is_refresh": false,
+              "max_tokens": {
+                "_input_type": "IntInput",
+                "advanced": true,
+                "display_name": "Maximum tokens",
+                "dynamic": true,
+                "info": "Maximum number of tokens for the HybridChunker.",
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "max_tokens",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": false,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": true,
+                "type": "int",
+                "value": ""
+              },
+              "openai_model_name": {
+                "_input_type": "StrInput",
+                "advanced": true,
+                "display_name": "OpenAI model name",
+                "dynamic": true,
+                "info": "Model name of the tokenizer to use with the HybridChunker when OpenAI is chosen as a tokenizer.",
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "openai_model_name",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": false,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "str",
+                "value": "gpt-4o"
+              },
+              "provider": {
+                "_input_type": "DropdownInput",
+                "advanced": true,
+                "combobox": false,
+                "dialog_inputs": {},
+                "display_name": "Provider",
+                "dynamic": true,
+                "external_options": {},
+                "info": "Which tokenizer provider.",
+                "name": "provider",
+                "options": [
+                  "Hugging Face",
+                  "OpenAI"
+                ],
+                "options_metadata": [],
+                "override_skip": false,
+                "placeholder": "",
+                "real_time_refresh": true,
+                "required": false,
+                "show": false,
+                "title_case": false,
+                "toggle": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": true,
+                "type": "str",
+                "value": "Hugging Face"
+              }
+            },
+            "tool_mode": false
+          },
+          "showNode": true,
+          "type": "ChunkDoclingDocument"
+        },
+        "dragging": false,
+        "id": "ChunkDoclingDocument-7Tsav",
+        "measured": {
+          "height": 347,
+          "width": 320
+        },
+        "position": {
+          "x": 383.4363765185066,
+          "y": 1602.9945490955463
+        },
+        "selected": false,
+        "type": "genericNode"
       }
     ],
     "viewport": {
-      "x": 249.3666737262397,
-      "y": -156.8776378758762,
-      "zoom": 0.38977017930844676
+      "x": 257.7690459293176,
+      "y": -154.96170253117464,
+      "zoom": 0.38900766436126777
     }
   },
   "description": "Load your data for chat context with Retrieval Augmented Generation.",
   "endpoint_name": null,
   "id": "5488df7c-b93f-4f87-a446-b67028bc0813",
   "is_component": false,
-  "locked": true,
   "last_tested_version": "1.7.0.dev21",
   "name": "OpenSearch Ingestion Flow",
   "tags": [
