@@ -10,8 +10,8 @@
 <script>!function(){function e(){if(void 0!==window.truste&&window.truste.cma){var e=window.truste.cma.callApi("getConsent",window.location.href)||{},n=1===e[2],t=1===e[3];gtag("consent","update",{ad_storage:n?"granted":"denied",ad_user_data:n?"granted":"denied",ad_personalization:n?"granted":"denied",analytics_storage:t?"granted":"denied"})}}window.addEventListener&&(window.addEventListener("cm_data_subject_consent_changed",e),window.addEventListener("cm_consent_preferences_set",e)),"complete"===document.readyState?e():window.addEventListener("load",e)}()</script>
 <script>window._ibmAnalytics={settings:{name:"DataStax",tealiumProfileName:"ibm-subsidiary"},trustarc:{privacyPolicyLink:"https://ibm.com/privacy"}},window.digitalData={page:{pageInfo:{ibm:{siteId:"IBM_DataStax"}},category:{primaryCategory:"PC230"}}}</script>
 <script src="//1.www.s81c.com/common/stats/ibm-common.js" async="true"></script><link rel="stylesheet" href="/assets/css/styles.29e42e49.css">
-<script src="/assets/js/runtime~main.34a89b8f.js" defer="defer"></script>
-<script src="/assets/js/main.e1ba3126.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.3c7d87a1.js" defer="defer"></script>
+<script src="/assets/js/main.c7facb5d.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -60,7 +60,7 @@ Anthropic provides language models only; you must select an additional provider 
 If a provider offers both types of models, then you can use the same provider for both models.
 If a provider offers only one type, then you must configure two providers.</p>
 <p>Language models must support tool calling to be compatible with OpenRAG.</p>
-<p>For more information, see <a href="#application-onboarding" class="">Application Onboarding</a>.</p>
+<p>For more information, see <a href="#application-onboarding" class="">Complete the application onboarding process</a>.</p>
 </li>
 <li class="">
 <p>Optional: Install GPU support with an NVIDIA GPU, <a href="https://docs.nvidia.com/cuda/" target="_blank" rel="noopener noreferrer" class="">CUDA</a> support, and compatible NVIDIA drivers on the OpenRAG host machine.
@@ -223,7 +223,7 @@ The overview demonstrates some basic functionality that is covered in the <a cla
 Incompatible models aren&#x27;t listed in OpenRAG&#x27;s settings or onboarding.</p>
 <p>Additionally, models must be able to handle the agentic reasoning tasks required by OpenRAG.
 Models that are too small or not designed for agentic RAG tasks can return low quality, incorrect, or improperly formatted responses.
-For more information, see <a class="" href="/chat#troubleshoot-chat">Troubleshoot chat</a>.</p>
+For more information, see <a class="" href="/support/troubleshoot#chat-issues">Chat issues</a>.</p>
 <p>You can submit an <a href="https://github.com/langflow-ai/openrag/issues" target="_blank" rel="noopener noreferrer" class="">OpenRAG GitHub issue</a> to request support for specific models.</p></div></div><ol>
 <li class="">
 <p>For <strong>watsonx.ai API Endpoint</strong>, select the base URL for your watsonx.ai model deployment.</p>
