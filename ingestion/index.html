@@ -10,7 +10,7 @@
 <script>!function(){function e(){if(void 0!==window.truste&&window.truste.cma){var e=window.truste.cma.callApi("getConsent",window.location.href)||{},n=1===e[2],t=1===e[3];gtag("consent","update",{ad_storage:n?"granted":"denied",ad_user_data:n?"granted":"denied",ad_personalization:n?"granted":"denied",analytics_storage:t?"granted":"denied"})}}window.addEventListener&&(window.addEventListener("cm_data_subject_consent_changed",e),window.addEventListener("cm_consent_preferences_set",e)),"complete"===document.readyState?e():window.addEventListener("load",e)}()</script>
 <script>window._ibmAnalytics={settings:{name:"DataStax",tealiumProfileName:"ibm-subsidiary"},trustarc:{privacyPolicyLink:"https://ibm.com/privacy"}},window.digitalData={page:{pageInfo:{ibm:{siteId:"IBM_DataStax"}},category:{primaryCategory:"PC230"}}}</script>
 <script src="//1.www.s81c.com/common/stats/ibm-common.js" async="true"></script><link rel="stylesheet" href="/assets/css/styles.29e42e49.css">
-<script src="/assets/js/runtime~main.3c7d87a1.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.1b110f99.js" defer="defer"></script>
 <script src="/assets/js/main.c7facb5d.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -39,6 +39,33 @@ Then, the chunks, embeddings, and associated metadata (which connects chunks of 
 To change this path, see <a class="" href="/knowledge#set-the-local-documents-path">Set the local documents path</a>.</p>
 </li>
 </ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="supported-file-types">Supported file types<a href="#supported-file-types" class="hash-link" aria-label="Direct link to Supported file types" title="Direct link to Supported file types" translate="no">​</a></h3>
+<p>OpenRAG supports ingesting the following document types:</p>
+<ul>
+<li class="">.pdf</li>
+<li class="">.doc</li>
+<li class="">.docx</li>
+<li class="">.pptx</li>
+<li class="">.ppt</li>
+<li class="">.xlsx</li>
+<li class="">.xls</li>
+<li class="">.csv</li>
+<li class="">.txt</li>
+<li class="">.md</li>
+<li class="">.html</li>
+<li class="">.htm</li>
+<li class="">.rtf</li>
+<li class="">.odt</li>
+<li class="">.asciidoc</li>
+<li class="">.adoc</li>
+<li class="">.png</li>
+<li class="">.jpg</li>
+<li class="">.jpeg</li>
+<li class="">.gif</li>
+<li class="">.bmp</li>
+<li class="">.tiff</li>
+<li class="">.webp</li>
+</ul>
 <p>The selected files are processed in the background through the <strong>OpenSearch Ingestion</strong> flow.</p>
 <details class="details_lb9f alert alert--info details_b_Ee" data-collapsed="true"><summary>About the OpenSearch Ingestion flow</summary><div><div class="collapsibleContent_i85q"><p>When you upload documents locally or with cloud storage connectors, the <strong>OpenSearch Ingestion</strong> flow runs in the background.
 By default, this flow uses Docling Serve to import and process documents.</p><p>Like all <a class="" href="/agents">OpenRAG flows</a>, you can <a class="" href="/agents#inspect-and-modify-flows">inspect the flow in Langflow</a>, and you can customize it if you want to change the knowledge ingestion settings.</p><p>The <strong>OpenSearch Ingestion</strong> flow is comprised of several components that work together to process and store documents in your knowledge base:</p><ul>
@@ -309,7 +336,7 @@ All errors were file-specific, and they didn&#x27;t stop the pipeline.</p>
 <li class=""><a class="" href="/chat">Chat with knowledge</a></li>
 <li class=""><a class="" href="/agents#inspect-and-modify-flows">Inspect and modify flows</a></li>
 <li class=""><a class="" href="/support/troubleshoot#document-ingestion-or-similarity-search-issues">Troubleshoot document ingestion or similarity search issues</a></li>
-</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/openrag/openrag/tree/main/docs/docs/core-components/ingestion.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/knowledge"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Configure knowledge</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/knowledge-filters"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Filter knowledge</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#ingest-local-files-and-folders" class="table-of-contents__link toc-highlight">Ingest local files and folders</a></li><li><a href="#ingest-local-files-temporarily" class="table-of-contents__link toc-highlight">Ingest local files temporarily</a></li><li><a href="#oauth-ingestion" class="table-of-contents__link toc-highlight">Ingest files with cloud storage connectors</a><ul><li><a href="#configure-cloud-storage-connectors" class="table-of-contents__link toc-highlight">Configure cloud storage connectors</a></li><li><a href="#ingest-files-from-cloud-storage" class="table-of-contents__link toc-highlight">Ingest files from cloud storage</a></li></ul></li><li><a href="#url-flow" class="table-of-contents__link toc-highlight">Ingest knowledge from URLs</a></li><li><a href="#monitor-ingestion" class="table-of-contents__link toc-highlight">Monitor ingestion</a><ul><li><a href="#ingestion-performance-expectations" class="table-of-contents__link toc-highlight">Ingestion performance expectations</a></li></ul></li><li><a href="#see-also" class="table-of-contents__link toc-highlight">See also</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title"></div><ul class="footer__items clean-list"><li class="footer__item"><div class="footer-links">
+</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/openrag/openrag/tree/main/docs/docs/core-components/ingestion.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/knowledge"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Configure knowledge</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/knowledge-filters"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Filter knowledge</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#ingest-local-files-and-folders" class="table-of-contents__link toc-highlight">Ingest local files and folders</a><ul><li><a href="#supported-file-types" class="table-of-contents__link toc-highlight">Supported file types</a></li></ul></li><li><a href="#ingest-local-files-temporarily" class="table-of-contents__link toc-highlight">Ingest local files temporarily</a></li><li><a href="#oauth-ingestion" class="table-of-contents__link toc-highlight">Ingest files with cloud storage connectors</a><ul><li><a href="#configure-cloud-storage-connectors" class="table-of-contents__link toc-highlight">Configure cloud storage connectors</a></li><li><a href="#ingest-files-from-cloud-storage" class="table-of-contents__link toc-highlight">Ingest files from cloud storage</a></li></ul></li><li><a href="#url-flow" class="table-of-contents__link toc-highlight">Ingest knowledge from URLs</a></li><li><a href="#monitor-ingestion" class="table-of-contents__link toc-highlight">Monitor ingestion</a><ul><li><a href="#ingestion-performance-expectations" class="table-of-contents__link toc-highlight">Ingestion performance expectations</a></li></ul></li><li><a href="#see-also" class="table-of-contents__link toc-highlight">See also</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title"></div><ul class="footer__items clean-list"><li class="footer__item"><div class="footer-links">
                   <span>© 2026 OpenRAG</span>
                   <span id="preferenceCenterContainer"> ·&nbsp; <a href="#" onclick='return"undefined"!=typeof window&&window.truste&&window.truste.eu&&window.truste.eu.clickListener&&window.truste.eu.clickListener(),!1' style="cursor: pointer;">Manage Privacy Choices</a></span>
                   </div></li></ul></div></div></div></footer></div>
