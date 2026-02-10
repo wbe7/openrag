@@ -517,7 +517,7 @@ class EnvManager:
 
                 # Langfuse settings (optional)
                 langfuse_vars = [
-                    ("LANGFUSE_SECRET_KEY", self.config.langfuse_secret_key),
+                    # Intentionally do NOT persist LANGFUSE_SECRET_KEY to avoid clear-text storage of secrets.
                     ("LANGFUSE_PUBLIC_KEY", self.config.langfuse_public_key),
                     ("LANGFUSE_HOST", self.config.langfuse_host),
                 ]
