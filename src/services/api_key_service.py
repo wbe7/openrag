@@ -18,6 +18,26 @@ class APIKeyService:
     def __init__(self, session_manager=None):
         self.session_manager = session_manager
 
+    def _derive_key_hash(self, api_key: str) -> str:
+        """
+        Derive a hash for an API key using a computationally expensive KDF.
+
+        This uses PBKDF2-HMAC with SHA-256 to make offline brute-force attacks
+        against stored API key hashes significantly more expensive.
+        """
+        # NOTE: This salt is constant at the application level. For API keys,
+        # which are high-entropy random secrets, a global salt is acceptable.
+        # If you later support user-chosen secrets, consider per-key salts.
+        salt = b"orag_api_key_service_pbkdf2_salt"
+        iterations = 100_000
+        dk = hashlib.pbkdf2_hmac(
+            "sha256",
+            api_key.encode(),
+            salt,
+            iterations,
+        )
+        return dk.hex()
+
     def _generate_api_key(self) -> tuple[str, str, str]:
         """
         Generate a new API key.
@@ -34,8 +54,8 @@ class APIKeyService:
         # Create the full key with prefix
         full_key = f"orag_{random_bytes}"
 
-        # Hash the full key for storage
-        key_hash = hashlib.sha256(full_key.encode()).hexdigest()
+        # Derive the hash of the full key for secure storage
+        key_hash = self._derive_key_hash(full_key)
 
         # Create prefix for display (orag_ + first 8 chars of random part)
         key_prefix = f"orag_{random_bytes[:8]}"
@@ -44,7 +64,7 @@ class APIKeyService:
 
     def _hash_key(self, api_key: str) -> str:
         """Hash an API key for lookup."""
-        return hashlib.sha256(api_key.encode()).hexdigest()
+        return self._derive_key_hash(api_key)
 
     async def create_key(
         self,
