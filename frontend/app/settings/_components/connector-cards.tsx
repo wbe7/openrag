@@ -38,10 +38,6 @@ export default function ConnectorCards() {
     const { isAuthenticated, isNoAuthMode } = useAuth();
     const router = useRouter();
 
-    const [syncResults, setSyncResults] = useState<{
-        [key: string]: SyncResult | null;
-    }>({});
-
     const { data: queryConnectors = [], isLoading: connectorsLoading } = useGetConnectorsQuery({
         enabled: isAuthenticated || isNoAuthMode,
     });
@@ -70,7 +66,6 @@ export default function ConnectorCards() {
     })) as Connector[];
 
     const handleConnect = async (connector: Connector) => {
-        setSyncResults((prev) => ({ ...prev, [connector.id]: null }));
         connectMutation.mutate({
             connector: connector as unknown as QueryConnector,
             redirectUri: `${window.location.origin}/auth/callback`,
@@ -197,22 +192,6 @@ export default function ConnectorCards() {
                                                     )}
                                                 </Button>
                                             </div>
-                                            {syncResults[connector.id] && (
-                                                <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
-                                                    <div>
-                                                        Processed:{" "}
-                                                        {syncResults[connector.id]?.processed || 0}
-                                                    </div>
-                                                    <div>
-                                                        Added: {syncResults[connector.id]?.added || 0}
-                                                    </div>
-                                                    {syncResults[connector.id]?.errors && (
-                                                        <div>
-                                                            Errors: {syncResults[connector.id]?.errors}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
                                         </>
                                     ) : (
                                         <Button
