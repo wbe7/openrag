@@ -1,9 +1,9 @@
 "use client";
 
-import { ArrowUpRight, Copy, Key, Loader2, Minus, PlugZap, Plus, RefreshCcw, Trash2 } from "lucide-react";
+import { ArrowUpRight, Copy, Key, Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
 	useGetAnthropicModelsQuery,
@@ -47,65 +47,15 @@ import {
 } from "@/lib/constants";
 import { useDebounce } from "@/lib/debounce";
 import { cn } from "@/lib/utils";
-import GoogleDriveIcon from "../../components/icons/google-drive-logo";
-import OneDriveIcon from "../../components/icons/one-drive-logo";
-import SharePointIcon from "../../components/icons/share-point-logo";
 import { useUpdateSettingsMutation } from "../api/mutations/useUpdateSettingsMutation";
-import { useGetConnectorsQuery, type Connector as QueryConnector } from "@/app/api/queries/useGetConnectorsQuery";
-import { useDisconnectConnectorMutation } from "@/app/api/mutations/useDisconnectConnectorMutation";
 import { ModelSelector } from "../onboarding/_components/model-selector";
 import ModelProviders from "./_components/model-providers";
-import ConnectorsSkeleton from "./_components/connectors-skeleton";
+import ConnectorCards from "./_components/connector-cards";
 import { getModelLogo, type ModelProvider } from "./_helpers/model-helpers";
 
 const { MAX_SYSTEM_PROMPT_CHARS } = UI_CONSTANTS;
 
-interface GoogleDriveFile {
-	id: string;
-	name: string;
-	mimeType: string;
-	webViewLink?: string;
-	iconLink?: string;
-}
 
-interface OneDriveFile {
-	id: string;
-	name: string;
-	mimeType?: string;
-	webUrl?: string;
-	driveItem?: {
-		file?: { mimeType: string };
-		folder?: unknown;
-	};
-}
-
-interface Connector {
-	id: string;
-	name: string;
-	description: string;
-	icon: React.ReactNode;
-	status: "not_connected" | "connecting" | "connected" | "error";
-	type: string;
-	connectionId?: string;
-	access_token?: string;
-	selectedFiles?: GoogleDriveFile[] | OneDriveFile[];
-	available?: boolean;
-}
-
-interface SyncResult {
-	processed?: number;
-	added?: number;
-	errors?: number;
-	skipped?: number;
-	total?: number;
-}
-
-interface Connection {
-	connection_id: string;
-	is_active: boolean;
-	created_at: string;
-	last_sync?: string;
-}
 function KnowledgeSourcesPage() {
 	const { isAuthenticated, isNoAuthMode } = useAuth();
 	const { addTask, tasks } = useTask();
@@ -122,23 +72,7 @@ function KnowledgeSourcesPage() {
 	const [newKeyName, setNewKeyName] = useState("");
 	const [newlyCreatedKey, setNewlyCreatedKey] = useState<string | null>(null);
 	const [showKeyDialogOpen, setShowKeyDialogOpen] = useState(false);
-	// Fetch connectors using React Query
-	const { data: queryConnectors = [], isLoading: connectorsLoading } = useGetConnectorsQuery({
-		enabled: isAuthenticated || isNoAuthMode,
-	});
 
-	// Use query data but cast to the local Connector interface if needed, or update local interface
-	// For now, let's keep the local state for isConnecting and syncResults as they are transient
-	const [isConnecting, setIsConnecting] = useState<string | null>(null);
-	const [isSyncing, setIsSyncing] = useState<string | null>(null);
-	const [syncResults, setSyncResults] = useState<{
-		[key: string]: SyncResult | null;
-	}>({});
-	const [maxFiles, setMaxFiles] = useState<number>(10);
-	const [syncAllFiles, setSyncAllFiles] = useState<boolean>(false);
-
-	// Disconnect mutation
-	const disconnectMutation = useDisconnectConnectorMutation();
 
 	// Only keep systemPrompt state since it needs manual save button
 	const [systemPrompt, setSystemPrompt] = useState<string>("");
@@ -472,142 +406,10 @@ function KnowledgeSourcesPage() {
 		});
 	};
 
-	// Helper function to get connector icon
-	const getConnectorIcon = useCallback((iconName: string) => {
-		const iconMap: { [key: string]: React.ReactElement } = {
-			"google-drive": <GoogleDriveIcon />,
-			sharepoint: <SharePointIcon />,
-			onedrive: <OneDriveIcon />,
-		};
-		return (
-			iconMap[iconName] || (
-				<div className="w-8 h-8 bg-gray-500 rounded flex items-center justify-center text-white font-bold leading-none shrink-0">
-					?
-				</div>
-			)
-		);
-	}, []);
-
-	// Transform query connectors to include icons
-	const connectors = queryConnectors.map(c => ({
-		...c,
-		icon: getConnectorIcon(c.icon)
-	})) as Connector[];
 
 
-	const handleConnect = async (connector: Connector) => {
-		setIsConnecting(connector.id);
-		setSyncResults((prev) => ({ ...prev, [connector.id]: null }));
 
-		try {
-			// Use the shared auth callback URL, same as connectors page
-			const redirectUri = `${window.location.origin}/auth/callback`;
 
-			const response = await fetch("/api/auth/init", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					connector_type: connector.type,
-					purpose: "data_source",
-					name: `${connector.name} Connection`,
-					redirect_uri: redirectUri,
-				}),
-			});
-
-			if (response.ok) {
-				const result = await response.json();
-
-				if (result.oauth_config) {
-					localStorage.setItem("connecting_connector_id", result.connection_id);
-					localStorage.setItem("connecting_connector_type", connector.type);
-
-					const authUrl =
-						`${result.oauth_config.authorization_endpoint}?` +
-						`client_id=${result.oauth_config.client_id}&` +
-						`response_type=code&` +
-						`scope=${result.oauth_config.scopes.join(" ")}&` +
-						`redirect_uri=${encodeURIComponent(
-							result.oauth_config.redirect_uri,
-						)}&` +
-						`access_type=offline&` +
-						`prompt=select_account&` +
-						`state=${result.connection_id}`;
-
-					window.location.href = authUrl;
-				}
-			} else {
-				console.error("Failed to initiate connection");
-				setIsConnecting(null);
-			}
-		} catch (error) {
-			console.error("Connection error:", error);
-			setIsConnecting(null);
-		}
-	};
-
-	const handleDisconnect = async (connector: Connector) => {
-		disconnectMutation.mutate(connector as unknown as QueryConnector);
-	};
-
-	// const handleSync = async (connector: Connector) => {
-	//   if (!connector.connectionId) return;
-
-	//   setIsSyncing(connector.id);
-	//   setSyncResults(prev => ({ ...prev, [connector.id]: null }));
-
-	//   try {
-	//     const syncBody: {
-	//       connection_id: string;
-	//       max_files?: number;
-	//       selected_files?: string[];
-	//     } = {
-	//       connection_id: connector.connectionId,
-	//       max_files: syncAllFiles ? 0 : maxFiles || undefined,
-	//     };
-
-	//     // Note: File selection is now handled via the cloud connectors dialog
-
-	//     const response = await fetch(`/api/connectors/${connector.type}/sync`, {
-	//       method: "POST",
-	//       headers: {
-	//         "Content-Type": "application/json",
-	//       },
-	//       body: JSON.stringify(syncBody),
-	//     });
-
-	//     const result = await response.json();
-
-	//     if (response.status === 201) {
-	//       const taskId = result.task_id;
-	//       if (taskId) {
-	//         addTask(taskId);
-	//         setSyncResults(prev => ({
-	//           ...prev,
-	//           [connector.id]: {
-	//             processed: 0,
-	//             total: result.total_files || 0,
-	//           },
-	//         }));
-	//       }
-	//     } else if (response.ok) {
-	//       setSyncResults(prev => ({ ...prev, [connector.id]: result }));
-	//       // Note: Stats will auto-refresh via task completion watcher for async syncs
-	//     } else {
-	//       console.error("Sync failed:", result.error);
-	//     }
-	//   } catch (error) {
-	//     console.error("Sync error:", error);
-	//   } finally {
-	//     setIsSyncing(null);
-	//   }
-	// };
-
-	const navigateToKnowledgePage = (connector: Connector) => {
-		const provider = connector.type.replace(/-/g, "_");
-		router.push(`/upload/${provider}`);
-	};
 
 	// Check connector status on mount and when returning from OAuth
 	useEffect(() => {
@@ -837,144 +639,7 @@ function KnowledgeSourcesPage() {
 					// </div>
 				}
 				{/* Connectors Grid */}
-				<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-					{connectors.length > 0 ? connectors.map((connector) => {
-						return (
-							<Card key={connector.id} className="relative flex flex-col">
-								<CardHeader className="pb-2">
-									<div className="flex flex-col items-start justify-between">
-										<div className="flex flex-col gap-3">
-											<div className="mb-1">
-												<div
-													className={cn(
-														"w-8 h-8 rounded flex items-center justify-center border",
-														connector?.available
-															? "bg-white"
-															: "bg-muted grayscale",
-													)}
-												>
-													{connector.icon}
-												</div>
-											</div>
-											<CardTitle className="flex flex-row items-center gap-2">
-												{connector.name}
-											</CardTitle>
-											<CardDescription className="text-sm">
-												{connector?.available
-													? `${connector.name} is configured.`
-													: "Not configured."}
-											</CardDescription>
-										</div>
-									</div>
-								</CardHeader>
-								<CardContent className="flex-1 flex flex-col justify-end space-y-4">
-									{connector?.available ? (
-										<div className="space-y-3">
-											{connector?.status === "connected" && connector?.connectionId ? (
-												<>
-													<div className="flex gap-2 overflow-hidden w-full">
-														<Button
-															variant="outline"
-															onClick={() => navigateToKnowledgePage(connector)}
-															disabled={isSyncing === connector.id || (disconnectMutation.isPending && (disconnectMutation.variables as any)?.type === connector.type)}
-															className="cursor-pointer !text-sm truncate"
-															size="md"
-														>
-															<Plus className="h-4 w-4" />
-															<span className="text-mmd truncate">Add Knowledge</span>
-														</Button>
-														<Button
-															variant="outline"
-															onClick={() => handleConnect(connector)}
-															disabled={isConnecting === connector.id || (disconnectMutation.isPending && (disconnectMutation.variables as any)?.type === connector.type)}
-															className="cursor-pointer"
-															size="iconMd"
-														>
-															{isConnecting === connector.id ? (
-																<RefreshCcw className="h-4 w-4 animate-spin" />
-															) : (
-																<RefreshCcw className="h-4 w-4" />
-															)}
-														</Button>
-														<Button
-															variant="outline"
-															onClick={() => handleDisconnect(connector)}
-															disabled={(disconnectMutation.isPending && (disconnectMutation.variables as any)?.type === connector.type) || isConnecting === connector.id}
-															className="cursor-pointer text-destructive hover:text-destructive"
-															size="iconMd"
-														>
-															{disconnectMutation.isPending && (disconnectMutation.variables as any)?.type === connector.type ? (
-																<Loader2 className="h-4 w-4 animate-spin" />
-															) : (
-																<Trash2 className="h-4 w-4" />
-															)}
-														</Button>
-													</div>
-													{syncResults[connector.id] && (
-														<div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
-															<div>
-																Processed:{" "}
-																{syncResults[connector.id]?.processed || 0}
-															</div>
-															<div>
-																Added: {syncResults[connector.id]?.added || 0}
-															</div>
-															{syncResults[connector.id]?.errors && (
-																<div>
-																	Errors: {syncResults[connector.id]?.errors}
-																</div>
-															)}
-														</div>
-													)}
-												</>
-											) : (
-												<Button
-													onClick={() => handleConnect(connector)}
-													disabled={isConnecting === connector.id}
-													className="w-full cursor-pointer"
-													size="sm"
-												>
-													{isConnecting === connector.id ? (
-														<>
-															<Loader2 className="h-4 w-4 animate-spin" />
-															Connecting...
-														</>
-													) : (
-														<>
-															<PlugZap className="h-4 w-4" />
-															Connect
-														</>
-													)}
-												</Button>
-											)}
-										</div>
-									) : (
-										<div className="text-sm text-muted-foreground">
-											<p>
-												See our{" "}
-												<Link
-													className="text-accent-pink-foreground"
-													href="https://docs.openr.ag/knowledge#oauth-ingestion"
-													target="_blank"
-													rel="noopener noreferrer"
-												>
-													Cloud Connectors installation guide
-												</Link>{" "}
-												for more detail.
-											</p>
-										</div>
-									)}
-								</CardContent>
-							</Card>
-						);
-					}) :
-						<>
-							<ConnectorsSkeleton />
-							<ConnectorsSkeleton />
-							<ConnectorsSkeleton />
-						</>
-					}
-				</div>
+				<ConnectorCards />
 			</div>
 
 			{/* Model Providers Section */}
