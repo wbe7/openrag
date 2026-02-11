@@ -40,8 +40,9 @@ PY
 
 #ENV EASYOCR_MODULE_PATH=~/.cache/docling/models/EasyOcr/
 
-# Copy Python source and flows
+# Copy Python source, scripts, and flows
 COPY src/ ./src/
+COPY scripts/ ./scripts/
 COPY flows/ ./flows/
 
 # Expose backend port

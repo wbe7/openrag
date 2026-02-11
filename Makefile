@@ -72,7 +72,7 @@ endef
        shell-backend shell-frontend install \
        test test-integration test-ci test-ci-local test-sdk test-os-jwt lint \
        backend frontend docling docling-stop install-be install-fe build-be build-fe logs-be logs-fe logs-lf logs-os \
-       shell-be shell-lf shell-os restart status health db-reset clear-os-data flow-upload setup factory-reset \
+       shell-be shell-lf shell-os restart status health db-reset create-os-index clear-os-data flow-upload setup factory-reset \
        dev-branch build-langflow-dev stop-dev clean-dev logs-dev logs-lf-dev shell-lf-dev restart-dev status-dev
 
 all: help
@@ -290,6 +290,8 @@ help_utils: ## Show utility commands
 	@echo ''
 	@echo "$(PURPLE)Database Operations:$(NC)"
 	@echo "  $(PURPLE)make db-reset$(NC)        - Reset OpenSearch indices"
+	@echo "  $(PURPLE)make create-os-index$(NC) - Create an OpenSearch index"
+	@echo "                         Usage: make create-os-index INDEX=documents"
 	@echo "  $(PURPLE)make clear-os-data$(NC)   - Clear OpenSearch data directory"
 	@echo ''
 	@echo "$(PURPLE)Cleanup:$(NC)"
@@ -835,6 +837,19 @@ db-reset: ## Reset OpenSearch indices
 	curl -X DELETE "http://localhost:9200/documents" -u admin:$${OPENSEARCH_PASSWORD} || true
 	curl -X DELETE "http://localhost:9200/knowledge_filters" -u admin:$${OPENSEARCH_PASSWORD} || true
 	@echo "$(PURPLE)Indices reset. Restart backend to recreate.$(NC)"
+
+create-os-index: ## Create an OpenSearch index (runs in Docker network so OpenSearch is reachable as opensearch:9200)
+	@if [ -z "$(INDEX)" ]; then \
+		echo "$(RED)Usage: make create-os-index INDEX=<name>$(NC)"; \
+		echo "$(CYAN)Supported indices: documents, knowledge_filters, api_keys$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(YELLOW)Creating OpenSearch index '$(INDEX)'...$(NC)"
+	@$(COMPOSE_CMD) run --rm \
+		-v "$$(pwd)/scripts:/app/scripts" \
+		-v "$$(pwd)/src:/app/src" \
+		openrag-backend uv run python scripts/create_opensearch_index.py --index $(INDEX)
+	@echo "$(PURPLE)Done.$(NC)"
 
 clear-os-data: ## Clear OpenSearch data directory
 	@echo "$(YELLOW)Clearing OpenSearch data directory...$(NC)"
