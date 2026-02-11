@@ -38,9 +38,6 @@ export default function ConnectorCards() {
     const { isAuthenticated, isNoAuthMode } = useAuth();
     const router = useRouter();
 
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [isSyncing, setIsSyncing] = useState<string | null>(null);
     const [syncResults, setSyncResults] = useState<{
         [key: string]: SyncResult | null;
     }>({});
@@ -140,7 +137,6 @@ export default function ConnectorCards() {
                                                     variant="outline"
                                                     onClick={() => navigateToKnowledgePage(connector)}
                                                     disabled={
-                                                        isSyncing === connector.id ||
                                                         (disconnectMutation.isPending &&
                                                             (disconnectMutation.variables as any)?.type ===
                                                             connector.type) ||
