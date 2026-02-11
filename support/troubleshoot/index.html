@@ -10,8 +10,8 @@
 <script>!function(){function e(){if(void 0!==window.truste&&window.truste.cma){var e=window.truste.cma.callApi("getConsent",window.location.href)||{},n=1===e[2],t=1===e[3];gtag("consent","update",{ad_storage:n?"granted":"denied",ad_user_data:n?"granted":"denied",ad_personalization:n?"granted":"denied",analytics_storage:t?"granted":"denied"})}}window.addEventListener&&(window.addEventListener("cm_data_subject_consent_changed",e),window.addEventListener("cm_consent_preferences_set",e)),"complete"===document.readyState?e():window.addEventListener("load",e)}()</script>
 <script>window._ibmAnalytics={settings:{name:"DataStax",tealiumProfileName:"ibm-subsidiary"},trustarc:{privacyPolicyLink:"https://ibm.com/privacy"}},window.digitalData={page:{pageInfo:{ibm:{siteId:"IBM_DataStax"}},category:{primaryCategory:"PC230"}}}</script>
 <script src="//1.www.s81c.com/common/stats/ibm-common.js" async="true"></script><link rel="stylesheet" href="/assets/css/styles.29e42e49.css">
-<script src="/assets/js/runtime~main.550c6a9a.js" defer="defer"></script>
-<script src="/assets/js/main.c7facb5d.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.cbac11bf.js" defer="defer"></script>
+<script src="/assets/js/main.6ed493b9.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -136,7 +136,7 @@ You can submit an <a href="https://github.com/langflow-ai/openrag/issues" target
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="failed-or-slow-ingestion">Failed or slow ingestion<a href="#failed-or-slow-ingestion" class="hash-link" aria-label="Direct link to Failed or slow ingestion" title="Direct link to Failed or slow ingestion" translate="no">​</a></h3>
 <p>If an ingestion task fails, try the following:</p>
 <ul>
-<li class="">Make sure you ingest only supported file types.</li>
+<li class="">Make sure you ingest only <a class="" href="/ingestion#supported-file-types">supported file types</a>.</li>
 <li class="">Split very large files into smaller files.</li>
 <li class="">Remove unusual or complex embedded content, such as videos or animations. Although Docling can replace some non-text content with placeholders during ingestion, some embedded content might cause errors.</li>
 <li class="">Make sure your Podman/Docker VM has <a class="" href="/support/troubleshoot#container-out-of-memory-errors">sufficient memory</a> and temporary storage for the ingestion tasks.
@@ -175,15 +175,15 @@ For example, on macOS, this is typically a user cache directory, such as <code>~
 </ol>
 <p>If you install OpenRAG with <code>uv</code>, dependencies are synced directly from your <code>pyproject.toml</code> file.
 This should automatically install <code>easyocr</code> because <code>easyocr</code> is included as a dependency in OpenRAG&#x27;s <code>pyproject.toml</code>.</p>
-<p>If you don&#x27;t need OCR, you can disable OCR-based processing in your <a class="" href="/knowledge#knowledge-ingestion-settings">ingestion settings</a> to avoid requiring <code>easyocr</code>.</p>
+<p>If you don&#x27;t need OCR, you can disable OCR-based processing in your <a class="" href="/ingestion-configure">ingestion settings</a> to avoid requiring <code>easyocr</code>.</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="problems-when-referencing-documents-in-chat">Problems when referencing documents in chat<a href="#problems-when-referencing-documents-in-chat" class="hash-link" aria-label="Direct link to Problems when referencing documents in chat" title="Direct link to Problems when referencing documents in chat" translate="no">​</a></h3>
-<p>If the OpenRAG <strong>Chat</strong> doesn&#x27;t seem to use your documents correctly, <a class="" href="/knowledge#browse-knowledge">browse your knowledge base</a> to confirm that the documents are uploaded in full, and the chunks are correct.</p>
+<p>If the OpenRAG <strong>Chat</strong> doesn&#x27;t seem to use your documents correctly, <a class="" href="/knowledge-browse">browse your knowledge base</a> to confirm that the documents are uploaded in full, and the chunks are correct.</p>
 <p>If the documents are present and well-formed, check your <a class="" href="/knowledge-filters">knowledge filters</a>.
 If you applied a filter to the chat, make sure the expected documents aren&#x27;t excluded by the filter settings.
-You can test this by applying the filter when you <a class="" href="/knowledge#browse-knowledge">browse the knowledge base</a>.
+You can test this by applying the filter when you <a class="" href="/knowledge-browse">browse the knowledge base</a>.
 If the filter excludes any documents, the agent cannot access those documents.
 Be aware that some settings create dynamic filters that don&#x27;t always produce the same results, such as a <strong>Search query</strong> combined with a low <strong>Response limit</strong>.</p>
-<p>If the document chunks have missing, incorrect, or unexpected text, you must <a class="" href="/knowledge#delete-knowledge">delete the documents</a> from your knowledge base, modify the <a class="" href="/knowledge#knowledge-ingestion-settings">ingestion parameters</a> or the documents themselves, and then reingest the documents.
+<p>If the document chunks have missing, incorrect, or unexpected text, you must <a class="" href="/knowledge-browse#delete-knowledge">delete the documents</a> from your knowledge base, modify the <a class="" href="/ingestion-configure">ingestion settings</a> or the documents themselves, and then reingest the documents.
 For example:</p>
 <ul>
 <li class="">Break combined documents into separate files for better metadata context.</li>
@@ -195,8 +195,8 @@ For example:</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="documents-seem-to-be-missing-or-misinterpreted">Documents seem to be missing or misinterpreted<a href="#documents-seem-to-be-missing-or-misinterpreted" class="hash-link" aria-label="Direct link to Documents seem to be missing or misinterpreted" title="Direct link to Documents seem to be missing or misinterpreted" translate="no">​</a></h3>
 <p>In the <strong>Chat</strong>, click <!-- --> <strong>Function Call: search_documents (tool_call)</strong> to view the log of tool calls made by the agent.
 This can shows you how the agent used particular tools and the reasoning.</p>
-<p>Click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-library" aria-hidden="true"><path d="m16 6 4 14"></path><path d="M12 6v14"></path><path d="M8 8v12"></path><path d="M4 4v16"></path></svg> <strong>Knowledge</strong> to confirm that the documents are present in the OpenRAG OpenSearch database, and then click each document to see how the document was chunked.
-If a document was chunked improperly, you might need to tweak the <a class="" href="/ingestion">ingestion settings</a> or modify and reupload the document.</p>
+<p>Click <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-library" aria-hidden="true"><path d="m16 6 4 14"></path><path d="M12 6v14"></path><path d="M8 8v12"></path><path d="M4 4v16"></path></svg> <strong>Knowledge</strong> to confirm that the documents are present in the OpenRAG OpenSearch knowledge base, and then click each document to see how the document was chunked.
+If a document was chunked improperly, you might need to tweak the <a class="" href="/ingestion-configure">ingestion settings</a> or modify and reupload the document.</p>
 <p>See also <a href="#document-ingestion-or-similarity-search-issues" class="">Document ingestion or similarity search issues</a>.</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="service-is-suddenly-unavailable-when-it-was-working-previously">Service is suddenly unavailable when it was working previously<a href="#service-is-suddenly-unavailable-when-it-was-working-previously" class="hash-link" aria-label="Direct link to Service is suddenly unavailable when it was working previously" title="Direct link to Service is suddenly unavailable when it was working previously" translate="no">​</a></h3>
 <p>First, verify that the container VM and the OpenRAG services are running and healthy.</p>
