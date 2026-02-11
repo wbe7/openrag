@@ -53,6 +53,7 @@ import SharePointIcon from "../../components/icons/share-point-logo";
 import { useUpdateSettingsMutation } from "../api/mutations/useUpdateSettingsMutation";
 import { ModelSelector } from "../onboarding/_components/model-selector";
 import ModelProviders from "./_components/model-providers";
+import ConnectorsSkeleton from "./_components/connectors-skeleton";
 import { getModelLogo, type ModelProvider } from "./_helpers/model-helpers";
 
 const { MAX_SYSTEM_PROMPT_CHARS } = UI_CONSTANTS;
@@ -917,7 +918,7 @@ function KnowledgeSourcesPage() {
 				}
 				{/* Connectors Grid */}
 				<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-					{connectors.map((connector) => {
+					{connectors.length > 0 ? connectors.map((connector) => {
 						return (
 							<Card key={connector.id} className="relative flex flex-col">
 								<CardHeader className="pb-2">
@@ -1046,7 +1047,13 @@ function KnowledgeSourcesPage() {
 								</CardContent>
 							</Card>
 						);
-					})}
+					}) :
+						<>
+							<ConnectorsSkeleton />
+							<ConnectorsSkeleton />
+							<ConnectorsSkeleton />
+						</>
+					}
 				</div>
 			</div>
 
