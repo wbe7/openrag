@@ -51,6 +51,8 @@ import GoogleDriveIcon from "../../components/icons/google-drive-logo";
 import OneDriveIcon from "../../components/icons/one-drive-logo";
 import SharePointIcon from "../../components/icons/share-point-logo";
 import { useUpdateSettingsMutation } from "../api/mutations/useUpdateSettingsMutation";
+import { useGetConnectorsQuery, type Connector as QueryConnector } from "@/app/api/queries/useGetConnectorsQuery";
+import { useDisconnectConnectorMutation } from "@/app/api/mutations/useDisconnectConnectorMutation";
 import { ModelSelector } from "../onboarding/_components/model-selector";
 import ModelProviders from "./_components/model-providers";
 import ConnectorsSkeleton from "./_components/connectors-skeleton";
@@ -115,16 +117,28 @@ function KnowledgeSourcesPage() {
 	// Use a trigger state that changes each time we detect the query param
 	const [openLlmSelector, setOpenLlmSelector] = useState(false);
 
-	// Connectors state
-	const [connectors, setConnectors] = useState<Connector[]>([]);
+	// API Keys state
+	const [createKeyDialogOpen, setCreateKeyDialogOpen] = useState(false);
+	const [newKeyName, setNewKeyName] = useState("");
+	const [newlyCreatedKey, setNewlyCreatedKey] = useState<string | null>(null);
+	const [showKeyDialogOpen, setShowKeyDialogOpen] = useState(false);
+	// Fetch connectors using React Query
+	const { data: queryConnectors = [], isLoading: connectorsLoading } = useGetConnectorsQuery({
+		enabled: isAuthenticated || isNoAuthMode,
+	});
+
+	// Use query data but cast to the local Connector interface if needed, or update local interface
+	// For now, let's keep the local state for isConnecting and syncResults as they are transient
 	const [isConnecting, setIsConnecting] = useState<string | null>(null);
-	const [isDisconnecting, setIsDisconnecting] = useState<string | null>(null);
 	const [isSyncing, setIsSyncing] = useState<string | null>(null);
 	const [syncResults, setSyncResults] = useState<{
 		[key: string]: SyncResult | null;
 	}>({});
 	const [maxFiles, setMaxFiles] = useState<number>(10);
 	const [syncAllFiles, setSyncAllFiles] = useState<boolean>(false);
+
+	// Disconnect mutation
+	const disconnectMutation = useDisconnectConnectorMutation();
 
 	// Only keep systemPrompt state since it needs manual save button
 	const [systemPrompt, setSystemPrompt] = useState<string>("");
@@ -134,12 +148,6 @@ function KnowledgeSourcesPage() {
 	const [ocr, setOcr] = useState<boolean>(false);
 	const [pictureDescriptions, setPictureDescriptions] =
 		useState<boolean>(false);
-
-	// API Keys state
-	const [createKeyDialogOpen, setCreateKeyDialogOpen] = useState(false);
-	const [newKeyName, setNewKeyName] = useState("");
-	const [newlyCreatedKey, setNewlyCreatedKey] = useState<string | null>(null);
-	const [showKeyDialogOpen, setShowKeyDialogOpen] = useState(false);
 
 	// Fetch settings using React Query
 	const { data: settings = {} } = useGetSettingsQuery({
@@ -480,64 +488,12 @@ function KnowledgeSourcesPage() {
 		);
 	}, []);
 
-	// Connector functions
-	const checkConnectorStatuses = useCallback(async () => {
-		try {
-			// Fetch available connectors from backend
-			const connectorsResponse = await fetch("/api/connectors");
-			if (!connectorsResponse.ok) {
-				throw new Error("Failed to load connectors");
-			}
+	// Transform query connectors to include icons
+	const connectors = queryConnectors.map(c => ({
+		...c,
+		icon: getConnectorIcon(c.icon)
+	})) as Connector[];
 
-			const connectorsResult = await connectorsResponse.json();
-			const connectorTypes = Object.keys(connectorsResult.connectors);
-
-			// Initialize connectors list with metadata from backend
-			const initialConnectors = connectorTypes
-				// .filter((type) => connectorsResult.connectors[type].available) // Only show available connectors
-				.map((type) => ({
-					id: type,
-					name: connectorsResult.connectors[type].name,
-					description: connectorsResult.connectors[type].description,
-					icon: getConnectorIcon(connectorsResult.connectors[type].icon),
-					status: "not_connected" as const,
-					type: type,
-					available: connectorsResult.connectors[type].available,
-				}));
-
-			setConnectors(initialConnectors);
-
-			// Check status for each connector type
-
-			for (const connectorType of connectorTypes) {
-				const response = await fetch(`/api/connectors/${connectorType}/status`);
-				if (response.ok) {
-					const data = await response.json();
-					const connections = data.connections || [];
-					// Find a connection that is both active AND authenticated
-					const activeConnection = connections.find(
-						(conn: Connection & { is_authenticated?: boolean }) =>
-							conn.is_active && conn.is_authenticated,
-					);
-					const isConnected = activeConnection !== undefined;
-
-					setConnectors((prev) =>
-						prev.map((c) =>
-							c.type === connectorType
-								? {
-									...c,
-									status: isConnected ? "connected" : "not_connected",
-									connectionId: activeConnection?.connection_id,
-								}
-								: c,
-						),
-					);
-				}
-			}
-		} catch (error) {
-			console.error("Failed to check connector statuses:", error);
-		}
-	}, [getConnectorIcon]);
 
 	const handleConnect = async (connector: Connector) => {
 		setIsConnecting(connector.id);
@@ -592,39 +548,7 @@ function KnowledgeSourcesPage() {
 	};
 
 	const handleDisconnect = async (connector: Connector) => {
-		setIsDisconnecting(connector.id);
-
-		try {
-			const response = await fetch(`/api/connectors/${connector.type}/disconnect`, {
-				method: "DELETE",
-			});
-
-			if (response.ok) {
-				// Update the connector status locally
-				setConnectors((prev) =>
-					prev.map((c) =>
-						c.type === connector.type
-							? {
-								...c,
-								status: "not_connected",
-								connectionId: undefined,
-							}
-							: c,
-					),
-				);
-				setSyncResults((prev) => ({ ...prev, [connector.id]: null }));
-				toast.success(`${connector.name} disconnected`);
-			} else {
-				const result = await response.json();
-				console.error("Failed to disconnect:", result.error);
-				toast.error(`Failed to disconnect ${connector.name}`);
-			}
-		} catch (error) {
-			console.error("Disconnect error:", error);
-			toast.error(`Failed to disconnect ${connector.name}`);
-		} finally {
-			setIsDisconnecting(null);
-		}
+		disconnectMutation.mutate(connector as unknown as QueryConnector);
 	};
 
 	// const handleSync = async (connector: Connector) => {
@@ -687,16 +611,12 @@ function KnowledgeSourcesPage() {
 
 	// Check connector status on mount and when returning from OAuth
 	useEffect(() => {
-		if (isAuthenticated) {
-			checkConnectorStatuses();
-		}
-
 		if (searchParams.get("oauth_success") === "true") {
 			const url = new URL(window.location.href);
 			url.searchParams.delete("oauth_success");
 			window.history.replaceState({}, "", url.toString());
 		}
-	}, [searchParams, isAuthenticated, checkConnectorStatuses]);
+	}, [searchParams]);
 
 	// Track previous tasks to detect new completions
 	const [prevTasks, setPrevTasks] = useState<typeof tasks>([]);
@@ -956,7 +876,7 @@ function KnowledgeSourcesPage() {
 														<Button
 															variant="outline"
 															onClick={() => navigateToKnowledgePage(connector)}
-															disabled={isSyncing === connector.id || isDisconnecting === connector.id}
+															disabled={isSyncing === connector.id || (disconnectMutation.isPending && (disconnectMutation.variables as any)?.type === connector.type)}
 															className="cursor-pointer !text-sm truncate"
 															size="md"
 														>
@@ -966,7 +886,7 @@ function KnowledgeSourcesPage() {
 														<Button
 															variant="outline"
 															onClick={() => handleConnect(connector)}
-															disabled={isConnecting === connector.id || isDisconnecting === connector.id}
+															disabled={isConnecting === connector.id || (disconnectMutation.isPending && (disconnectMutation.variables as any)?.type === connector.type)}
 															className="cursor-pointer"
 															size="iconMd"
 														>
@@ -979,11 +899,11 @@ function KnowledgeSourcesPage() {
 														<Button
 															variant="outline"
 															onClick={() => handleDisconnect(connector)}
-															disabled={isDisconnecting === connector.id || isConnecting === connector.id}
+															disabled={(disconnectMutation.isPending && (disconnectMutation.variables as any)?.type === connector.type) || isConnecting === connector.id}
 															className="cursor-pointer text-destructive hover:text-destructive"
 															size="iconMd"
 														>
-															{isDisconnecting === connector.id ? (
+															{disconnectMutation.isPending && (disconnectMutation.variables as any)?.type === connector.type ? (
 																<Loader2 className="h-4 w-4 animate-spin" />
 															) : (
 																<Trash2 className="h-4 w-4" />
