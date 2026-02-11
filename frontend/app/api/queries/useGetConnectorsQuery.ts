@@ -27,6 +27,8 @@ export interface Connector {
     status: "not_connected" | "connected" | "error";
     type: string;
     connectionId?: string;
+    clientId?: string;
+    baseUrl?: string;
     access_token?: string;
     selectedFiles?: GoogleDriveFile[] | OneDriveFile[];
     available?: boolean;
@@ -38,6 +40,8 @@ interface Connection {
     is_authenticated?: boolean;
     created_at: string;
     last_sync?: string;
+    client_id?: string;
+    base_url?: string;
 }
 
 export interface GetConnectorsResponse {
@@ -74,6 +78,18 @@ export const useGetConnectorsQuery = (
                     if (activeConnection) {
                         status = "connected";
                         connectionId = activeConnection.connection_id;
+                        return {
+                            id: type,
+                            name: connectorData.name,
+                            description: connectorData.description,
+                            icon: connectorData.icon,
+                            status,
+                            type,
+                            connectionId,
+                            clientId: activeConnection.client_id,
+                            baseUrl: activeConnection.base_url,
+                            available: connectorData.available,
+                        } as Connector;
                     }
                 }
 
