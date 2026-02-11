@@ -96,6 +96,7 @@ export const useGetConnectorsQuery = (
     return useQuery({
         queryKey: ["connectors"],
         queryFn: getConnectors,
+        refetchOnMount: "always",
         ...options,
     });
 };
