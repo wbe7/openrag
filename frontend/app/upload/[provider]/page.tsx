@@ -19,7 +19,7 @@ interface CloudConnector {
   id: string;
   name: string;
   description: string;
-  status: "not_connected" | "connecting" | "connected" | "error";
+  status: "not_connected" | "connected" | "error";
   type: string;
   connectionId?: string;
   clientId: string;
@@ -101,7 +101,7 @@ export default function UploadProviderPage() {
             if (provider === "sharepoint" && activeConnection.base_url) {
               tokenUrl += `&resource=${encodeURIComponent(activeConnection.base_url)}`;
             }
-            
+
             const tokenResponse = await fetch(tokenUrl);
             if (tokenResponse.ok) {
               const tokenData = await tokenResponse.json();

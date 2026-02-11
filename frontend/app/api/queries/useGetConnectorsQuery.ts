@@ -24,7 +24,7 @@ export interface Connector {
     name: string;
     description: string;
     icon: string; // The icon name from the API
-    status: "not_connected" | "connecting" | "connected" | "error";
+    status: "not_connected" | "connected" | "error";
     type: string;
     connectionId?: string;
     access_token?: string;

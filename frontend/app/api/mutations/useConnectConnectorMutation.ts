@@ -43,17 +43,6 @@ export const useConnectConnectorMutation = () => {
             // Snapshot the previous value
             const previousConnectors = queryClient.getQueryData<Connector[]>(["connectors"]);
 
-            // Optimistically update to "connecting" status
-            if (previousConnectors) {
-                queryClient.setQueryData<Connector[]>(["connectors"],
-                    previousConnectors.map((c) =>
-                        c.type === connector.type
-                            ? { ...c, status: "connecting" }
-                            : c
-                    )
-                );
-            }
-
             return { previousConnectors };
         },
         onError: (err, { connector }, context) => {
@@ -67,6 +56,7 @@ export const useConnectConnectorMutation = () => {
             if (result.oauth_config) {
                 localStorage.setItem("connecting_connector_id", result.connection_id);
                 localStorage.setItem("connecting_connector_type", connector.type);
+                localStorage.setItem("auth_purpose", "data_source");
 
                 const authUrl =
                     `${result.oauth_config.authorization_endpoint}?` +
@@ -82,9 +72,6 @@ export const useConnectConnectorMutation = () => {
 
                 window.location.href = authUrl;
             }
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ["connectors"] });
         },
     });
 };

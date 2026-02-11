@@ -197,15 +197,16 @@ export default function ConnectorCards() {
                                         <Button
                                             onClick={() => handleConnect(connector)}
                                             disabled={
-                                                connectMutation.isPending &&
-                                                connectMutation.variables?.connector.id === connector.id
+                                                (connectMutation.isPending &&
+                                                    connectMutation.variables?.connector.id ===
+                                                    connector.id)
                                             }
                                             className="w-full cursor-pointer"
                                             size="sm"
                                         >
-                                            {connectMutation.isPending &&
+                                            {(connectMutation.isPending &&
                                                 connectMutation.variables?.connector.id ===
-                                                connector.id ? (
+                                                connector.id) ? (
                                                 <>
                                                     <Loader2 className="h-4 w-4 animate-spin" />
                                                     Connecting...
