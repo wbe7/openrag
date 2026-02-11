@@ -56,7 +56,7 @@ INDEX_BODIES = {
 async def create_index(index_name: str) -> int:
     if index_name not in INDEX_BODIES:
         print(f"Unsupported index name: {index_name}", file=sys.stderr)
-        print(f"Supported: {', '.join(INDEX_BODIES)}", file=sys.stderr)
+        print("Supported: documents, knowledge_filters, api_keys", file=sys.stderr)
         return 1
 
     if not OPENSEARCH_PASSWORD:
