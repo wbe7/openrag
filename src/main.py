@@ -1559,8 +1559,10 @@ async def create_app():
     ]
 
     # MCP Apps HTTP server at /mcp (Streamable HTTP, API key auth)
+    # When mounted, the sub-app's lifespan is not run; we must run the session
+    # manager lifespan in the parent app to avoid 500 on POST (task group not initialized).
     from mcp_apps.server import create_mcp_http_app
-    mcp_app = create_mcp_http_app(services)
+    mcp_app, mcp_session_manager = create_mcp_http_app(services)
     routes.append(Mount("/mcp", mcp_app))
 
     app = Starlette(debug=True, routes=routes)
@@ -1571,6 +1573,10 @@ async def create_app():
     @app.on_event("startup")
     async def startup_event():
         await TelemetryClient.send_event(Category.APPLICATION_STARTUP, MessageId.ORB_APP_STARTED)
+        # Run MCP StreamableHTTP session manager lifespan (required when mounting at /mcp)
+        mcp_cm = mcp_session_manager.run()
+        app.state._mcp_session_manager_cm = mcp_cm
+        await mcp_cm.__aenter__()
         # Start index initialization in background to avoid blocking OIDC endpoints
         t1 = asyncio.create_task(startup_tasks(services))
         app.state.background_tasks.add(t1)
@@ -1622,6 +1628,10 @@ async def create_app():
     @app.on_event("shutdown")
     async def shutdown_event():
         await TelemetryClient.send_event(Category.APPLICATION_SHUTDOWN, MessageId.ORB_APP_SHUTDOWN)
+        # Exit MCP StreamableHTTP session manager lifespan
+        mcp_cm = getattr(app.state, "_mcp_session_manager_cm", None)
+        if mcp_cm is not None:
+            await mcp_cm.__aexit__(None, None, None)
         await cleanup_subscriptions_proper(services)
         # Cleanup task service (cancels background tasks and process pool)
         await services["task_service"].shutdown()
