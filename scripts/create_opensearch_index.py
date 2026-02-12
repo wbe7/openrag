@@ -21,12 +21,13 @@ from opensearchpy._async.http_aiohttp import AIOHttpConnection
 
 from config.settings import (
     API_KEYS_INDEX_BODY,
-    INDEX_BODY,
     OPENSEARCH_HOST,
     OPENSEARCH_PASSWORD,
     OPENSEARCH_PORT,
     OPENSEARCH_USERNAME,
+    get_openrag_config,
 )
+from utils.embeddings import create_dynamic_index_body
 
 # Knowledge filters index body (matches src/main.py)
 KNOWLEDGE_FILTERS_INDEX_BODY = {
@@ -47,14 +48,16 @@ KNOWLEDGE_FILTERS_INDEX_BODY = {
 }
 
 INDEX_BODIES = {
-    "documents": INDEX_BODY,
     "knowledge_filters": KNOWLEDGE_FILTERS_INDEX_BODY,
     "api_keys": API_KEYS_INDEX_BODY,
 }
 
+# List of supported index names (documents index is created dynamically)
+SUPPORTED_INDEXES = ["documents", "knowledge_filters", "api_keys"]
+
 
 async def create_index(index_name: str) -> int:
-    if index_name not in INDEX_BODIES:
+    if index_name not in SUPPORTED_INDEXES:
         print(f"Unsupported index name: {index_name}", file=sys.stderr)
         print("Supported: documents, knowledge_filters, api_keys", file=sys.stderr)
         return 1
@@ -80,7 +83,21 @@ async def create_index(index_name: str) -> int:
             print(f"Index '{index_name}' already exists, skipping.")
             return 0
 
-        body = INDEX_BODIES[index_name]
+        # For documents index, create dynamic index body based on embedding config
+        if index_name == "documents":
+            config = get_openrag_config()
+            embedding_model = config.knowledge.embedding_model
+            embedding_provider = config.knowledge.embedding_provider
+            embedding_provider_config = config.get_embedding_provider_config()
+
+            body = await create_dynamic_index_body(
+                embedding_model,
+                provider=embedding_provider,
+                endpoint=getattr(embedding_provider_config, "endpoint", None)
+            )
+        else:
+            body = INDEX_BODIES[index_name]
+
         await client.indices.create(index=index_name, body=body)
         print(f"Created OpenSearch index '{index_name}'.")
         return 0
@@ -96,7 +113,7 @@ def main() -> int:
     parser.add_argument(
         "--index",
         required=True,
-        choices=list(INDEX_BODIES),
+        choices=SUPPORTED_INDEXES,
         help="Index name to create (documents, knowledge_filters, api_keys)",
     )
     args = parser.parse_args()
