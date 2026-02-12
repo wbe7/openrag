@@ -1,6 +1,7 @@
 from typing import Any
 from .tasks import UploadTask, FileTask
 from utils.logging_config import get_logger
+from utils.file_utils import get_file_extension, clean_connector_filename
 
 logger = get_logger(__name__)
 
@@ -158,6 +159,7 @@ class TaskProcessor:
         connector_type: str = "local",
         embedding_model: str = None,
         is_sample_data: bool = False,
+        acl: "DocumentACL" = None,
     ):
         """
         Standard processing pipeline for non-Langflow processors:
@@ -166,6 +168,7 @@ class TaskProcessor:
         Args:
             embedding_model: Embedding model to use (defaults to the current
                 embedding model from settings)
+            acl: DocumentACL instance with access control information
         """
         import datetime
         from config.settings import INDEX_NAME, clients, get_embedding_model
@@ -251,9 +254,20 @@ class TaskProcessor:
                 "indexed_time": datetime.datetime.now().isoformat(),
             }
 
-            # Only set owner fields if owner_user_id is provided (for no-auth mode support)
-            if owner_user_id is not None:
-                chunk_doc["owner"] = owner_user_id
+            # Set owner and ACL fields
+            if acl:
+                # Use ACL data if provided (from connector)
+                chunk_doc["owner"] = acl.owner if acl.owner else owner_user_id
+                chunk_doc["allowed_users"] = acl.allowed_users
+                chunk_doc["allowed_groups"] = acl.allowed_groups
+            else:
+                # Fallback to owner_user_id if no ACL (local uploads)
+                if owner_user_id is not None:
+                    chunk_doc["owner"] = owner_user_id
+                    chunk_doc["allowed_users"] = []
+                    chunk_doc["allowed_groups"] = []
+
+            # Set owner metadata fields (for display)
             if owner_name is not None:
                 chunk_doc["owner_name"] = owner_name
             if owner_email is not None:
@@ -418,6 +432,9 @@ class ConnectorFileProcessor(TaskProcessor):
 
             # Get file content from connector
             document = await connector.get_file_content(file_id)
+            
+            # Update filename in task once we have it from the connector
+            file_task.filename = clean_connector_filename(document.filename, document.mimetype)
 
             if not self.user_id:
                 raise ValueError("user_id not provided to ConnectorFileProcessor")
@@ -425,7 +442,7 @@ class ConnectorFileProcessor(TaskProcessor):
             # Create temporary file from document content
             from utils.file_utils import auto_cleanup_tempfile
 
-            suffix = self.connector_service._get_file_extension(document.mimetype)
+            suffix = get_file_extension(document.mimetype)
             with auto_cleanup_tempfile(suffix=suffix) as tmp_path:
                 # Write content to temp file
                 with open(tmp_path, 'wb') as f:
@@ -445,6 +462,7 @@ class ConnectorFileProcessor(TaskProcessor):
                     owner_email=self.owner_email,
                     file_size=len(document.content),
                     connector_type=connection.connector_type,
+                    acl=document.acl,
                 )
 
                 # Add connector-specific metadata
@@ -519,13 +537,16 @@ class LangflowConnectorFileProcessor(TaskProcessor):
             # Get file content from connector
             document = await connector.get_file_content(file_id)
 
+            # Update filename in task once we have it from the connector
+            file_task.filename = clean_connector_filename(document.filename, document.mimetype)
+
             if not self.user_id:
                 raise ValueError("user_id not provided to LangflowConnectorFileProcessor")
 
             # Create temporary file and compute hash to check for duplicates
             from utils.file_utils import auto_cleanup_tempfile
 
-            suffix = self.langflow_connector_service._get_file_extension(document.mimetype)
+            suffix = get_file_extension(document.mimetype)
             with auto_cleanup_tempfile(suffix=suffix) as tmp_path:
                 # Write content to temp file
                 with open(tmp_path, 'wb') as f:
