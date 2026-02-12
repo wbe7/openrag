@@ -20,7 +20,7 @@ import subprocess
 from functools import partial
 
 from starlette.applications import Starlette
-from starlette.routing import Route
+from starlette.routing import Mount, Route
 
 # Set multiprocessing start method to 'spawn' for CUDA compatibility
 multiprocessing.set_start_method("spawn", force=True)
@@ -1489,6 +1489,11 @@ async def create_app():
             methods=["DELETE"],
         ),
     ]
+
+    # MCP Apps HTTP server at /mcp (Streamable HTTP, API key auth)
+    from mcp_apps.server import create_mcp_http_app
+    mcp_app = create_mcp_http_app(services)
+    routes.append(Mount("/mcp", mcp_app))
 
     app = Starlette(debug=True, routes=routes)
     app.state.services = services  # Store services for cleanup

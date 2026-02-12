@@ -37,6 +37,7 @@ dependencies = [
     "easyocr>=1.7.1; sys_platform != 'darwin'",
     "zxcvbn>=4.5.0",
     "openrag-sdk>=0.1.0",
+    "mcp>=1.26.0",
 ]
 
 [dependency-groups]
