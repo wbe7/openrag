@@ -286,7 +286,7 @@ const OnboardingCard = ({
 
     // If at least one processed file, no failures, and we've started onboarding, complete it
     if (
-      (((!activeTasks || (activeTasks.processed_files ?? 0) > 0) &&
+      (((!activeTasks || (activeTasks.successful_files ?? 0) > 0) &&
         tasks.length > 0) ||
         (tasks.length === 0 && currentStep === totalSteps - 1)) && // Complete because no files were ingested
       !isCompleted &&
