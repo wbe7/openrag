@@ -10,7 +10,6 @@ import {
   useOnboardingMutation,
 } from "@/app/api/mutations/useOnboardingMutation";
 import { useOnboardingRollbackMutation } from "@/app/api/mutations/useOnboardingRollbackMutation";
-import { useUpdateOnboardingStateMutation } from "@/app/api/mutations/useUpdateOnboardingStateMutation";
 import { useGetSettingsQuery } from "@/app/api/queries/useGetSettingsQuery";
 import { useGetTasksQuery } from "@/app/api/queries/useGetTasksQuery";
 import type { ProviderHealthResponse } from "@/app/api/queries/useProviderHealthQuery";
@@ -65,8 +64,6 @@ const OnboardingCard = ({
   const [modelProvider, setModelProvider] = useState<string>(
     isEmbedding ? "openai" : "anthropic",
   );
-
-  const [sampleDataset, setSampleDataset] = useState<boolean>(true);
 
   const [isLoadingModels, setIsLoadingModels] = useState<boolean>(false);
 
@@ -274,14 +271,7 @@ const OnboardingCard = ({
       // Set error message and jump back one step (exactly like onboardingMutation.onError)
       setError(errorMessage);
       setCurrentStep(totalSteps);
-      // Jump back one step after 1 second (go back to the step before ingestion)
-      // For embedding: totalSteps is 4, ingestion is step 3, so go back to step 2
-      // For LLM: totalSteps is 3, ingestion is step 2, so go back to step 1
-      setTimeout(() => {
-        // Go back to the step before the last step (which is ingestion)
-        const previousStep = totalSteps > 1 ? totalSteps - 2 : 0;
-        setCurrentStep(previousStep);
-      }, 1000);
+      rollbackMutation.mutate();
       return;
     }
 
@@ -330,10 +320,7 @@ const OnboardingCard = ({
     onError: (error) => {
       setError(error.message);
       setCurrentStep(totalSteps);
-      // Reset to provider selection after 1 second
-      setTimeout(() => {
-        setCurrentStep(null);
-      }, 1000);
+      rollbackMutation.mutate();
     },
   });
 
@@ -358,7 +345,6 @@ const OnboardingCard = ({
 
     // Prepare onboarding data with provider-specific fields
     const onboardingData: OnboardingVariables = {
-      sample_data: sampleDataset,
     };
 
     // Set the provider field
@@ -574,8 +560,6 @@ const OnboardingCard = ({
                   <TabsContent value="anthropic">
                     <AnthropicOnboarding
                       setSettings={setSettings}
-                      sampleDataset={sampleDataset}
-                      setSampleDataset={setSampleDataset}
                       setIsLoadingModels={setIsLoadingModels}
                       isEmbedding={isEmbedding}
                       hasEnvApiKey={
@@ -588,8 +572,6 @@ const OnboardingCard = ({
                 <TabsContent value="openai">
                   <OpenAIOnboarding
                     setSettings={setSettings}
-                    sampleDataset={sampleDataset}
-                    setSampleDataset={setSampleDataset}
                     setIsLoadingModels={setIsLoadingModels}
                     isEmbedding={isEmbedding}
                     hasEnvApiKey={
@@ -601,8 +583,6 @@ const OnboardingCard = ({
                 <TabsContent value="watsonx">
                   <IBMOnboarding
                     setSettings={setSettings}
-                    sampleDataset={sampleDataset}
-                    setSampleDataset={setSampleDataset}
                     setIsLoadingModels={setIsLoadingModels}
                     isEmbedding={isEmbedding}
                     alreadyConfigured={providerAlreadyConfigured && modelProvider === "watsonx"}
@@ -614,8 +594,6 @@ const OnboardingCard = ({
                 <TabsContent value="ollama">
                   <OllamaOnboarding
                     setSettings={setSettings}
-                    sampleDataset={sampleDataset}
-                    setSampleDataset={setSampleDataset}
                     setIsLoadingModels={setIsLoadingModels}
                     isEmbedding={isEmbedding}
                     alreadyConfigured={providerAlreadyConfigured && modelProvider === "ollama"}
