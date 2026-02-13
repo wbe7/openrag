@@ -7,6 +7,7 @@ from utils.logging_config import get_logger
 from utils.telemetry import TelemetryClient, Category, MessageId
 from config.settings import (
     DISABLE_INGEST_WITH_LANGFLOW,
+    INGEST_SAMPLE_DATA,
     LANGFLOW_URL,
     LANGFLOW_CHAT_FLOW_ID,
     LANGFLOW_INGEST_FLOW_ID,
@@ -730,7 +731,6 @@ async def onboarding(request, flows_service, session_manager=None):
             "llm_model",
             "embedding_provider",
             "embedding_model",
-            "sample_data",
             # Provider-specific fields
             "openai_api_key",
             "anthropic_api_key",
@@ -920,20 +920,13 @@ async def onboarding(request, flows_service, session_manager=None):
                 current_config.providers.ollama.configured = True
                 logger.info("Marked Ollama as configured (chosen as embedding provider)")
 
-        # Handle sample_data
-        should_ingest_sample_data = False
-        if "sample_data" in body:
-            if not isinstance(body["sample_data"], bool):
-                return JSONResponse(
-                    {"error": "sample_data must be a boolean value"}, status_code=400
-                )
-            should_ingest_sample_data = body["sample_data"]
-            if should_ingest_sample_data:
-                await TelemetryClient.send_event(
-                    Category.ONBOARDING, 
-                    MessageId.ORB_ONBOARD_SAMPLE_DATA
-                )
-                logger.info("Sample data ingestion requested during onboarding")
+        should_ingest_sample_data = INGEST_SAMPLE_DATA
+        if should_ingest_sample_data:
+            await TelemetryClient.send_event(
+                Category.ONBOARDING, 
+                MessageId.ORB_ONBOARD_SAMPLE_DATA
+            )
+            logger.info("Sample data ingestion enabled via environment variable")
 
         if not config_updated:
             return JSONResponse(
@@ -1069,13 +1062,14 @@ async def onboarding(request, flows_service, session_manager=None):
                     logger.error(
                         "Failed to complete sample data ingestion", error=str(e)
                     )
-                    should_ingest_sample_data = False
-                    # Don't fail the entire onboarding process if sample data fails
+                    
+                    return JSONResponse(
+                        {"error": f"Failed to ingest sample documents: {str(e)}"}, 
+                        status_code=500
+                    )
 
         if config_manager.save_config_file(current_config):
-            updated_fields = [
-                k for k in body.keys() if k != "sample_data"
-            ]  # Exclude sample_data from log
+            updated_fields = list(body.keys())
             logger.info(
                 "Onboarding configuration updated successfully",
                 updated_fields=updated_fields,

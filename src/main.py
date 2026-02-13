@@ -388,6 +388,7 @@ async def ingest_default_documents_when_ready(services):
     except Exception as e:
         logger.error("Default documents ingestion failed", error=str(e))
         await TelemetryClient.send_event(Category.DOCUMENT_INGESTION, MessageId.ORB_DOC_DEFAULT_FAILED)
+        raise
 
 
 async def _ingest_default_documents_langflow(services, file_paths):
