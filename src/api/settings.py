@@ -1018,24 +1018,16 @@ async def onboarding(request, flows_service, session_manager=None):
                 await init_index()
                 logger.info("OpenSearch index initialization completed successfully")
             except Exception as e:
-                if isinstance(e, ValueError):
-                    logger.error(
-                        "Failed to initialize OpenSearch index after onboarding",
-                        error=str(e),
-                    )
-                    return JSONResponse(
-                        {
-                            "error": str(e),
-                            "edited": True,
-                        },
-                        status_code=400,
-                    )
                 logger.error(
                     "Failed to initialize OpenSearch index after onboarding",
                     error=str(e),
                 )
-                # Don't fail the entire onboarding process if index creation fails
-                # The application can still work, but document operations may fail
+                return JSONResponse(
+                    {
+                        "error": str(e),
+                    },
+                    status_code=500,
+                )
 
             # Handle sample data ingestion if requested
             if should_ingest_sample_data:
