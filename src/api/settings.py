@@ -1069,6 +1069,7 @@ async def onboarding(request, flows_service, session_manager=None):
                     logger.error(
                         "Failed to complete sample data ingestion", error=str(e)
                     )
+                    should_ingest_sample_data = False
                     # Don't fail the entire onboarding process if sample data fails
 
         if config_manager.save_config_file(current_config):
