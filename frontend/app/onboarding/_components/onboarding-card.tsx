@@ -208,13 +208,13 @@ const OnboardingCard = ({
         task.status === "processing",
     );
 
-    // Check if any file failed in completed tasks
-    const completedTasks = tasks.filter(
-      (task) => task.status === "completed"
+    // Check if any task failed at the top level
+    const failedTask = tasks.find(
+      (task) => task.status === "failed" || task.status === "error",
     );
 
     // Check if any completed task has at least one failed file
-    const taskWithFailedFile = completedTasks.find((task) => {
+    const completedTaskWithFailedFile = tasks.find((task) => {
       // Must have files object
       if (!task.files || typeof task.files !== "object") {
         return false;
@@ -229,44 +229,53 @@ const OnboardingCard = ({
 
       // Check if any file has failed status
       const hasFailedFile = fileEntries.some(
-        (file) => file.status === "failed" || file.status === "error"
+        (file) => file.status === "failed" || file.status === "error",
       );
 
       return hasFailedFile;
     });
 
+    const taskWithFailure = failedTask || completedTaskWithFailedFile;
+
     // If any file failed, show error and jump back one step (like onboardingMutation.onError)
     // Only handle if we haven't already handled this task
     if (
-      taskWithFailedFile &&
+      taskWithFailure &&
       !rollbackMutation.isPending &&
       !isCompleted &&
-      !handledFailedTasksRef.current.has(taskWithFailedFile.task_id)
+      !handledFailedTasksRef.current.has(taskWithFailure.task_id)
     ) {
-      console.error("File failed in task, jumping back one step", taskWithFailedFile);
+      console.error(
+        "Task failed, jumping back one step",
+        taskWithFailure,
+      );
 
       // Mark this task as handled to prevent infinite loops
-      handledFailedTasksRef.current.add(taskWithFailedFile.task_id);
+      handledFailedTasksRef.current.add(taskWithFailure.task_id);
 
       // Extract error messages from failed files
       const errorMessages: string[] = [];
-      if (taskWithFailedFile.files) {
-        Object.values(taskWithFailedFile.files).forEach((file) => {
-          if ((file.status === "failed" || file.status === "error") && file.error) {
+      if (taskWithFailure.files) {
+        Object.values(taskWithFailure.files).forEach((file) => {
+          if (
+            (file.status === "failed" || file.status === "error") &&
+            file.error
+          ) {
             errorMessages.push(file.error);
           }
         });
       }
 
       // Also check task-level error
-      if (taskWithFailedFile.error) {
-        errorMessages.push(taskWithFailedFile.error);
+      if (taskWithFailure.error) {
+        errorMessages.push(taskWithFailure.error);
       }
 
       // Use the first error message, or a generic message if no errors found
-      const errorMessage = errorMessages.length > 0
-        ? errorMessages[0]
-        : "Sample data file failed to ingest. Please try again with a different configuration.";
+      const errorMessage =
+        errorMessages.length > 0
+          ? errorMessages[0]
+          : "Sample data ingestion failed. Please try again.";
 
       // Set error message and jump back one step (exactly like onboardingMutation.onError)
       setError(errorMessage);
@@ -275,13 +284,14 @@ const OnboardingCard = ({
       return;
     }
 
-    // If no active tasks and we've started onboarding, complete it
+    // If at least one processed file, no failures, and we've started onboarding, complete it
     if (
       (((!activeTasks || (activeTasks.processed_files ?? 0) > 0) &&
         tasks.length > 0) ||
         (tasks.length === 0 && currentStep === totalSteps - 1)) && // Complete because no files were ingested
       !isCompleted &&
-      !taskWithFailedFile
+      !taskWithFailure
+
     ) {
       // Set to final step to show "Done"
       setCurrentStep(totalSteps);
