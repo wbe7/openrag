@@ -1,5 +1,6 @@
 """Configuration screen for OpenRAG TUI."""
 
+import os
 import re
 from zxcvbn import zxcvbn
 from textual.app import ComposeResult
@@ -393,10 +394,11 @@ class ConfigScreen(Screen):
                 classes="helper-text",
             )
             # Callback URL guidance for Google OAuth
+            frontend_port = os.getenv("FRONTEND_PORT", "3000")
             yield Static(
                 Text(
-                    "Important: add an Authorized redirect URI to your Google OAuth app(s):\n"
-                    "  - Local: http://localhost:3000/auth/callback\n"
+                    f"Important: add an Authorized redirect URI to your Google OAuth app(s):\n"
+                    f"  - Local: http://localhost:{frontend_port}/auth/callback\n"
                     "  - Prod:  https://your-domain.com/auth/callback\n"
                     "If you use separate apps for login and connectors, add this URL to BOTH.",
                     style="dim",
@@ -443,10 +445,11 @@ class ConfigScreen(Screen):
                 classes="helper-text",
             )
             # Callback URL guidance for Microsoft OAuth
+            frontend_port = os.getenv("FRONTEND_PORT", "3000")
             yield Static(
                 Text(
-                    "Important: configure a Web redirect URI for your Microsoft app(s):\n"
-                    "  - Local: http://localhost:3000/auth/callback\n"
+                    f"Important: configure a Web redirect URI for your Microsoft app(s):\n"
+                    f"  - Local: http://localhost:{frontend_port}/auth/callback\n"
                     "  - Prod:  https://your-domain.com/auth/callback\n"
                     "If you use separate apps for login and connectors, add this URI to BOTH.",
                     style="dim",

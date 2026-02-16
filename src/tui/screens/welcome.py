@@ -638,10 +638,73 @@ class WelcomeScreen(Screen):
 
     def action_open_app(self) -> None:
         """Open the OpenRAG app in the default browser."""
+        self.run_worker(self._open_app_async())
+
+    async def _open_app_async(self) -> None:
+        """Open the OpenRAG app in the default browser, detecting the actual port."""
         import webbrowser
+        import re
+        
         try:
-            webbrowser.open("http://localhost:3000")
-            self.notify("Opening OpenRAG app in browser...", severity="information")
+            # Try to get the actual port from the running container first
+            frontend_port = None
+            
+            if self.container_manager.is_available():
+                # First try: use docker/podman port command for accurate port mapping
+                try:
+                    runtime_cmd = self.container_manager.runtime_info.runtime_command
+                    success, stdout, _ = await self.container_manager._run_runtime_command(
+                        ["port", "openrag-frontend", "3000"]
+                    )
+                    if success and stdout.strip():
+                        # Output format: "0.0.0.0:3001" or "::3001" or just "3001"
+                        port_line = stdout.strip().splitlines()[0]
+                        # Extract port number (last part after :)
+                        if ":" in port_line:
+                            port_part = port_line.split(":")[-1]
+                            try:
+                                frontend_port = int(port_part)
+                            except ValueError:
+                                pass
+                except Exception:
+                    pass  # Fall back to service status method
+                
+                # Second try: use service status port information
+                if frontend_port is None:
+                    services = await self.container_manager.get_service_status()
+                    frontend_service = services.get("openrag-frontend")
+                    
+                    if frontend_service and frontend_service.status == ServiceStatus.RUNNING:
+                        # Extract port from ports list
+                        # Format can be: "3000:3000", "0.0.0.0:3000->3000/tcp", etc.
+                        if frontend_service.ports:
+                            for port_mapping in frontend_service.ports:
+                                if isinstance(port_mapping, str):
+                                    # Parse string format like "3000:3000" or "0.0.0.0:3000->3000/tcp"
+                                    # Extract the host port (first number)
+                                    match = re.search(r'(\d+)(?:->|\:)', port_mapping)
+                                    if match:
+                                        try:
+                                            frontend_port = int(match.group(1))
+                                            break
+                                        except ValueError:
+                                            continue
+                                    # Fallback: try simple "port:port" format
+                                    if ":" in port_mapping and not "->" in port_mapping:
+                                        parts = port_mapping.split(":")
+                                        if parts:
+                                            try:
+                                                frontend_port = int(parts[0])
+                                                break
+                                            except ValueError:
+                                                continue
+            
+            # Fallback to environment variable if we couldn't detect the port
+            if frontend_port is None:
+                frontend_port = int(os.getenv("FRONTEND_PORT", "3000"))
+            
+            webbrowser.open(f"http://localhost:{frontend_port}")
+            self.notify(f"Opening OpenRAG app at http://localhost:{frontend_port}...", severity="information")
         except Exception as e:
             self.notify(f"Error opening app: {e}", severity="error")
 
