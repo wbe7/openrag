@@ -61,10 +61,18 @@ export const SUPPORTED_FILE_TYPES = {
   "text/html": [".html", ".htm"],
   "application/rtf": [".rtf"],
   "application/vnd.oasis.opendocument.text": [".odt"],
-  "text/asciidoc": [".adoc", ".asciidoc"]
+  "text/asciidoc": [".adoc", ".asciidoc"],
+  "audio/*": [".mp3", ".m4a", ".wav", ".weba"],
+  "video/*": [".mp4", ".webm"],
 }
 
 export const SUPPORTED_EXTENSIONS = Object.values(SUPPORTED_FILE_TYPES).flat();
+
+// Combined accept string with both MIME types and extensions for broad browser compatibility
+export const SUPPORTED_ACCEPT_STRING = [
+  ...Object.keys(SUPPORTED_FILE_TYPES),
+  ...SUPPORTED_EXTENSIONS,
+].join(",");
 
 export function KnowledgeDropdown() {
   const { addTask } = useTask();
@@ -238,7 +246,7 @@ export function KnowledgeDropdown() {
     setFileUploading(true);
 
     try {
-      await uploadFileUtil(file, replace);
+      const result = await uploadFileUtil(file, replace);
       refetchTasks();
       // Always invalidate search queries to refresh the table
       // This ensures new files appear immediately even if a task was created
@@ -604,7 +612,7 @@ export function KnowledgeDropdown() {
         type="file"
         onChange={handleFileChange}
         className="hidden"
-        accept={SUPPORTED_EXTENSIONS.join(",")}
+        accept={SUPPORTED_ACCEPT_STRING}
       />
 
       <input
