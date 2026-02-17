@@ -815,9 +815,11 @@ lint: ## Run linting checks
 	cd frontend && npm run lint
 	@echo "$(PURPLE)Frontend linting complete.$(NC)"
 
-format_backend: ## Run ruff fix on backend
-	@echo "$(YELLOW)Running ruff fix on backend...$(NC)"
-	uv run ruff fix .
+format_backend: ## Run ruff check --fix and format on backend
+	@echo "$(YELLOW)Running ruff check --fix on backend...$(NC)"
+	uv run ruff check --fix .
+	@echo "$(YELLOW)Running ruff format on backend...$(NC)"
+	uv run ruff format .
 	@echo "$(PURPLE)Backend format complete.$(NC)"
 
 ######################
