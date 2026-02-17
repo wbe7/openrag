@@ -240,6 +240,9 @@ export function KnowledgeDropdown() {
     try {
       await uploadFileUtil(file, replace);
       refetchTasks();
+      // Always invalidate search queries to refresh the table
+      // This ensures new files appear immediately even if a task was created
+      queryClient.invalidateQueries({ queryKey: ["search"] });
     } catch (error) {
       // Dispatch event that chat context can listen to
       // This avoids circular dependency issues
@@ -375,6 +378,8 @@ export function KnowledgeDropdown() {
       }
 
       refetchTasks();
+      // Invalidate search queries to refresh the table
+      queryClient.invalidateQueries({ queryKey: ["search"] });
 
       const processedCount = nonDuplicateFiles.length;
       const message =
@@ -423,10 +428,14 @@ export function KnowledgeDropdown() {
         setFolderPath("");
         // Refetch tasks to show the new task
         refetchTasks();
+        // Invalidate search queries to refresh the table
+        queryClient.invalidateQueries({ queryKey: ["search"] });
       } else if (response.ok) {
         setFolderPath("");
         // Refetch tasks even for direct uploads in case tasks were created
         refetchTasks();
+        // Invalidate search queries to refresh the table
+        queryClient.invalidateQueries({ queryKey: ["search"] });
       } else {
         console.error("Folder upload failed:", result.error);
         if (response.status === 400) {
@@ -470,6 +479,8 @@ export function KnowledgeDropdown() {
         setBucketUrl("s3://");
         // Refetch tasks to show the new task
         refetchTasks();
+        // Invalidate search queries to refresh the table
+        queryClient.invalidateQueries({ queryKey: ["search"] });
       } else {
         console.error("S3 upload failed:", result.error);
         if (response.status === 400) {
