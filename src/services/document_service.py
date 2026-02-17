@@ -1,19 +1,13 @@
-import datetime
-import hashlib
-import tempfile
 import os
-import aiofiles
-from io import BytesIO
 from docling_core.types.io import DocumentStream
 from typing import List
-import openai
 import tiktoken
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
 
 from config.settings import clients, get_embedding_model, get_index_name
-from utils.document_processing import extract_relevant, process_document_sync
+from utils.document_processing import extract_relevant
 from utils.telemetry import TelemetryClient, Category, MessageId
 
 
@@ -99,7 +93,9 @@ class DocumentService:
         """Recreate the process pool if it's broken"""
         if self._process_pool_broken and self.process_pool:
             logger.warning("Attempting to recreate broken process pool")
-            TelemetryClient.send_event_sync(Category.DOCUMENT_PROCESSING, MessageId.ORB_DOC_POOL_RECREATE)
+            TelemetryClient.send_event_sync(
+                Category.DOCUMENT_PROCESSING, MessageId.ORB_DOC_POOL_RECREATE
+            )
             try:
                 # Shutdown the old pool
                 self.process_pool.shutdown(wait=False)
@@ -117,7 +113,6 @@ class DocumentService:
                 return False
         return False
 
-
     async def process_upload_file(
         self,
         upload_file,
@@ -129,7 +124,6 @@ class DocumentService:
         """Process an uploaded file from form data"""
         from utils.hash_utils import hash_id
         from utils.file_utils import auto_cleanup_tempfile
-        import os
 
         # Preserve file extension for docling format detection
         filename = upload_file.filename or "uploaded"
@@ -138,7 +132,7 @@ class DocumentService:
         with auto_cleanup_tempfile(suffix=suffix) as tmp_path:
             # Stream upload file to temporary file
             file_size = 0
-            with open(tmp_path, 'wb') as tmp_file:
+            with open(tmp_path, "wb") as tmp_file:
                 while True:
                     chunk = await upload_file.read(1 << 20)
                     if not chunk:
@@ -153,7 +147,9 @@ class DocumentService:
             )
 
             try:
-                exists = await opensearch_client.exists(index=get_index_name(), id=file_hash)
+                exists = await opensearch_client.exists(
+                    index=get_index_name(), id=file_hash
+                )
             except Exception as e:
                 logger.error(
                     "OpenSearch exists check failed", file_hash=file_hash, error=str(e)
@@ -164,6 +160,7 @@ class DocumentService:
 
             # Use consolidated standard processing
             from models.processors import TaskProcessor
+
             processor = TaskProcessor(document_service=self)
             result = await processor.process_document_standard(
                 file_path=tmp_path,
@@ -181,7 +178,6 @@ class DocumentService:
     async def process_upload_context(self, upload_file, filename: str = None):
         """Process uploaded file and return content for context"""
         import io
-        import os
 
         if not filename:
             filename = upload_file.filename or "uploaded_document"
@@ -197,11 +193,11 @@ class DocumentService:
 
         # Check if this is a .txt file - use simple processing
         file_ext = os.path.splitext(filename)[1].lower()
-        
-        if file_ext == '.txt':
+
+        if file_ext == ".txt":
             # Simple text file processing for chat context
-            text_content = content.read().decode('utf-8', errors='replace')
-            
+            text_content = content.read().decode("utf-8", errors="replace")
+
             # For context, we don't need to chunk - just return the full content
             return {
                 "filename": filename,

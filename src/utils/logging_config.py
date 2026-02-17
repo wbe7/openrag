@@ -1,8 +1,6 @@
 import os
 import sys
-from typing import Any, Dict
 import structlog
-from structlog import processors
 
 
 def configure_logging(
@@ -83,7 +81,9 @@ def configure_logging(
             header = f"[{timestamp}] [{level:<7}] [{location:<{loc_width}}] "
 
             # Add any remaining context as indented multi-line fields
-            extra = {k: v for k, v in event_dict.items() if k not in ["service", "func_name"]}
+            extra = {
+                k: v for k, v in event_dict.items() if k not in ["service", "func_name"]
+            }
             if extra:
                 padding = " " * len(header)
                 for key, value in extra.items():

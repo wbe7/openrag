@@ -37,9 +37,7 @@ class ModelsClient:
         """
         from .models import ModelsResponse
 
-        response = await self._client._request(
-            "GET", f"/api/v1/models/{provider}"
-        )
+        response = await self._client._request("GET", f"/api/v1/models/{provider}")
         data = response.json()
         return ModelsResponse(**data)
 
@@ -138,9 +136,7 @@ class OpenRAGClient:
 
         # Resolve base URL from argument or environment
         self._base_url = (
-            base_url
-            or os.environ.get("OPENRAG_URL")
-            or self.DEFAULT_BASE_URL
+            base_url or os.environ.get("OPENRAG_URL") or self.DEFAULT_BASE_URL
         ).rstrip("/")
 
         self._timeout = timeout

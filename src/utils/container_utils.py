@@ -88,8 +88,12 @@ def get_container_host() -> str | None:
         with Path("/proc/net/route").open() as f:
             for line in f:
                 fields = line.strip().split()
-                min_field_count = 3  # Minimum fields needed: interface, destination, gateway
-                if len(fields) >= min_field_count and fields[1] == "00000000":  # Default route
+                min_field_count = (
+                    3  # Minimum fields needed: interface, destination, gateway
+                )
+                if (
+                    len(fields) >= min_field_count and fields[1] == "00000000"
+                ):  # Default route
                     # Gateway is in hex format (little-endian)
                     gateway_hex = fields[2]
                     # Convert hex to IP address
@@ -187,10 +191,23 @@ def guess_host_ip_for_containers(logger=None) -> str:
             if ls.returncode == 0:
                 for name in filter(None, ls.stdout.splitlines()):
                     try:
-                        insp = run(["docker", "network", "inspect", name, "--format", "{{json .}}"])
+                        insp = run(
+                            [
+                                "docker",
+                                "network",
+                                "inspect",
+                                name,
+                                "--format",
+                                "{{json .}}",
+                            ]
+                        )
                         if insp.returncode == 0 and insp.stdout.strip():
                             payload = insp.stdout.strip()
-                            nw = json.loads(payload)[0] if payload.startswith("[") else json.loads(payload)
+                            nw = (
+                                json.loads(payload)[0]
+                                if payload.startswith("[")
+                                else json.loads(payload)
+                            )
                             ipam = nw.get("IPAM", {})
                             containers = nw.get("Containers", {})
                             for cfg in ipam.get("Config", []) or []:
@@ -218,10 +235,12 @@ def guess_host_ip_for_containers(logger=None) -> str:
                     if not name:
                         continue
                     try:
-                        insp = run(["podman", "network", "inspect", name, "--format", "json"])
+                        insp = run(
+                            ["podman", "network", "inspect", name, "--format", "json"]
+                        )
                         if insp.returncode == 0 and insp.stdout.strip():
                             arr = json.loads(insp.stdout)
-                            for item in (arr if isinstance(arr, list) else [arr]):
+                            for item in arr if isinstance(arr, list) else [arr]:
                                 for sn in item.get("subnets", []) or []:
                                     gw = sn.get("gateway")
                                     if not gw:
@@ -242,7 +261,10 @@ def guess_host_ip_for_containers(logger=None) -> str:
                 show = run(["ip", "-o", "-4", "addr", "show"])
                 if show.returncode == 0:
                     for line in show.stdout.splitlines():
-                        match = re.search(r"^\d+:\s+([\w_.:-]+)\s+.*\binet\s+(\d+\.\d+\.\d+\.\d+)/", line)
+                        match = re.search(
+                            r"^\d+:\s+([\w_.:-]+)\s+.*\binet\s+(\d+\.\d+\.\d+\.\d+)/",
+                            line,
+                        )
                         if not match:
                             continue
                         ifname, ip_addr = match.group(1), match.group(2)
@@ -251,7 +273,9 @@ def guess_host_ip_for_containers(logger=None) -> str:
             elif shutil.which("ifconfig"):
                 show = run(["ifconfig"])
                 for block in show.stdout.split("\n\n"):
-                    if any(block.strip().startswith(n) for n in ("docker0", "cni", "br-")):
+                    if any(
+                        block.strip().startswith(n) for n in ("docker0", "cni", "br-")
+                    ):
                         match = re.search(r"inet (?:addr:)?(\d+\.\d+\.\d+\.\d+)", block)
                         if match:
                             gateways.append(match.group(1))

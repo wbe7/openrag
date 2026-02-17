@@ -12,6 +12,7 @@ ToolHandler = Callable[[dict], Awaitable[list[TextContent]]]
 @dataclass
 class ToolEntry:
     """A tool definition with its handler."""
+
     tool: Tool
     handler: ToolHandler
 
@@ -34,4 +35,3 @@ def get_handler(name: str) -> ToolHandler | None:
     """Get the handler for a tool by name."""
     entry = _registry.get(name)
     return entry.handler if entry else None
-

@@ -4,18 +4,16 @@ import asyncio
 import re
 import shutil
 from pathlib import Path
-from typing import Literal, Any, Optional, AsyncIterator
+from typing import Literal, Optional, AsyncIterator
 
 # Define button variant type
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 
 from textual.app import ComposeResult
-from textual.containers import Container, Vertical, Horizontal, ScrollableContainer
+from textual.containers import Horizontal, ScrollableContainer
 from textual.screen import Screen
-from textual.widgets import Header, Footer, Static, Button, DataTable
-from textual.timer import Timer
+from textual.widgets import Footer, Static, Button, DataTable
 from rich.text import Text
-from rich.table import Table
 
 from ..managers.container_manager import ContainerManager, ServiceStatus, ServiceInfo
 from ..managers.docling_manager import DoclingManager
@@ -65,7 +63,6 @@ class MonitorScreen(Screen):
         if self._container_manager is None:
             self._container_manager = self.app.container_manager
         return self._container_manager
-
 
     def compose(self) -> ComposeResult:
         """Create the monitoring screen layout."""
@@ -375,6 +372,7 @@ class MonitorScreen(Screen):
                 # This ensures docker compose reads the correct version
                 try:
                     from ..managers.env_manager import EnvManager
+
                     env_manager = EnvManager()
                     env_manager.ensure_openrag_version()
                     # Small delay to ensure .env file is written and flushed
@@ -485,11 +483,14 @@ class MonitorScreen(Screen):
             try:
                 # Get paths from env config
                 from ..managers.env_manager import EnvManager
+
                 env_manager = EnvManager()
                 env_manager.load_existing_env()
 
                 def expand_path(path_str: str) -> Path:
-                    return Path(path_str.replace("$HOME", str(Path.home()))).expanduser()
+                    return Path(
+                        path_str.replace("$HOME", str(Path.home()))
+                    ).expanduser()
 
                 config_path = expand_path(env_manager.config.openrag_config_path)
                 flows_path = expand_path(env_manager.config.openrag_flows_path)
@@ -497,7 +498,12 @@ class MonitorScreen(Screen):
 
                 if config_path.exists():
                     # Use container to handle files owned by container user
-                    success, msg = await self.container_manager.clear_directory_with_container(config_path)
+                    (
+                        success,
+                        msg,
+                    ) = await self.container_manager.clear_directory_with_container(
+                        config_path
+                    )
                     if not success:
                         # Fallback to regular rmtree if container method fails
                         shutil.rmtree(config_path)
@@ -505,9 +511,16 @@ class MonitorScreen(Screen):
                     config_path.mkdir(parents=True, exist_ok=True)
 
                 # Also delete legacy TUI config folder if it exists (~/.openrag/tui/config/)
-                tui_config_path = expand_path(env_manager.config.openrag_tui_config_path_legacy)
+                tui_config_path = expand_path(
+                    env_manager.config.openrag_tui_config_path_legacy
+                )
                 if tui_config_path.exists():
-                    success, msg = await self.container_manager.clear_directory_with_container(tui_config_path)
+                    (
+                        success,
+                        msg,
+                    ) = await self.container_manager.clear_directory_with_container(
+                        tui_config_path
+                    )
                     if not success:
                         # Fallback to regular rmtree if container method fails
                         shutil.rmtree(tui_config_path)
@@ -518,7 +531,12 @@ class MonitorScreen(Screen):
                 if self._check_flow_backups():
                     if delete_backups:
                         # Use container to handle files owned by container user
-                        success, msg = await self.container_manager.clear_directory_with_container(flows_backup_path)
+                        (
+                            success,
+                            msg,
+                        ) = await self.container_manager.clear_directory_with_container(
+                            flows_backup_path
+                        )
                         if not success:
                             # Fallback to regular rmtree if container method fails
                             shutil.rmtree(flows_backup_path)
@@ -526,8 +544,11 @@ class MonitorScreen(Screen):
                         flows_backup_path.mkdir(parents=True, exist_ok=True)
                         self.notify("Flow backups deleted", severity="information")
                     else:
-                        self.notify(f"Flow backups preserved in {flows_backup_path}", severity="information")
-                
+                        self.notify(
+                            f"Flow backups preserved in {flows_backup_path}",
+                            severity="information",
+                        )
+
             except Exception as e:
                 self.notify(
                     f"Error clearing config: {str(e)}",
@@ -553,20 +574,26 @@ class MonitorScreen(Screen):
             yield success, message
             if not success and "failed" in message.lower():
                 return
-        
+
         # Now clear opensearch-data using container
         yield False, "Clearing OpenSearch data..."
         # Get opensearch data path from env config
         from ..managers.env_manager import EnvManager
+
         env_manager = EnvManager()
         env_manager.load_existing_env()
-        opensearch_data_path = Path(env_manager.config.opensearch_data_path.replace("$HOME", str(Path.home()))).expanduser()
+        opensearch_data_path = Path(
+            env_manager.config.opensearch_data_path.replace("$HOME", str(Path.home()))
+        ).expanduser()
         if opensearch_data_path.exists():
-            async for success, message in self.container_manager.clear_opensearch_data_volume():
+            async for (
+                success,
+                message,
+            ) in self.container_manager.clear_opensearch_data_volume():
                 yield success, message
                 if not success and "failed" in message.lower():
                     return
-            
+
             # Recreate empty opensearch-data directory
             try:
                 opensearch_data_path.mkdir(parents=True, exist_ok=True)
@@ -574,7 +601,7 @@ class MonitorScreen(Screen):
             except Exception as e:
                 yield False, f"Error recreating opensearch-data directory: {e}"
                 return
-        
+
         yield True, "Factory reset completed successfully"
 
     async def _prune_images(self) -> None:
@@ -583,13 +610,13 @@ class MonitorScreen(Screen):
         try:
             # Show prune options modal
             from tui.widgets.prune_options_modal import PruneOptionsModal
-            
+
             prune_choice = await self.app.push_screen_wait(PruneOptionsModal())
-            
+
             if prune_choice == "cancel":
                 self.notify("Prune cancelled", severity="information")
                 return
-            
+
             # Choose the appropriate pruning method based on user choice
             if prune_choice == "all":
                 # Stop services and prune all images
@@ -599,7 +626,7 @@ class MonitorScreen(Screen):
                 # Prune only unused images (default)
                 command_generator = self.container_manager.prune_old_images()
                 modal_title = "Pruning Unused Images"
-            
+
             # Show command output in modal dialog
             modal = CommandOutputModal(
                 modal_title,
@@ -618,7 +645,9 @@ class MonitorScreen(Screen):
         # Get flows path from env config
         env_manager = EnvManager()
         env_manager.load_existing_env()
-        flows_path = Path(env_manager.config.openrag_flows_path.replace("$HOME", str(Path.home()))).expanduser()
+        flows_path = Path(
+            env_manager.config.openrag_flows_path.replace("$HOME", str(Path.home()))
+        ).expanduser()
         backup_dir = flows_path / "backup"
         if not backup_dir.exists():
             return False
@@ -913,7 +942,9 @@ class MonitorScreen(Screen):
             controls.mount(
                 Button("Prune Images", variant="default", id=f"prune-btn{suffix}")
             )
-            controls.mount(Button("Factory Reset", variant="error", id=f"reset-btn{suffix}"))
+            controls.mount(
+                Button("Factory Reset", variant="error", id=f"reset-btn{suffix}")
+            )
 
         except Exception as e:
             notify_with_diagnostics(

@@ -5,7 +5,7 @@ import re
 from textual.app import ComposeResult
 from textual.containers import Container, Vertical, Horizontal
 from textual.screen import Screen
-from textual.widgets import Header, Footer, Static, Button, Log
+from textual.widgets import Footer, Static, Button, Log
 from rich.text import Text
 
 from ..managers.container_manager import ContainerManager
@@ -182,7 +182,7 @@ class LogsScreen(Screen):
             self._log_lines.append(cleaned)
             # Trim internal buffer to match max lines
             if len(self._log_lines) > self.MAX_LOG_LINES:
-                self._log_lines = self._log_lines[-self.MAX_LOG_LINES:]
+                self._log_lines = self._log_lines[-self.MAX_LOG_LINES :]
 
     async def _follow_logs(self) -> None:
         """Follow logs in real-time."""

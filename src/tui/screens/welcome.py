@@ -5,9 +5,8 @@ from pathlib import Path
 from textual.app import ComposeResult
 from textual.containers import Container, Vertical, Horizontal
 from textual.screen import Screen
-from textual.widgets import Header, Footer, Static, Button
+from textual.widgets import Footer, Static, Button
 from rich.text import Text
-from rich.align import Align
 from dotenv import load_dotenv
 
 from .. import __version__
@@ -37,7 +36,7 @@ class WelcomeScreen(Screen):
         self.default_button_id = "basic-setup-btn"
         self._state_checked = False
         self.has_flow_backups = False
-        
+
         # Check if .env file exists
         self.has_env_file = self.env_manager.env_file.exists()
 
@@ -49,7 +48,7 @@ class WelcomeScreen(Screen):
         self.has_oauth_config = bool(os.getenv("GOOGLE_OAUTH_CLIENT_ID")) or bool(
             os.getenv("MICROSOFT_GRAPH_OAUTH_CLIENT_ID")
         )
-        
+
         # Check for flow backups
         self.has_flow_backups = self._check_flow_backups()
 
@@ -75,7 +74,9 @@ class WelcomeScreen(Screen):
         # Get flows path from env config
         env_manager = EnvManager()
         env_manager.load_existing_env()
-        flows_path = Path(env_manager.config.openrag_flows_path.replace("$HOME", str(Path.home()))).expanduser()
+        flows_path = Path(
+            env_manager.config.openrag_flows_path.replace("$HOME", str(Path.home()))
+        ).expanduser()
         backup_dir = flows_path / "backup"
         if not backup_dir.exists():
             return False
@@ -97,19 +98,21 @@ class WelcomeScreen(Screen):
         try:
             # Use detected runtime command to check services
             import subprocess
+
             compose_cmd = self.container_manager.runtime_info.compose_command + [
-                "-f", str(self.container_manager.compose_file),
-                "ps", "--format", "json"
+                "-f",
+                str(self.container_manager.compose_file),
+                "ps",
+                "--format",
+                "json",
             ]
             result = subprocess.run(
-                compose_cmd,
-                capture_output=True,
-                text=True,
-                timeout=5
+                compose_cmd, capture_output=True, text=True, timeout=5
             )
 
             if result.returncode == 0:
                 import json
+
                 services = []
 
                 # Try parsing as a single JSON array first (podman format)
@@ -121,7 +124,7 @@ class WelcomeScreen(Screen):
                         services = [parsed] if isinstance(parsed, dict) else []
                 except json.JSONDecodeError:
                     # Fallback: try parsing line-by-line (docker format)
-                    for line in result.stdout.strip().split('\n'):
+                    for line in result.stdout.strip().split("\n"):
                         if line.strip():
                             try:
                                 service = json.loads(line)
@@ -141,13 +144,13 @@ class WelcomeScreen(Screen):
                     if not isinstance(s, dict):
                         continue
                     # Get service name - try compose label first (most reliable for Podman)
-                    labels = s.get('Labels', {}) or {}
-                    service_name = labels.get('com.docker.compose.service', '')
+                    labels = s.get("Labels", {}) or {}
+                    service_name = labels.get("com.docker.compose.service", "")
                     if not service_name:
                         # Fall back to container name mapping
-                        container_name = s.get('Name') or s.get('Service', '')
+                        container_name = s.get("Name") or s.get("Service", "")
                         if not container_name:
-                            names = s.get('Names', [])
+                            names = s.get("Names", [])
                             if names and isinstance(names, list):
                                 container_name = names[0]
                         # Map container name to service name using container_name_map
@@ -155,15 +158,18 @@ class WelcomeScreen(Screen):
                     # Skip if not an expected service
                     if service_name not in expected:
                         continue
-                    state = str(s.get('State', '')).lower()
-                    if state == 'running':
+                    state = str(s.get("State", "")).lower()
+                    if state == "running":
                         running_services.add(service_name)
-                    elif 'starting' in state or 'created' in state:
+                    elif "starting" in state or "created" in state:
                         starting_services.add(service_name)
 
                 # Services are running if all expected services are in running state
                 # (i.e., we have all expected services running and none are still starting)
-                self.services_running = len(running_services) == len(expected) and len(starting_services) == 0
+                self.services_running = (
+                    len(running_services) == len(expected)
+                    and len(starting_services) == 0
+                )
             else:
                 self.services_running = False
         except Exception:
@@ -192,13 +198,9 @@ class WelcomeScreen(Screen):
         all_services_running = self.services_running and self.docling_running
 
         if all_services_running:
-            welcome_text.append(
-                "✓ All services are running\n\n", style="bold green"
-            )
+            welcome_text.append("✓ All services are running\n\n", style="bold green")
         elif self.services_running or self.docling_running:
-            welcome_text.append(
-                "⚠ Some services are running\n\n", style="bold yellow"
-            )
+            welcome_text.append("⚠ Some services are running\n\n", style="bold yellow")
         elif self.has_oauth_config:
             welcome_text.append(
                 "OAuth credentials detected — Advanced Setup recommended\n\n",
@@ -266,9 +268,7 @@ class WelcomeScreen(Screen):
             )
 
         # Always show status option
-        buttons.append(
-            Button("Status", variant="default", id="status-btn")
-        )
+        buttons.append(Button("Status", variant="default", id="status-btn"))
 
         return Horizontal(*buttons, classes="button-row")
 
@@ -285,13 +285,14 @@ class WelcomeScreen(Screen):
                 s.name for s in services.values() if s.status == ServiceStatus.STARTING
             ]
             # Services are running if all expected services are in running state
-            self.services_running = len(running_services) == len(expected) and len(starting_services) == 0
+            self.services_running = (
+                len(running_services) == len(expected) and len(starting_services) == 0
+            )
         else:
             self.services_running = False
 
         # Check native service state
         self.docling_running = self.docling_manager.is_running()
-
 
         # Check for OAuth configuration
         self.has_oauth_config = bool(os.getenv("GOOGLE_OAUTH_CLIENT_ID")) or bool(
@@ -327,7 +328,7 @@ class WelcomeScreen(Screen):
         """Called when returning from another screen (e.g., config screen)."""
         # Check if .env file exists (may have been created)
         self.has_env_file = self.env_manager.env_file.exists()
-        
+
         # Reload environment variables
         load_dotenv(override=True)
 
@@ -338,7 +339,9 @@ class WelcomeScreen(Screen):
 
         # Re-detect container services using async method for accuracy
         if self.container_manager.is_available():
-            services = await self.container_manager.get_service_status(force_refresh=True)
+            services = await self.container_manager.get_service_status(
+                force_refresh=True
+            )
             expected = set(self.container_manager.expected_services)
             running_services = [
                 s.name for s in services.values() if s.status == ServiceStatus.RUNNING
@@ -346,7 +349,9 @@ class WelcomeScreen(Screen):
             starting_services = [
                 s.name for s in services.values() if s.status == ServiceStatus.STARTING
             ]
-            self.services_running = len(running_services) == len(expected) and len(starting_services) == 0
+            self.services_running = (
+                len(running_services) == len(expected) and len(starting_services) == 0
+            )
         else:
             self.services_running = False
 
@@ -414,7 +419,9 @@ class WelcomeScreen(Screen):
         """Async refresh of service state."""
         # Re-detect container services using async method for accuracy
         if self.container_manager.is_available():
-            services = await self.container_manager.get_service_status(force_refresh=True)
+            services = await self.container_manager.get_service_status(
+                force_refresh=True
+            )
             expected = set(self.container_manager.expected_services)
             running_services = [
                 s.name for s in services.values() if s.status == ServiceStatus.RUNNING
@@ -422,7 +429,9 @@ class WelcomeScreen(Screen):
             starting_services = [
                 s.name for s in services.values() if s.status == ServiceStatus.STARTING
             ]
-            self.services_running = len(running_services) == len(expected) and len(starting_services) == 0
+            self.services_running = (
+                len(running_services) == len(expected) and len(starting_services) == 0
+            )
         else:
             self.services_running = False
 
@@ -495,7 +504,10 @@ class WelcomeScreen(Screen):
 
         # Check container ports only if services are not already running
         if self.container_manager.is_available() and not self.services_running:
-            ports_available, port_conflicts = await self.container_manager.check_ports_available()
+            (
+                ports_available,
+                port_conflicts,
+            ) = await self.container_manager.check_ports_available()
             if not ports_available:
                 for service_name, port, error_msg in port_conflicts[:3]:  # Show first 3
                     conflicts.append(f"{service_name} (port {port})")
@@ -515,14 +527,18 @@ class WelcomeScreen(Screen):
                 f"Cannot start services: Port conflicts detected for {conflict_str}. "
                 f"Please stop the conflicting services first.",
                 severity="error",
-                timeout=10
+                timeout=10,
             )
             return
 
         # Step 1: Start container services first (to create the network)
         if self.container_manager.is_available() and not self.services_running:
             # Check for version mismatch before starting
-            has_mismatch, container_version, tui_version = await self.container_manager.check_version_mismatch()
+            (
+                has_mismatch,
+                container_version,
+                tui_version,
+            ) = await self.container_manager.check_version_mismatch()
             if has_mismatch and container_version:
                 # Show warning modal and wait for user decision
                 should_continue = await self.app.push_screen_wait(
@@ -535,14 +551,16 @@ class WelcomeScreen(Screen):
                 # This ensures docker compose reads the correct version
                 try:
                     from ..managers.env_manager import EnvManager
+
                     env_manager = EnvManager()
                     env_manager.ensure_openrag_version()
                     # Small delay to ensure .env file is written and flushed
                     import asyncio
+
                     await asyncio.sleep(0.5)
                 except Exception:
                     pass  # Continue even if version setting fails
-            
+
             command_generator = self.container_manager.start_services()
             modal = CommandOutputModal(
                 "Starting Container Services",
@@ -577,7 +595,7 @@ class WelcomeScreen(Screen):
                     f"Cannot start native services: {error_msg}. "
                     f"Please stop the conflicting service first.",
                     severity="error",
-                    timeout=10
+                    timeout=10,
                 )
                 # Update state and return
                 self.docling_running = False
@@ -589,7 +607,9 @@ class WelcomeScreen(Screen):
             if success:
                 self.notify(message, severity="information")
             else:
-                self.notify(f"Failed to start native services: {message}", severity="error")
+                self.notify(
+                    f"Failed to start native services: {message}", severity="error"
+                )
         else:
             self.notify("Native services already running", severity="information")
 
@@ -628,7 +648,9 @@ class WelcomeScreen(Screen):
             if success:
                 self.notify(message, severity="information")
             else:
-                self.notify(f"Failed to stop native services: {message}", severity="error")
+                self.notify(
+                    f"Failed to stop native services: {message}", severity="error"
+                )
         else:
             self.notify("Native services already stopped", severity="information")
 
@@ -639,6 +661,7 @@ class WelcomeScreen(Screen):
     def action_open_app(self) -> None:
         """Open the OpenRAG app in the default browser."""
         import webbrowser
+
         try:
             webbrowser.open("http://localhost:3000")
             self.notify("Opening OpenRAG app in browser...", severity="information")

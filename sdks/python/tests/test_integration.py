@@ -49,10 +49,12 @@ def ensure_onboarding():
             timeout=30.0,
         )
         if response.status_code in (200, 204):
-            print(f"[SDK Tests] Onboarding completed successfully")
+            print("[SDK Tests] Onboarding completed successfully")
         else:
             # May already be onboarded, which is fine
-            print(f"[SDK Tests] Onboarding returned {response.status_code}: {response.text[:200]}")
+            print(
+                f"[SDK Tests] Onboarding returned {response.status_code}: {response.text[:200]}"
+            )
     except Exception as e:
         print(f"[SDK Tests] Onboarding request failed: {e}")
 
@@ -88,6 +90,7 @@ def client():
 def test_file(tmp_path) -> Path:
     """Create a test file for ingestion with unique content."""
     import uuid
+
     # Use .md extension - Langflow has issues with .txt files
     file_path = tmp_path / f"sdk_test_doc_{uuid.uuid4().hex[:8]}.md"
     file_path.write_text(
@@ -134,15 +137,17 @@ class TestKnowledgeFilters:
     async def test_knowledge_filter_crud(self, client):
         """Test create, read, update, delete for knowledge filters."""
         # Create
-        create_result = await client.knowledge_filters.create({
-            "name": "Python SDK Test Filter",
-            "description": "Filter created by Python SDK integration tests",
-            "queryData": {
-                "query": "test documents",
-                "limit": 10,
-                "scoreThreshold": 0.5,
-            },
-        })
+        create_result = await client.knowledge_filters.create(
+            {
+                "name": "Python SDK Test Filter",
+                "description": "Filter created by Python SDK integration tests",
+                "queryData": {
+                    "query": "test documents",
+                    "limit": 10,
+                    "scoreThreshold": 0.5,
+                },
+            }
+        )
 
         assert create_result.success is True
         assert create_result.id is not None
@@ -183,14 +188,16 @@ class TestKnowledgeFilters:
     async def test_filter_id_in_chat(self, client):
         """Test using filter_id in chat."""
         # Create a filter first
-        create_result = await client.knowledge_filters.create({
-            "name": "Chat Test Filter Python",
-            "description": "Filter for testing chat with filter_id",
-            "queryData": {
-                "query": "test",
-                "limit": 5,
-            },
-        })
+        create_result = await client.knowledge_filters.create(
+            {
+                "name": "Chat Test Filter Python",
+                "description": "Filter for testing chat with filter_id",
+                "queryData": {
+                    "query": "test",
+                    "limit": 5,
+                },
+            }
+        )
         assert create_result.success is True
         filter_id = create_result.id
 
@@ -209,14 +216,16 @@ class TestKnowledgeFilters:
     async def test_filter_id_in_search(self, client):
         """Test using filter_id in search."""
         # Create a filter first
-        create_result = await client.knowledge_filters.create({
-            "name": "Search Test Filter Python",
-            "description": "Filter for testing search with filter_id",
-            "queryData": {
-                "query": "test",
-                "limit": 5,
-            },
-        })
+        create_result = await client.knowledge_filters.create(
+            {
+                "name": "Search Test Filter Python",
+                "description": "Filter for testing search with filter_id",
+                "queryData": {
+                    "query": "test",
+                    "limit": 5,
+                },
+            }
+        )
         assert create_result.success is True
         filter_id = create_result.id
 
@@ -256,7 +265,6 @@ class TestDocuments:
         assert result.status is not None
         assert result.successful_files >= 0
 
-
     @pytest.mark.asyncio
     async def test_delete_document(self, client, test_file: Path):
         """Test document deletion."""
@@ -280,6 +288,7 @@ class TestSearch:
 
         # Wait a bit for indexing
         import asyncio
+
         await asyncio.sleep(2)
 
         # Search for unique content
@@ -295,9 +304,7 @@ class TestChat:
     @pytest.mark.asyncio
     async def test_chat_non_streaming(self, client):
         """Test non-streaming chat."""
-        response = await client.chat.create(
-            message="Say hello in exactly 3 words."
-        )
+        response = await client.chat.create(message="Say hello in exactly 3 words.")
 
         assert response.response is not None
         assert isinstance(response.response, str)
@@ -345,9 +352,7 @@ class TestChat:
     @pytest.mark.asyncio
     async def test_chat_final_text(self, client):
         """Test final_text() helper."""
-        async with client.chat.stream(
-            message="Say 'done' and nothing else."
-        ) as stream:
+        async with client.chat.stream(message="Say 'done' and nothing else.") as stream:
             text = await stream.final_text()
 
         assert len(text) > 0
@@ -356,9 +361,7 @@ class TestChat:
     async def test_chat_conversation_continuation(self, client):
         """Test continuing a conversation."""
         # First message
-        response1 = await client.chat.create(
-            message="Remember the number 42."
-        )
+        response1 = await client.chat.create(message="Remember the number 42.")
         assert response1.chat_id is not None
 
         # Continue conversation

@@ -70,7 +70,7 @@ endef
 .PHONY: help check_tools help_docker help_dev help_test help_local help_utils \
        dev dev-cpu dev-local dev-local-cpu stop clean build logs \
        shell-backend shell-frontend install \
-       test test-integration test-ci test-ci-local test-sdk test-os-jwt lint \
+       test test-integration test-ci test-ci-local test-sdk test-os-jwt lint format_backend \
        backend frontend docling docling-stop install-be install-fe build-be build-fe build-os build-lf logs-be logs-fe logs-lf logs-os \
        shell-be shell-lf shell-os restart status health db-reset clear-os-data flow-upload setup factory-reset \
        dev-branch build-langflow-dev stop-dev clean-dev logs-dev logs-lf-dev shell-lf-dev restart-dev status-dev
@@ -814,6 +814,11 @@ lint: ## Run linting checks
 	@echo "$(YELLOW)Running linting checks...$(NC)"
 	cd frontend && npm run lint
 	@echo "$(PURPLE)Frontend linting complete.$(NC)"
+
+format_backend: ## Run ruff fix on backend
+	@echo "$(YELLOW)Running ruff fix on backend...$(NC)"
+	uv run ruff fix .
+	@echo "$(PURPLE)Backend format complete.$(NC)"
 
 ######################
 # STATUS & HEALTH

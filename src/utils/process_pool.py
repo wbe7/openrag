@@ -1,4 +1,3 @@
-import os
 from concurrent.futures import ProcessPoolExecutor
 from utils.gpu_detection import get_worker_count
 from utils.logging_config import get_logger

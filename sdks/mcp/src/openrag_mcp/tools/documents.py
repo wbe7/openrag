@@ -15,7 +15,6 @@ from openrag_sdk import (
 )
 
 from openrag_mcp.config import get_openrag_client
-from openrag_mcp.tools.registry import register_tool
 
 logger = logging.getLogger("openrag-mcp.documents")
 
@@ -63,7 +62,9 @@ async def handle_ingest_file(arguments: dict) -> list[TextContent]:
         return [TextContent(type="text", text=f"Error: File not found: {file_path}")]
 
     if not path.is_file():
-        return [TextContent(type="text", text=f"Error: Path is not a file: {file_path}")]
+        return [
+            TextContent(type="text", text=f"Error: Path is not a file: {file_path}")
+        ]
 
     try:
         client = get_openrag_client()
@@ -85,7 +86,9 @@ async def handle_ingest_file(arguments: dict) -> list[TextContent]:
                 result += f"\nSuccessful files: {successful}"
                 result += f"\nFailed files: {failed}"
         else:
-            result = f"Successfully queued '{response.filename or path.name}' for ingestion."
+            result = (
+                f"Successfully queued '{response.filename or path.name}' for ingestion."
+            )
             if response.task_id:
                 result += f"\nTask ID: {response.task_id}"
                 result += "\n\nUse openrag_get_task_status or openrag_wait_for_task to check progress."
@@ -146,7 +149,11 @@ async def handle_ingest_url(arguments: dict) -> list[TextContent]:
         return [TextContent(type="text", text="Error: url is required")]
 
     if not url.startswith(("http://", "https://")):
-        return [TextContent(type="text", text="Error: url must start with http:// or https://")]
+        return [
+            TextContent(
+                type="text", text="Error: url must start with http:// or https://"
+            )
+        ]
 
     try:
         client = get_openrag_client()
@@ -154,7 +161,11 @@ async def handle_ingest_url(arguments: dict) -> list[TextContent]:
             message=f"Please ingest the content from this URL into the knowledge base: {url}",
         )
 
-        return [TextContent(type="text", text=f"URL ingestion requested.\n\n{response.response}")]
+        return [
+            TextContent(
+                type="text", text=f"URL ingestion requested.\n\n{response.response}"
+            )
+        ]
 
     except AuthenticationError as e:
         logger.error(f"Authentication error: {e.message}")
@@ -287,7 +298,11 @@ async def handle_wait_for_task(arguments: dict) -> list[TextContent]:
 
     except TimeoutError as e:
         logger.error(f"Wait for task timeout: {e}")
-        return [TextContent(type="text", text=f"Task did not complete within {timeout} seconds.")]
+        return [
+            TextContent(
+                type="text", text=f"Task did not complete within {timeout} seconds."
+            )
+        ]
     except NotFoundError as e:
         logger.error(f"Task not found: {e.message}")
         return [TextContent(type="text", text=f"Task not found: {e.message}")]
@@ -334,15 +349,19 @@ async def handle_delete_document(arguments: dict) -> list[TextContent]:
         response = await client.documents.delete(filename)
 
         if response.success:
-            return [TextContent(
-                type="text",
-                text=f"Successfully deleted '{filename}' ({response.deleted_chunks} chunks removed).",
-            )]
+            return [
+                TextContent(
+                    type="text",
+                    text=f"Successfully deleted '{filename}' ({response.deleted_chunks} chunks removed).",
+                )
+            ]
         else:
-            return [TextContent(
-                type="text",
-                text=f"Failed to delete '{filename}'.",
-            )]
+            return [
+                TextContent(
+                    type="text",
+                    text=f"Failed to delete '{filename}'.",
+                )
+            ]
 
     except NotFoundError as e:
         logger.error(f"Document not found: {e.message}")
@@ -364,4 +383,4 @@ async def handle_delete_document(arguments: dict) -> list[TextContent]:
 # ============================================================================
 # Register all tools
 # ============================================================================
-#NOTE: Ingest Tools are disabled in OpenRAGMCP currently.
+# NOTE: Ingest Tools are disabled in OpenRAGMCP currently.

@@ -8,7 +8,7 @@ to minimize write amplification when ACLs change.
 import hashlib
 import json
 import asyncio
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple
 from src.connectors.base import DocumentACL
 
 
@@ -27,15 +27,11 @@ def compute_acl_hash(acl: DocumentACL) -> str:
         "allowed_users": sorted(acl.allowed_users),
         "allowed_groups": sorted(acl.allowed_groups),
     }
-    return hashlib.sha256(
-        json.dumps(acl_data, sort_keys=True).encode()
-    ).hexdigest()
+    return hashlib.sha256(json.dumps(acl_data, sort_keys=True).encode()).hexdigest()
 
 
 async def should_update_acl(
-    document_id: str,
-    new_acl: DocumentACL,
-    opensearch_client
+    document_id: str, new_acl: DocumentACL, opensearch_client
 ) -> bool:
     """
     Check if ACL has changed by querying one chunk and comparing hashes.
@@ -62,8 +58,8 @@ async def should_update_acl(
                     "owner",
                     "allowed_users",
                     "allowed_groups",
-                ]
-            }
+                ],
+            },
         )
 
         if not response["hits"]["hits"]:
@@ -91,9 +87,7 @@ async def should_update_acl(
 
 
 async def update_document_acl(
-    document_id: str,
-    acl: DocumentACL,
-    opensearch_client
+    document_id: str, acl: DocumentACL, opensearch_client
 ) -> Dict[str, any]:
     """
     Update ACL for all chunks of a document.
@@ -131,15 +125,12 @@ async def update_document_acl(
                         "owner": acl.owner,
                         "allowed_users": acl.allowed_users,
                         "allowed_groups": acl.allowed_groups,
-                    }
-                }
-            }
+                    },
+                },
+            },
         )
 
-        return {
-            "status": "updated",
-            "chunks_updated": response.get("updated", 0)
-        }
+        return {"status": "updated", "chunks_updated": response.get("updated", 0)}
 
     except Exception as e:
         print(f"Error updating ACL for {document_id}: {e}")
@@ -147,8 +138,7 @@ async def update_document_acl(
 
 
 async def batch_update_acls(
-    acl_updates: List[Tuple[str, DocumentACL]],
-    opensearch_client
+    acl_updates: List[Tuple[str, DocumentACL]], opensearch_client
 ) -> Dict[str, any]:
     """
     Batch update ACLs for multiple documents.
@@ -170,8 +160,7 @@ async def batch_update_acls(
 
     # Filter to only changed ACLs (parallel chunk queries)
     check_tasks = [
-        should_update_acl(doc_id, acl, opensearch_client)
-        for doc_id, acl in acl_updates
+        should_update_acl(doc_id, acl, opensearch_client) for doc_id, acl in acl_updates
     ]
     should_update_flags = await asyncio.gather(*check_tasks)
 
@@ -187,7 +176,7 @@ async def batch_update_acls(
             "status": "no_changes",
             "documents_updated": 0,
             "chunks_updated": 0,
-            "skipped": len(acl_updates)
+            "skipped": len(acl_updates),
         }
 
     # Bulk update chunks for each document (parallelized)
@@ -206,9 +195,9 @@ async def batch_update_acls(
                         "owner": acl.owner,
                         "allowed_users": acl.allowed_users,
                         "allowed_groups": acl.allowed_groups,
-                    }
-                }
-            }
+                    },
+                },
+            },
         )
         for doc_id, acl in changed
     ]
@@ -230,7 +219,7 @@ async def batch_update_acls(
             "documents_updated": len(changed) - len(errors),
             "chunks_updated": total_chunks_updated,
             "skipped": len(acl_updates) - len(changed),
-            "errors": errors if errors else None
+            "errors": errors if errors else None,
         }
 
     except Exception as e:
@@ -238,5 +227,5 @@ async def batch_update_acls(
             "status": "error",
             "documents_updated": 0,
             "chunks_updated": 0,
-            "error": str(e)
+            "error": str(e),
         }

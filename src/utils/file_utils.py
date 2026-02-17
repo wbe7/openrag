@@ -7,7 +7,11 @@ from typing import Optional
 
 
 @contextmanager
-def auto_cleanup_tempfile(suffix: Optional[str] = None, prefix: Optional[str] = None, dir: Optional[str] = None):
+def auto_cleanup_tempfile(
+    suffix: Optional[str] = None,
+    prefix: Optional[str] = None,
+    dir: Optional[str] = None,
+):
     """
     Context manager for temporary files that automatically cleans up.
 

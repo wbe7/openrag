@@ -15,6 +15,7 @@ logger = logging.getLogger("openrag-mcp.settings")
 
 VALID_PROVIDERS = ("openai", "anthropic", "ollama", "watsonx")
 
+
 def _format_http_error(response) -> str:
     """Extract error message from HTTP response."""
     try:
@@ -78,11 +79,15 @@ async def handle_get_settings(arguments: dict) -> list[TextContent]:
         system_prompt = agent.get("system_prompt")
         if system_prompt:
             prompt_preview = (
-                system_prompt[:200] + "..." if len(system_prompt) > 200 else system_prompt
+                system_prompt[:200] + "..."
+                if len(system_prompt) > 200
+                else system_prompt
             )
             parts.append(f"\n- System prompt: {prompt_preview}")
         parts.append("\n**Knowledge (embeddings & ingestion)**")
-        parts.append(f"\n- Embedding provider: {knowledge.get('embedding_provider') or '—'}")
+        parts.append(
+            f"\n- Embedding provider: {knowledge.get('embedding_provider') or '—'}"
+        )
         parts.append(f"\n- Embedding model: {knowledge.get('embedding_model') or '—'}")
         parts.append(f"\n- Chunk size: {knowledge.get('chunk_size', '—')}")
         parts.append(f"\n- Chunk overlap: {knowledge.get('chunk_overlap', '—')}")
@@ -91,7 +96,9 @@ async def handle_get_settings(arguments: dict) -> list[TextContent]:
         if "ocr" in knowledge:
             parts.append(f"\n- OCR: {knowledge['ocr']}")
         if "picture_descriptions" in knowledge:
-            parts.append(f"\n- Picture descriptions: {knowledge['picture_descriptions']}")
+            parts.append(
+                f"\n- Picture descriptions: {knowledge['picture_descriptions']}"
+            )
 
         return [TextContent(type="text", text="".join(parts))]
 
@@ -163,7 +170,11 @@ async def handle_update_settings(arguments: dict) -> list[TextContent]:
     """Handle openrag_update_settings tool calls."""
     options = {k: v for k, v in arguments.items() if v is not None}
     if not options:
-        return [TextContent(type="text", text="No settings to update. Provide at least one option.")]
+        return [
+            TextContent(
+                type="text", text="No settings to update. Provide at least one option."
+            )
+        ]
 
     try:
         response = await _request_post("/api/v1/settings", "/v1/settings", options)
@@ -216,7 +227,9 @@ async def handle_list_models(arguments: dict) -> list[TextContent]:
         ]
 
     try:
-        response = await _request_get(f"/api/v1/models/{provider}", f"/v1/models/{provider}")
+        response = await _request_get(
+            f"/api/v1/models/{provider}", f"/v1/models/{provider}"
+        )
         if response.status_code != 200:
             return [TextContent(type="text", text=_format_http_error(response))]
 
@@ -247,7 +260,7 @@ async def handle_list_models(arguments: dict) -> list[TextContent]:
             msg = (
                 "You're running an old build of openrag-mcp. To fix:\n"
                 "1. Uninstall: uv pip uninstall openrag-mcp\n"
-                "2. In Cursor MCP config (~/.cursor/mcp.json) use: \"args\": [\"run\", \"--directory\", \"/Users/edwin.jose/Documents/openrag/sdks/mcp\", \"openrag-mcp\"]\n"
+                '2. In Cursor MCP config (~/.cursor/mcp.json) use: "args": ["run", "--directory", "/Users/edwin.jose/Documents/openrag/sdks/mcp", "openrag-mcp"]\n'
                 "3. Restart Cursor."
             )
             return [TextContent(type="text", text=msg)]

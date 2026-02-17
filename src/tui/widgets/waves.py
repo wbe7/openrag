@@ -5,7 +5,6 @@ import random
 from dataclasses import dataclass
 from typing import List
 
-from textual import events
 from textual.reactive import reactive
 from textual.widgets import Static
 

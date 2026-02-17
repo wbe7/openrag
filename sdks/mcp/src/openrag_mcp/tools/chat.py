@@ -85,7 +85,9 @@ async def handle_chat(arguments: dict) -> list[TextContent]:
         if response.sources:
             output_parts.append("\n\n---\n**Sources:**")
             for i, source in enumerate(response.sources, 1):
-                output_parts.append(f"\n{i}. {source.filename} (relevance: {source.score:.2f})")
+                output_parts.append(
+                    f"\n{i}. {source.filename} (relevance: {source.score:.2f})"
+                )
 
         if response.chat_id:
             output_parts.append(f"\n\n_Chat ID: {response.chat_id}_")
