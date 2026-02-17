@@ -25,8 +25,16 @@ import { ChatRenderer } from "./chat-renderer";
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isMenuOpen } = useTask();
-  const { isPanelOpen } = useKnowledgeFilter();
+  const { isMenuOpen, closeMenu } = useTask();
+  const { isPanelOpen, closePanelOnly } = useKnowledgeFilter();
+
+  // Only one panel can be open at a time
+  useEffect(() => {
+    if (isMenuOpen) closePanelOnly();
+  }, [isMenuOpen, closePanelOnly]);
+  useEffect(() => {
+    if (isPanelOpen) closeMenu();
+  }, [isPanelOpen, closeMenu]);
   const { isLoading, isAuthenticated, isNoAuthMode } = useAuth();
   const { isOnboardingComplete } = useChat();
 
