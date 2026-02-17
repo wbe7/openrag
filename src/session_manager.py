@@ -9,9 +9,6 @@ from cryptography.hazmat.primitives.asymmetric import rsa, ec, ed25519, ed448
 import os
 from utils.logging_config import get_logger
 
-logger = get_logger(__name__)
-
-from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
 

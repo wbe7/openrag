@@ -7,8 +7,6 @@ from utils.embeddings import create_dynamic_index_body
 from utils.logging_config import configure_from_env, get_logger
 from utils.telemetry import TelemetryClient, Category, MessageId
 
-configure_from_env()
-logger = get_logger(__name__)
 
 import asyncio
 import atexit
@@ -21,8 +19,6 @@ from starlette.applications import Starlette
 from starlette.routing import Route
 from starlette.responses import JSONResponse
 
-# Set multiprocessing start method to 'spawn' for CUDA compatibility
-multiprocessing.set_start_method("spawn", force=True)
 
 # Create process pool FIRST, before any torch/CUDA imports
 from utils.process_pool import process_pool  # isort: skip
@@ -97,6 +93,11 @@ from services.search_service import SearchService
 from services.task_service import TaskService
 from session_manager import SessionManager
 
+
+configure_from_env()
+logger = get_logger(__name__)
+# Set multiprocessing start method to 'spawn' for CUDA compatibility
+multiprocessing.set_start_method("spawn", force=True)
 logger.info(
     "CUDA device information",
     cuda_available=torch.cuda.is_available(),

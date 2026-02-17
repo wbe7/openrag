@@ -13,7 +13,6 @@ try:
 except ImportError:
     from importlib_resources import files
 
-logger = get_logger(__name__)
 
 from .screens.welcome import WelcomeScreen
 from .managers.env_manager import EnvManager
@@ -21,6 +20,8 @@ from .managers.container_manager import ContainerManager
 from .managers.docling_manager import DoclingManager
 from .utils.platform import PlatformDetector
 from .widgets.diagnostics_notification import notify_with_diagnostics
+
+logger = get_logger(__name__)
 
 
 class OpenRAGTUI(App):
@@ -392,9 +393,6 @@ class OpenRAGTUI(App):
                 severity="warning",
                 timeout=10,
             )
-
-        # Load existing config if available
-        config_exists = self.env_manager.load_existing_env()
 
         # Start with welcome screen
         self.push_screen(WelcomeScreen())

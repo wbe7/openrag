@@ -6,9 +6,6 @@ import shutil
 from pathlib import Path
 from typing import Literal, Optional, AsyncIterator
 
-# Define button variant type
-ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
-
 from textual.app import ComposeResult
 from textual.containers import Horizontal, ScrollableContainer
 from textual.screen import Screen
@@ -24,6 +21,9 @@ from ..widgets.factory_reset_warning_modal import FactoryResetWarningModal
 from ..widgets.version_mismatch_warning_modal import VersionMismatchWarningModal
 from ..widgets.upgrade_instructions_modal import UpgradeInstructionsModal
 from ..widgets.diagnostics_notification import notify_with_diagnostics
+
+# Define button variant type
+ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 
 
 class MonitorScreen(Screen):
@@ -280,8 +280,6 @@ class MonitorScreen(Screen):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""
         button_id = event.button.id or ""
-        button_label = event.button.label or ""
-
         # Use button ID prefixes to determine action, ignoring any random suffix
         if button_id.startswith("start-btn"):
             self.run_worker(self._start_services())

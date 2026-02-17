@@ -16,10 +16,11 @@ try:
 except ImportError:
     from importlib_resources import files
 
-logger = get_logger(__name__)
 
 from ..utils.platform import PlatformDetector, RuntimeInfo, RuntimeType
 from utils.gpu_detection import detect_gpu_devices
+
+logger = get_logger(__name__)
 
 
 class ServiceStatus(Enum):

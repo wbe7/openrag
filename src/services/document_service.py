@@ -4,11 +4,12 @@ from typing import List
 import tiktoken
 from utils.logging_config import get_logger
 
-logger = get_logger(__name__)
 
 from config.settings import clients, get_embedding_model, get_index_name
 from utils.document_processing import extract_relevant
 from utils.telemetry import TelemetryClient, Category, MessageId
+
+logger = get_logger(__name__)
 
 
 def get_token_count(text: str, model: str = None) -> int:

@@ -10,7 +10,6 @@ import asyncio
 
 from config.settings import WEBHOOK_BASE_URL, is_no_auth_mode
 
-logger = logging.getLogger(__name__)
 from session_manager import SessionManager
 from services.langflow_mcp_service import LangflowMCPService
 from connectors.google_drive.oauth import GoogleDriveOAuth
@@ -19,6 +18,8 @@ from connectors.sharepoint.oauth import SharePointOAuth
 from connectors.google_drive import GoogleDriveConnector
 from connectors.onedrive import OneDriveConnector
 from connectors.sharepoint import SharePointConnector
+
+logger = logging.getLogger(__name__)
 
 
 class AuthService:

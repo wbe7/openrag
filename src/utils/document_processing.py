@@ -432,7 +432,8 @@ def process_document_sync(file_path: str):
                 system=f"{platform.system()} {platform.release()}",
                 architecture=platform.machine(),
             )
-        except:
+        except Exception:
+            # Best-effort logging; ignore failures here to avoid masking the original error
             pass
 
         # Re-raise to trigger BrokenProcessPool in main process

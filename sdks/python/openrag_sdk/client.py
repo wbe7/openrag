@@ -97,7 +97,8 @@ class OpenRAGClient:
             response = await client.chat.create(message="Hello")
 
         # Using explicit arguments
-        async with OpenRAGClient(api_key="orag_...", base_url="https://api.example.com") as client:
+        async with OpenRAGClient(api_key="orag_...",
+                                    base_url="https://api.example.com") as client:
             response = await client.chat.create(message="Hello")
 
         # Without context manager
@@ -123,7 +124,8 @@ class OpenRAGClient:
 
         Args:
             api_key: API key for authentication. Falls back to OPENRAG_API_KEY env var.
-            base_url: Base URL for the API. Falls back to OPENRAG_URL env var, then default.
+            base_url: Base URL for the API.
+                      Falls back to OPENRAG_URL env var, then default.
             timeout: Request timeout in seconds (default 30).
             http_client: Optional custom httpx.AsyncClient instance.
         """
@@ -131,7 +133,8 @@ class OpenRAGClient:
         self._api_key = api_key or os.environ.get("OPENRAG_API_KEY")
         if not self._api_key:
             raise AuthenticationError(
-                "API key is required. Set OPENRAG_API_KEY environment variable or pass api_key argument."
+                "API key is required. Set OPENRAG_API_KEY environment variable or "
+                "pass api_key argument."
             )
 
         # Resolve base URL from argument or environment

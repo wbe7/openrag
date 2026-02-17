@@ -1,4 +1,6 @@
 from typing import Any
+
+from connectors.base import DocumentACL
 from .tasks import UploadTask, FileTask
 from utils.logging_config import get_logger
 from utils.file_utils import get_file_extension, clean_connector_filename
@@ -157,7 +159,7 @@ class TaskProcessor:
         connector_type: str = "local",
         embedding_model: str = None,
         is_sample_data: bool = False,
-        acl: "DocumentACL" = None,
+        acl: DocumentACL = None,
     ):
         """
         Standard processing pipeline for non-Langflow processors:

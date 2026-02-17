@@ -238,9 +238,6 @@ class ConfigScreen(Screen):
         yield Static(" ")
 
         # Langflow Admin Username - conditionally displayed based on password
-        current_password = getattr(
-            self.env_manager.config, "langflow_superuser_password", ""
-        )
         yield Label("Langflow Admin Username *", id="langflow-username-label")
         current_value = getattr(self.env_manager.config, "langflow_superuser", "")
         input_widget = Input(

@@ -440,7 +440,7 @@ class DiagnosticsScreen(Screen):
                             log.write(
                                 f"  OpenSearch version: {info['version']['number']}"
                             )
-                    except:
+                    except Exception:
                         pass
                 else:
                     log.write(
@@ -488,7 +488,7 @@ class DiagnosticsScreen(Screen):
                         if "tenants" in user_info:
                             tenants = list(user_info["tenants"].keys())
                             log.write(f"  Tenants: {', '.join(tenants)}")
-                    except:
+                    except Exception:
                         log.write("  Account info retrieved but couldn't parse JSON")
                 else:
                     log.write(
@@ -532,7 +532,7 @@ class DiagnosticsScreen(Screen):
                             if admin_user.get("reserved"):
                                 log.write("  Admin user is reserved (protected)")
                         log.write(f"  Total internal users: {len(users)}")
-                    except:
+                    except Exception:
                         log.write("[green]✓ Internal users endpoint accessible[/green]")
                 else:
                     log.write(

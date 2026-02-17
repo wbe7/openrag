@@ -7,6 +7,11 @@ import pytest
 import pytest_asyncio
 from dotenv import load_dotenv
 
+
+from src.config.settings import clients
+from src.session_manager import SessionManager
+from src.main import generate_jwt_keys
+
 # Load environment variables
 load_dotenv()
 
@@ -14,10 +19,6 @@ load_dotenv()
 # This ensures anonymous JWT tokens are created automatically
 os.environ["GOOGLE_OAUTH_CLIENT_ID"] = ""
 os.environ["GOOGLE_OAUTH_CLIENT_SECRET"] = ""
-
-from src.config.settings import clients
-from src.session_manager import SessionManager
-from src.main import generate_jwt_keys
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)

@@ -12,13 +12,14 @@ from utils.container_utils import get_container_host
 from utils.document_processing import create_document_converter
 from utils.logging_config import get_logger
 
+# Import configuration manager
+from .config_manager import config_manager
+
 load_dotenv(override=False)
 load_dotenv("../", override=False)
 
 logger = get_logger(__name__)
 
-# Import configuration manager
-from .config_manager import config_manager
 
 # Environment variables
 OPENSEARCH_HOST = os.getenv("OPENSEARCH_HOST", "localhost")

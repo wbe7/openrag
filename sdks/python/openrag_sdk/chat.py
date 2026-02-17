@@ -497,4 +497,3 @@ class ChatClient:
 
 
 # Import Literal for type hints
-from typing import Literal
