@@ -195,13 +195,43 @@ class DocumentService:
             content.write(chunk)
         content.seek(0)  # Reset to beginning for reading
 
-        # Check if this is a .txt file - use simple processing
+        # Check if this is a media or text file
         file_ext = os.path.splitext(filename)[1].lower()
-        
-        if file_ext == '.txt':
+        from services.transcription_service import is_media_file, MEDIA_EXTENSIONS
+
+        if file_ext in MEDIA_EXTENSIONS:
+            # Audio/video file - write to temp file and transcribe
+            from services.transcription_service import transcribe_media
+            from utils.file_utils import auto_cleanup_tempfile
+
+            with auto_cleanup_tempfile(suffix=file_ext) as tmp_path:
+                with open(tmp_path, 'wb') as f:
+                    f.write(content.read())
+
+                slim_doc = await transcribe_media(tmp_path)
+
+            # Format transcript for chat context with timestamps
+            all_text = []
+            for chunk in slim_doc["chunks"]:
+                start = chunk.get("timestamp_start", 0)
+                end = chunk.get("timestamp_end", 0)
+                mins_s, secs_s = divmod(int(start), 60)
+                mins_e, secs_e = divmod(int(end), 60)
+                all_text.append(
+                    f"[{mins_s:02d}:{secs_s:02d} - {mins_e:02d}:{secs_e:02d}]\n{chunk['text']}"
+                )
+
+            full_content = "\n\n".join(all_text)
+            return {
+                "filename": filename,
+                "content": full_content,
+                "pages": len(slim_doc["chunks"]),
+                "content_length": len(full_content),
+            }
+        elif file_ext == '.txt':
             # Simple text file processing for chat context
             text_content = content.read().decode('utf-8', errors='replace')
-            
+
             # For context, we don't need to chunk - just return the full content
             return {
                 "filename": filename,

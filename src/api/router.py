@@ -1,15 +1,27 @@
 """Router endpoints that automatically route based on configuration settings."""
 
+import os
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from config.settings import DISABLE_INGEST_WITH_LANGFLOW
+from services.transcription_service import MEDIA_EXTENSIONS
 from utils.logging_config import get_logger
 
 # Import the actual endpoint implementations
 from .upload import upload as traditional_upload
 
 logger = get_logger(__name__)
+
+
+def _has_media_files(form) -> bool:
+    """Check if any uploaded files are media files that Langflow can't handle."""
+    upload_files = form.getlist("file")
+    for f in upload_files:
+        ext = os.path.splitext(f.filename or "")[1].lower()
+        if ext in MEDIA_EXTENSIONS:
+            return True
+    return False
 
 
 async def upload_ingest_router(
@@ -24,6 +36,7 @@ async def upload_ingest_router(
 
     - If DISABLE_INGEST_WITH_LANGFLOW is True: uses traditional OpenRAG upload (/upload)
     - If DISABLE_INGEST_WITH_LANGFLOW is False (default): uses Langflow upload-ingest via task service
+    - Media files (audio/video) always use traditional upload since Langflow can't process them
 
     This provides a single endpoint that users can call regardless of backend configuration.
     All langflow uploads are processed as background tasks for better scalability.
@@ -33,6 +46,14 @@ async def upload_ingest_router(
             "Router upload_ingest endpoint called",
             disable_langflow_ingest=DISABLE_INGEST_WITH_LANGFLOW,
         )
+
+        # Parse form once so we can inspect filenames
+        form = await request.form()
+
+        # Media files (audio/video) must bypass Langflow — it can't handle them
+        if not DISABLE_INGEST_WITH_LANGFLOW and _has_media_files(form):
+            logger.info("Media file detected, routing to traditional OpenRAG upload (bypassing Langflow)")
+            return await traditional_upload_from_form(form, document_service, session_manager, request)
 
         # Route based on configuration
         if DISABLE_INGEST_WITH_LANGFLOW:
@@ -44,7 +65,7 @@ async def upload_ingest_router(
             # Route to Langflow upload and ingest using task service
             logger.debug("Routing to Langflow upload-ingest pipeline via task service")
             return await langflow_upload_ingest_task(
-                request, langflow_file_service, session_manager, task_service
+                request, langflow_file_service, session_manager, task_service, form=form
             )
 
     except Exception as e:
@@ -59,13 +80,41 @@ async def upload_ingest_router(
             return JSONResponse({"error": error_msg}, status_code=500)
 
 
+async def traditional_upload_from_form(form, document_service, session_manager, request):
+    """Process a single file upload using the traditional pipeline from a pre-parsed form."""
+    from config.settings import is_no_auth_mode
+
+    upload_file = form.getlist("file")[0]
+    user = request.state.user
+    jwt_token = session_manager.get_effective_jwt_token(user.user_id, request.state.jwt_token)
+
+    if is_no_auth_mode():
+        owner_user_id = None
+        owner_name = None
+        owner_email = None
+    else:
+        owner_user_id = user.user_id
+        owner_name = user.name
+        owner_email = user.email
+
+    result = await document_service.process_upload_file(
+        upload_file,
+        owner_user_id=owner_user_id,
+        jwt_token=jwt_token,
+        owner_name=owner_name,
+        owner_email=owner_email,
+    )
+    return JSONResponse(result, status_code=201)
+
+
 async def langflow_upload_ingest_task(
-    request: Request, langflow_file_service, session_manager, task_service
+    request: Request, langflow_file_service, session_manager, task_service, form=None
 ):
     """Task-based langflow upload and ingest for single/multiple files"""
     try:
         logger.debug("Task-based langflow upload_ingest endpoint called")
-        form = await request.form()
+        if form is None:
+            form = await request.form()
         upload_files = form.getlist("file")
 
         if not upload_files or len(upload_files) == 0:

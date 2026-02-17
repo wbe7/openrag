@@ -200,11 +200,23 @@ class TaskProcessor:
             file_hash=file_hash,
         )
 
-        # Check if this is a .txt file - use simple processing instead of docling
+        # Check file type to determine processing path
         import os
+        from services.transcription_service import is_media_file
         file_ext = os.path.splitext(file_path)[1].lower()
-        
-        if file_ext == '.txt':
+
+        if is_media_file(file_path):
+            # Audio/video file - transcribe using Whisper API
+            from services.transcription_service import transcribe_media
+            logger.info(
+                "Processing as media file (transcribing with Whisper)",
+                file_path=file_path,
+                file_hash=file_hash,
+            )
+            slim_doc = await transcribe_media(file_path)
+            if original_filename:
+                slim_doc["filename"] = original_filename
+        elif file_ext == '.txt':
             # Simple text file processing without docling
             from utils.document_processing import process_text_file
             logger.info(
@@ -253,6 +265,14 @@ class TaskProcessor:
                 "connector_type": connector_type,
                 "indexed_time": datetime.datetime.now().isoformat(),
             }
+
+            # Include timestamp metadata for transcribed media chunks
+            if "timestamp_start" in chunk:
+                chunk_doc["timestamp_start"] = chunk["timestamp_start"]
+            if "timestamp_end" in chunk:
+                chunk_doc["timestamp_end"] = chunk["timestamp_end"]
+            if chunk.get("type") == "transcript":
+                chunk_doc["content_type"] = "transcript"
 
             # Set owner and ACL fields
             if acl:

@@ -351,6 +351,9 @@ class SearchService:
                 "embedding_dimensions",
                 "allowed_users",
                 "allowed_groups",
+                "timestamp_start",
+                "timestamp_end",
+                "content_type",
             ],
             "size": limit,
         }
@@ -454,6 +457,10 @@ class SearchService:
                     "connector_type": source.get("connector_type"),
                     "embedding_model": source.get("embedding_model"),  # Include in results
                     "embedding_dimensions": source.get("embedding_dimensions"),
+                    # Transcript timestamp fields (for media files)
+                    "timestamp_start": source.get("timestamp_start"),
+                    "timestamp_end": source.get("timestamp_end"),
+                    "content_type": source.get("content_type"),
                     # ACL fields (may be missing for some documents)
                     "allowed_users": source.get("allowed_users", []),
                     "allowed_groups": source.get("allowed_groups", []),
