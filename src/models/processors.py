@@ -202,21 +202,9 @@ class TaskProcessor:
 
         # Check file type to determine processing path
         import os
-        from services.transcription_service import is_media_file
         file_ext = os.path.splitext(file_path)[1].lower()
 
-        if is_media_file(file_path):
-            # Audio/video file - transcribe using Whisper API
-            from services.transcription_service import transcribe_media
-            logger.info(
-                "Processing as media file (transcribing with Whisper)",
-                file_path=file_path,
-                file_hash=file_hash,
-            )
-            slim_doc = await transcribe_media(file_path)
-            if original_filename:
-                slim_doc["filename"] = original_filename
-        elif file_ext == '.txt':
+        if file_ext == '.txt':
             # Simple text file processing without docling
             from utils.document_processing import process_text_file
             logger.info(
