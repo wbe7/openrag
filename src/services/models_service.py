@@ -1,5 +1,5 @@
 import httpx
-from typing import Dict, List
+from typing import Dict, List, Optional
 from utils.container_utils import transform_localhost_url
 from utils.logging_config import get_logger
 
@@ -43,7 +43,9 @@ class ModelsService:
     def __init__(self):
         self.session_manager = None
 
-    async def get_openai_models(self, api_key: str) -> Dict[str, List[Dict[str, str]]]:
+    async def get_openai_models(
+        self, api_key: str, endpoint: Optional[str] = None, provider: str = "openai"
+    ) -> Dict[str, List[Dict[str, str]]]:
         """Fetch available models from OpenAI API with lightweight validation"""
         try:
             headers = {
@@ -51,11 +53,15 @@ class ModelsService:
                 "Content-Type": "application/json",
             }
 
+            # Use configured endpoint or default to OpenAI
+            effective_endpoint = endpoint or "https://api.openai.com/v1"
+            models_url = f"{effective_endpoint}/models"
+
             async with httpx.AsyncClient() as client:
                 # Lightweight validation: just check if API key is valid
                 # This doesn't consume credits, only validates the key
                 response = await client.get(
-                    "https://api.openai.com/v1/models", headers=headers, timeout=10.0
+                    models_url, headers=headers, timeout=10.0
                 )
 
             if response.status_code == 200:
@@ -66,26 +72,30 @@ class ModelsService:
                 language_models = []
                 embedding_models = []
 
+                # If provider is 'openai-compatible', we don't filter by hardcoded list
+                is_custom_provider = provider == "openai-compatible"
+
                 for model in models:
                     model_id = model.get("id", "")
 
-                    # Language models (GPT models)
-                    if model_id in self.OPENAI_TOOL_CALLING_MODELS:
+                    # Language models (GPT models or all models for custom provider except embeddings)
+                    is_embedding_candidate = "embedding" in model_id.lower()
+                    if (is_custom_provider and not is_embedding_candidate) or model_id in self.OPENAI_TOOL_CALLING_MODELS:
                         language_models.append(
                             {
                                 "value": model_id,
                                 "label": model_id,
-                                "default": model_id == "gpt-4o",
+                                "default": model_id == "gpt-4o" or (is_custom_provider and not language_models),
                             }
                         )
 
                     # Embedding models
-                    elif "text-embedding" in model_id:
+                    elif "text-embedding" in model_id or (is_custom_provider and not any(kw in model_id.lower() for kw in ["gpt", "claude", "mistral", "llama", "deepseek", "chat"])):
                         embedding_models.append(
                             {
                                 "value": model_id,
                                 "label": model_id,
-                                "default": model_id == "text-embedding-3-small",
+                                "default": model_id == "text-embedding-3-small" or (is_custom_provider and not embedding_models),
                             }
                         )
 
@@ -97,7 +107,11 @@ class ModelsService:
                     key=lambda x: (not x.get("default", False), x["value"])
                 )
 
-                logger.info("OpenAI API key validated successfully without consuming credits")
+                if is_custom_provider:
+                    logger.info(f"Custom models fetched successfully from {effective_endpoint}")
+                else:
+                    logger.info("OpenAI API key validated successfully without consuming credits")
+                
                 return {
                     "language_models": language_models,
                     "embedding_models": embedding_models,

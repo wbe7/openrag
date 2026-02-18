@@ -14,6 +14,15 @@ logger = get_logger(__name__)
 class OpenAIConfig:
     """OpenAI provider configuration."""
     api_key: str = ""
+    endpoint: str = ""
+    configured: bool = False
+
+
+@dataclass
+class OpenAICompatibleConfig:
+    """Generic OpenAI-compatible provider configuration."""
+    api_key: str = ""
+    endpoint: str = ""
     configured: bool = False
 
 
@@ -44,6 +53,7 @@ class OllamaConfig:
 class ProvidersConfig:
     """All provider configurations."""
     openai: OpenAIConfig
+    openai_compatible: OpenAICompatibleConfig
     anthropic: AnthropicConfig
     watsonx: WatsonXConfig
     ollama: OllamaConfig
@@ -53,6 +63,8 @@ class ProvidersConfig:
         provider_lower = provider.lower()
         if provider_lower == "openai":
             return self.openai
+        elif provider_lower == "openai-compatible":
+            return self.openai_compatible
         elif provider_lower == "anthropic":
             return self.anthropic
         elif provider_lower == "watsonx":
@@ -116,6 +128,7 @@ class OpenRAGConfig:
         return cls(
             providers=ProvidersConfig(
                 openai=OpenAIConfig(**providers_data.get("openai", {})),
+                openai_compatible=OpenAICompatibleConfig(**providers_data.get("openai-compatible", {})),
                 anthropic=AnthropicConfig(**providers_data.get("anthropic", {})),
                 watsonx=WatsonXConfig(**providers_data.get("watsonx", {})),
                 ollama=OllamaConfig(**providers_data.get("ollama", {})),
@@ -166,6 +179,7 @@ class ConfigManager:
         config_data = {
             "providers": {
                 "openai": {},
+                "openai-compatible": {},
                 "anthropic": {},
                 "watsonx": {},
                 "ollama": {},
@@ -183,7 +197,7 @@ class ConfigManager:
 
                 # Merge file config
                 if "providers" in file_config:
-                    for provider in ["openai", "anthropic", "watsonx", "ollama"]:
+                    for provider in ["openai", "openai-compatible", "anthropic", "watsonx", "ollama"]:
                         if provider in file_config["providers"]:
                             config_data["providers"][provider].update(
                                 file_config["providers"][provider]
@@ -224,6 +238,14 @@ class ConfigManager:
         # OpenAI provider settings
         if os.getenv("OPENAI_API_KEY"):
             config_data["providers"]["openai"]["api_key"] = os.getenv("OPENAI_API_KEY")
+        if os.getenv("OPENAI_BASE_URL"):
+            config_data["providers"]["openai"]["endpoint"] = os.getenv("OPENAI_BASE_URL")
+
+        # OpenAI Compatible provider settings
+        if os.getenv("OPENAI_COMPATIBLE_API_KEY"):
+            config_data["providers"]["openai-compatible"]["api_key"] = os.getenv("OPENAI_COMPATIBLE_API_KEY")
+        if os.getenv("OPENAI_COMPATIBLE_BASE_URL"):
+            config_data["providers"]["openai-compatible"]["endpoint"] = os.getenv("OPENAI_COMPATIBLE_BASE_URL")
 
         # Anthropic provider settings
         if os.getenv("ANTHROPIC_API_KEY"):

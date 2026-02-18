@@ -11,19 +11,33 @@ from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
 
-VALID_PROVIDERS = frozenset({"openai", "anthropic", "ollama", "watsonx"})
+VALID_PROVIDERS = frozenset({"openai", "anthropic", "ollama", "watsonx", "openai-compatible"})
 
 
 async def _fetch_models(provider, config, models_service):
     """Fetch models for the given provider using config credentials. Returns (models_dict, error_response)."""
     if provider == "openai":
         api_key = config.providers.openai.api_key
+        base_url = config.providers.openai.base_url
         if not api_key:
             return None, JSONResponse(
                 {"error": "OpenAI API key not configured. Set it in Settings."},
                 status_code=400,
             )
-        models = await models_service.get_openai_models(api_key=api_key)
+        models = await models_service.get_openai_models(api_key=api_key, base_url=base_url)
+        return models, None
+
+    if provider == "openai-compatible":
+        api_key = config.providers.openai_compatible.api_key
+        base_url = config.providers.openai_compatible.base_url
+        if not base_url:
+            return None, JSONResponse(
+                {"error": "OpenAI-compatible base URL not configured. Set it in Settings."},
+                status_code=400,
+            )
+        models = await models_service.get_openai_models(
+            api_key=api_key, base_url=base_url, provider=provider
+        )
         return models, None
 
     if provider == "anthropic":
