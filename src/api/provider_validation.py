@@ -8,6 +8,20 @@ from utils.logging_config import get_logger
 logger = get_logger(__name__)
 
 
+# Helper for basic URL validation
+def is_valid_url(url: str) -> bool:
+    """Check if the string is a well-formed HTTP/HTTPS URL."""
+    from urllib.parse import urlparse
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc]) and result.scheme in ["http", "https"]
+    except Exception:
+        return False
+
+
+DEFAULT_OPENAI_API_URL = "https://api.openai.com/v1"
+
+
 def _parse_json_error_message(error_text: str) -> str:
     """Parse JSON error message and extract just the message field."""
     try:
@@ -115,7 +129,6 @@ async def validate_provider_setup(
     llm_model: str = None,
     endpoint: str = None,
     project_id: str = None,
-    base_url: str = None,
     test_completion: bool = False,
 ) -> None:
     """
@@ -166,7 +179,6 @@ async def validate_provider_setup(
                 api_key=api_key,
                 endpoint=endpoint,
                 project_id=project_id,
-                base_url=base_url,
             )
 
         logger.info(f"Validation successful for provider: {provider_lower}")
@@ -244,13 +256,16 @@ async def _test_openai_lightweight_health(api_key: str, endpoint: str = None) ->
     Only checks if the API key is valid without consuming credits.
     Uses the /v1/models endpoint which doesn't consume credits.
     """
+    if endpoint and not is_valid_url(endpoint):
+        raise ValueError(f"Invalid custom endpoint URL: {endpoint}")
+
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         }
 
-        effective_endpoint = endpoint or "https://api.openai.com/v1"
+        effective_endpoint = endpoint or DEFAULT_OPENAI_API_URL
         models_url = f"{effective_endpoint}/models"
 
         async with httpx.AsyncClient() as client:
@@ -278,6 +293,9 @@ async def _test_openai_lightweight_health(api_key: str, endpoint: str = None) ->
 
 async def _test_openai_completion_with_tools(api_key: str, llm_model: str, endpoint: str = None) -> None:
     """Test OpenAI completion with tool calling."""
+    if endpoint and not is_valid_url(endpoint):
+        raise ValueError(f"Invalid custom endpoint URL: {endpoint}")
+
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -311,7 +329,7 @@ async def _test_openai_completion_with_tools(api_key: str, llm_model: str, endpo
             ],
         }
 
-        effective_endpoint = endpoint or "https://api.openai.com/v1"
+        effective_endpoint = endpoint or DEFAULT_OPENAI_API_URL
         chat_url = f"{effective_endpoint}/chat/completions"
 
         async with httpx.AsyncClient() as client:
@@ -352,6 +370,9 @@ async def _test_openai_completion_with_tools(api_key: str, llm_model: str, endpo
 
 async def _test_openai_embedding(api_key: str, embedding_model: str, endpoint: str = None) -> None:
     """Test OpenAI embedding generation."""
+    if endpoint and not is_valid_url(endpoint):
+        raise ValueError(f"Invalid custom endpoint URL: {endpoint}")
+
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -363,7 +384,7 @@ async def _test_openai_embedding(api_key: str, embedding_model: str, endpoint: s
             "input": "test embedding",
         }
 
-        effective_endpoint = endpoint or "https://api.openai.com/v1"
+        effective_endpoint = endpoint or DEFAULT_OPENAI_API_URL
         embeddings_url = f"{effective_endpoint}/embeddings"
 
         async with httpx.AsyncClient() as client:

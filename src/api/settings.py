@@ -24,6 +24,17 @@ from api.provider_validation import validate_provider_setup
 logger = get_logger(__name__)
 
 
+# Helper for basic URL validation
+def is_valid_url(url: str) -> bool:
+    """Check if the string is a well-formed HTTP/HTTPS URL."""
+    from urllib.parse import urlparse
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc]) and result.scheme in ["http", "https"]
+    except Exception:
+        return False
+
+
 # Docling preset configurations
 def get_docling_preset_configs(
     table_structure=False, ocr=False, picture_descriptions=False
@@ -333,13 +344,24 @@ async def update_settings(request, session_manager):
                 )
 
         # Validate provider-specific fields
-        for key in ["openai_api_key", "anthropic_api_key", "watsonx_api_key", "openai_compatible_api_key"]:
-            if key in body and not isinstance(body[key], str):
-                return JSONResponse(
-                    {"error": f"{key} must be a string"}, status_code=400
-                )
+        # List of all provider-related keys that should be strings
+        config_keys = [
+            "openai_api_key", "anthropic_api_key", "watsonx_api_key", "openai_compatible_api_key",
+            "watsonx_endpoint", "ollama_endpoint", "openai_endpoint", "openai_compatible_endpoint",
+            "watsonx_project_id"
+        ]
 
-        for key in ["watsonx_endpoint", "ollama_endpoint", "openai_endpoint", "openai_compatible_endpoint"]:
+        for key in config_keys:
+            if key in body:
+                if not isinstance(body[key], str):
+                    return JSONResponse(
+                        {"error": f"{key} must be a string"}, status_code=400
+                    )
+                # Apply URL validation for endpoints
+                if key.endswith("_endpoint") and body[key] and not is_valid_url(body[key]):
+                    return JSONResponse(
+                        {"error": f"{key} must be a valid HTTP/HTTPS URL"}, status_code=400
+                    )
             if key in body:
                 if not isinstance(body[key], str) or not body[key].strip():
                     return JSONResponse(
@@ -652,16 +674,26 @@ async def update_settings(request, session_manager):
 
         if "openai_endpoint" in body:
             current_config.providers.openai.endpoint = body["openai_endpoint"].strip()
+            current_config.providers.openai.configured = True
             config_updated = True
             provider_updated = True
 
-        if "openai_compatible_api_key" in body and body["openai_compatible_api_key"].strip():
-            current_config.providers.openai_compatible.api_key = body["openai_compatible_api_key"].strip()
-            current_config.providers.openai_compatible.configured = True
-            config_updated = True
-            provider_updated = True
+        if "openai_compatible_api_key" in body:
+            if not isinstance(body["openai_compatible_api_key"], str):
+                return JSONResponse(
+                    {"error": "openai_compatible_api_key must be a string"}, status_code=400
+                )
+            if body["openai_compatible_api_key"].strip():
+                current_config.providers.openai_compatible.api_key = body["openai_compatible_api_key"].strip()
+                current_config.providers.openai_compatible.configured = True
+                config_updated = True
+                provider_updated = True
 
         if "openai_compatible_endpoint" in body:
+            if not isinstance(body["openai_compatible_endpoint"], str) or not body["openai_compatible_endpoint"].strip():
+                return JSONResponse(
+                    {"error": "openai_compatible_endpoint must be a non-empty string"}, status_code=400
+                )
             current_config.providers.openai_compatible.endpoint = body["openai_compatible_endpoint"].strip()
             current_config.providers.openai_compatible.configured = True
             config_updated = True
@@ -814,9 +846,9 @@ async def onboarding(request, flows_service, session_manager=None):
                     {"error": "llm_provider must be a non-empty string"},
                     status_code=400,
                 )
-            if body["llm_provider"] not in ["openai", "anthropic", "watsonx", "ollama", "openai-compatible"]:
+            if body["llm_provider"] not in VALID_LLM_PROVIDERS:
                 return JSONResponse(
-                    {"error": "llm_provider must be one of: openai, anthropic, watsonx, ollama, openai-compatible"},
+                    {"error": f"llm_provider must be one of: {', '.join(VALID_LLM_PROVIDERS)}"},
                     status_code=400,
                 )
             llm_provider_selected = body["llm_provider"].strip()
@@ -862,9 +894,9 @@ async def onboarding(request, flows_service, session_manager=None):
                     status_code=400,
                 )
             # Anthropic doesn't have embeddings
-            if body["embedding_provider"] not in ["openai", "watsonx", "ollama", "openai-compatible"]:
+            if body["embedding_provider"] not in VALID_EMBEDDING_PROVIDERS:
                 return JSONResponse(
-                    {"error": "embedding_provider must be one of: openai, watsonx, ollama, openai-compatible"},
+                    {"error": f"embedding_provider must be one of: {', '.join(VALID_EMBEDDING_PROVIDERS)}"},
                     status_code=400,
                 )
             embedding_provider_selected = body["embedding_provider"].strip()
@@ -929,12 +961,18 @@ async def onboarding(request, flows_service, session_manager=None):
                     {"error": "openai_endpoint must be a non-empty string"}, status_code=400
                 )
             current_config.providers.openai.endpoint = body["openai_endpoint"].strip()
+            current_config.providers.openai.configured = True
             config_updated = True
 
-        if "openai_compatible_api_key" in body and body["openai_compatible_api_key"].strip():
-            current_config.providers.openai_compatible.api_key = body["openai_compatible_api_key"].strip()
-            current_config.providers.openai_compatible.configured = True
-            config_updated = True
+        if "openai_compatible_api_key" in body:
+            if not isinstance(body["openai_compatible_api_key"], str):
+                return JSONResponse(
+                    {"error": "openai_compatible_api_key must be a string"}, status_code=400
+                )
+            if body["openai_compatible_api_key"].strip():
+                current_config.providers.openai_compatible.api_key = body["openai_compatible_api_key"].strip()
+                current_config.providers.openai_compatible.configured = True
+                config_updated = True
 
         if "openai_compatible_endpoint" in body:
             if not isinstance(body["openai_compatible_endpoint"], str) or not body["openai_compatible_endpoint"].strip():
@@ -946,40 +984,29 @@ async def onboarding(request, flows_service, session_manager=None):
             config_updated = True
 
         # Mark providers as configured if they were chosen during onboarding
-        # Check LLM provider
-        if "llm_provider" in body:
-            llm_provider = body["llm_provider"].strip().lower()
-            if llm_provider == "openai" and current_config.providers.openai.api_key:
-                current_config.providers.openai.configured = True
-                logger.info("Marked OpenAI as configured (chosen as LLM provider)")
-            elif llm_provider == "anthropic" and current_config.providers.anthropic.api_key:
-                current_config.providers.anthropic.configured = True
-                logger.info("Marked Anthropic as configured (chosen as LLM provider)")
-            elif llm_provider == "watsonx" and current_config.providers.watsonx.api_key and current_config.providers.watsonx.endpoint and current_config.providers.watsonx.project_id:
-                current_config.providers.watsonx.configured = True
-                logger.info("Marked WatsonX as configured (chosen as LLM provider)")
-            elif llm_provider == "ollama" and current_config.providers.ollama.endpoint:
-                current_config.providers.ollama.configured = True
-                logger.info("Marked Ollama as configured (chosen as LLM provider)")
-            elif llm_provider == "openai-compatible" and current_config.providers.openai_compatible.endpoint:
-                current_config.providers.openai_compatible.configured = True
-                logger.info("Marked OpenAI-compatible as configured (chosen as LLM provider)")
+        providers_to_check = {
+            "llm": (body.get("llm_provider"), VALID_LLM_PROVIDERS, "LLM provider"),
+            "embedding": (body.get("embedding_provider"), VALID_EMBEDDING_PROVIDERS, "embedding provider")
+        }
 
-        # Check embedding provider
-        if "embedding_provider" in body:
-            embedding_provider = body["embedding_provider"].strip().lower()
-            if embedding_provider == "openai" and current_config.providers.openai.api_key:
-                current_config.providers.openai.configured = True
-                logger.info("Marked OpenAI as configured (chosen as embedding provider)")
-            elif embedding_provider == "watsonx" and current_config.providers.watsonx.api_key and current_config.providers.watsonx.endpoint and current_config.providers.watsonx.project_id:
-                current_config.providers.watsonx.configured = True
-                logger.info("Marked WatsonX as configured (chosen as embedding provider)")
-            elif embedding_provider == "ollama" and current_config.providers.ollama.endpoint:
-                current_config.providers.ollama.configured = True
-                logger.info("Marked Ollama as configured (chosen as embedding provider)")
-            elif embedding_provider == "openai-compatible" and current_config.providers.openai_compatible.endpoint:
-                current_config.providers.openai_compatible.configured = True
-                logger.info("Marked OpenAI-compatible as configured (chosen as embedding provider)")
+        for p_type, (selected, valid_list, log_label) in providers_to_check.items():
+            if selected:
+                prov_name = selected.strip().lower()
+                prov_attr = prov_name.replace("-", "_")
+                if hasattr(current_config.providers, prov_attr):
+                    prov_config = getattr(current_config.providers, prov_attr)
+                    # Check if credentials are set
+                    has_creds = False
+                    if prov_name == "ollama":
+                        has_creds = bool(prov_config.endpoint)
+                    elif prov_name == "watsonx":
+                        has_creds = all([prov_config.api_key, prov_config.endpoint, prov_config.project_id])
+                    else:
+                        has_creds = bool(prov_config.api_key)
+
+                    if has_creds:
+                        prov_config.configured = True
+                        logger.info(f"Marked {prov_name} as configured (chosen as {log_label})")
 
         should_ingest_sample_data = INGEST_SAMPLE_DATA
         if should_ingest_sample_data:

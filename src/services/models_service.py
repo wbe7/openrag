@@ -6,6 +6,20 @@ from utils.logging_config import get_logger
 logger = get_logger(__name__)
 
 
+# Helper for basic URL validation
+def is_valid_url(url: str) -> bool:
+    """Check if the string is a well-formed HTTP/HTTPS URL."""
+    from urllib.parse import urlparse
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc]) and result.scheme in ["http", "https"]
+    except Exception:
+        return False
+
+
+DEFAULT_OPENAI_API_URL = "https://api.openai.com/v1"
+
+
 class ModelsService:
     """Service for fetching available models from different AI providers"""
 
@@ -48,13 +62,18 @@ class ModelsService:
     ) -> Dict[str, List[Dict[str, str]]]:
         """Fetch available models from OpenAI API with lightweight validation"""
         try:
+            # Validate endpoint if provided (SSRF protection)
+            if endpoint and not is_valid_url(endpoint):
+                logger.error(f"Invalid custom endpoint URL: {endpoint}")
+                return {"language_models": [], "embedding_models": []}
+
             headers = {
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
             }
 
             # Use configured endpoint or default to OpenAI
-            effective_endpoint = endpoint or "https://api.openai.com/v1"
+            effective_endpoint = endpoint or DEFAULT_OPENAI_API_URL
             models_url = f"{effective_endpoint}/models"
 
             async with httpx.AsyncClient() as client:
@@ -78,30 +97,40 @@ class ModelsService:
                 for model in models:
                     model_id = model.get("id", "")
 
-                    # Heuristic for Custom Providers:
-                    # 1. Language models: Any model not containing 'embedding' in its ID,
-                    #    or models explicitly known to support tool calling.
-                    is_embedding_candidate = "embedding" in model_id.lower()
-                    if (is_custom_provider and not is_embedding_candidate) or model_id in self.OPENAI_TOOL_CALLING_MODELS:
+                    if is_custom_provider:
+                        # User request: "naming can be anything", "let user decide".
+                        # functionality: Add all models to both lists.
                         language_models.append(
                             {
                                 "value": model_id,
                                 "label": model_id,
-                                "default": model_id == "gpt-4o" or (is_custom_provider and not language_models),
+                                "default": not language_models,  # First one is default
                             }
                         )
-
-                    # 2. Embedding models: Models with 'text-embedding' in ID,
-                    #    or for custom providers, any model that doesn't look like a chat model
-                    #    (i.e., doesn't contain common LLM keywords).
-                    elif "text-embedding" in model_id or (is_custom_provider and not any(kw in model_id.lower() for kw in ["gpt", "claude", "mistral", "llama", "deepseek", "chat"])):
                         embedding_models.append(
                             {
                                 "value": model_id,
                                 "label": model_id,
-                                "default": model_id == "text-embedding-3-small" or (is_custom_provider and not embedding_models),
+                                "default": not embedding_models,  # First one is default
                             }
                         )
+                    else:
+                        if model_id in self.OPENAI_TOOL_CALLING_MODELS:
+                            language_models.append(
+                                {
+                                    "value": model_id,
+                                    "label": model_id,
+                                    "default": model_id == "gpt-4o",
+                                }
+                            )
+                        elif "text-embedding" in model_id:
+                            embedding_models.append(
+                                {
+                                    "value": model_id,
+                                    "label": model_id,
+                                    "default": model_id == "text-embedding-3-small",
+                                }
+                            )
 
                 # Sort by name and ensure defaults are first
                 language_models.sort(
