@@ -19,20 +19,11 @@ from config.settings import (
     VALID_LLM_PROVIDERS,
     VALID_EMBEDDING_PROVIDERS,
 )
-from api.provider_validation import validate_provider_setup
+from api.provider_validation import validate_provider_setup, is_valid_url
 
 logger = get_logger(__name__)
 
 
-# Helper for basic URL validation
-def is_valid_url(url: str) -> bool:
-    """Check if the string is a well-formed HTTP/HTTPS URL."""
-    from urllib.parse import urlparse
-    try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc]) and result.scheme in ["http", "https"]
-    except Exception:
-        return False
 
 
 # Docling preset configurations
@@ -679,10 +670,6 @@ async def update_settings(request, session_manager):
             provider_updated = True
 
         if "openai_compatible_api_key" in body:
-            if not isinstance(body["openai_compatible_api_key"], str):
-                return JSONResponse(
-                    {"error": "openai_compatible_api_key must be a string"}, status_code=400
-                )
             if body["openai_compatible_api_key"].strip():
                 current_config.providers.openai_compatible.api_key = body["openai_compatible_api_key"].strip()
                 current_config.providers.openai_compatible.configured = True
@@ -690,10 +677,6 @@ async def update_settings(request, session_manager):
                 provider_updated = True
 
         if "openai_compatible_endpoint" in body:
-            if not isinstance(body["openai_compatible_endpoint"], str) or not body["openai_compatible_endpoint"].strip():
-                return JSONResponse(
-                    {"error": "openai_compatible_endpoint must be a non-empty string"}, status_code=400
-                )
             current_config.providers.openai_compatible.endpoint = body["openai_compatible_endpoint"].strip()
             current_config.providers.openai_compatible.configured = True
             config_updated = True
@@ -1024,7 +1007,7 @@ async def onboarding(request, flows_service, session_manager=None):
         # Validate provider setup before initializing OpenSearch index
         # Use full validation with completion tests (test_completion=True) to ensure provider health during onboarding
         try:
-            from api.provider_validation import validate_provider_setup
+            from api.provider_validation import validate_provider_setup, is_valid_url
 
             # Validate LLM provider if set
             if "llm_provider" in body or "llm_model" in body:

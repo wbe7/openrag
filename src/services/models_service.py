@@ -1,4 +1,5 @@
 import httpx
+from urllib.parse import urlparse
 from typing import Dict, List, Optional
 from utils.container_utils import transform_localhost_url
 from utils.logging_config import get_logger
@@ -6,15 +7,7 @@ from utils.logging_config import get_logger
 logger = get_logger(__name__)
 
 
-# Helper for basic URL validation
-def is_valid_url(url: str) -> bool:
-    """Check if the string is a well-formed HTTP/HTTPS URL."""
-    from urllib.parse import urlparse
-    try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc]) and result.scheme in ["http", "https"]
-    except Exception:
-        return False
+from api.provider_validation import is_valid_url
 
 
 DEFAULT_OPENAI_API_URL = "https://api.openai.com/v1"

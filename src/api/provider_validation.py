@@ -1,6 +1,7 @@
 """Provider validation utilities for testing API keys and models during onboarding."""
 
 import json
+from urllib.parse import urlparse
 import httpx
 from utils.container_utils import transform_localhost_url
 from utils.logging_config import get_logger
@@ -11,11 +12,10 @@ logger = get_logger(__name__)
 # Helper for basic URL validation
 def is_valid_url(url: str) -> bool:
     """Check if the string is a well-formed HTTP/HTTPS URL."""
-    from urllib.parse import urlparse
     try:
         result = urlparse(url)
         return all([result.scheme, result.netloc]) and result.scheme in ["http", "https"]
-    except Exception:
+    except (ValueError, TypeError):
         return False
 
 
