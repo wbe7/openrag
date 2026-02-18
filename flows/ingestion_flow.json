@@ -23,12 +23,12 @@
             "type": "str"
           }
         },
-        "id": "xy-edge__SecretInput-F34VJ{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-F34VJ\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}-AdvancedDynamicFormBuilder-81Exw{\u0153fieldName\u0153:\u0153dynamic_connector_type\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}",
+        "id": "xy-edge__SecretInput-F34VJ{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-F34VJœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}-AdvancedDynamicFormBuilder-81Exw{œfieldNameœ:œdynamic_connector_typeœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
         "source": "SecretInput-F34VJ",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-F34VJ\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-F34VJœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}",
         "target": "AdvancedDynamicFormBuilder-81Exw",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153dynamic_connector_type\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}"
+        "targetHandle": "{œfieldNameœ:œdynamic_connector_typeœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -52,12 +52,12 @@
             "type": "str"
           }
         },
-        "id": "xy-edge__SecretInput-b2cab{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-b2cab\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}-AdvancedDynamicFormBuilder-81Exw{\u0153fieldName\u0153:\u0153dynamic_owner\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}",
+        "id": "xy-edge__SecretInput-b2cab{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-b2cabœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}-AdvancedDynamicFormBuilder-81Exw{œfieldNameœ:œdynamic_ownerœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
         "source": "SecretInput-b2cab",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-b2cab\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-b2cabœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}",
         "target": "AdvancedDynamicFormBuilder-81Exw",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153dynamic_owner\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}"
+        "targetHandle": "{œfieldNameœ:œdynamic_ownerœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -81,12 +81,12 @@
             "type": "str"
           }
         },
-        "id": "xy-edge__SecretInput-ZVfuS{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-ZVfuS\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}-AdvancedDynamicFormBuilder-81Exw{\u0153fieldName\u0153:\u0153dynamic_owner_email\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}",
+        "id": "xy-edge__SecretInput-ZVfuS{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-ZVfuSœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}-AdvancedDynamicFormBuilder-81Exw{œfieldNameœ:œdynamic_owner_emailœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
         "source": "SecretInput-ZVfuS",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-ZVfuS\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-ZVfuSœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}",
         "target": "AdvancedDynamicFormBuilder-81Exw",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153dynamic_owner_email\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}"
+        "targetHandle": "{œfieldNameœ:œdynamic_owner_emailœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -110,12 +110,12 @@
             "type": "str"
           }
         },
-        "id": "xy-edge__SecretInput-Iqtxd{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-Iqtxd\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}-AdvancedDynamicFormBuilder-81Exw{\u0153fieldName\u0153:\u0153dynamic_owner_name\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}",
+        "id": "xy-edge__SecretInput-Iqtxd{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-Iqtxdœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}-AdvancedDynamicFormBuilder-81Exw{œfieldNameœ:œdynamic_owner_nameœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
         "source": "SecretInput-Iqtxd",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-Iqtxd\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-Iqtxdœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}",
         "target": "AdvancedDynamicFormBuilder-81Exw",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153dynamic_owner_name\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}"
+        "targetHandle": "{œfieldNameœ:œdynamic_owner_nameœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -139,12 +139,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__DoclingRemote-Dp3PX{\u0153dataType\u0153:\u0153DoclingRemote\u0153,\u0153id\u0153:\u0153DoclingRemote-Dp3PX\u0153,\u0153name\u0153:\u0153dataframe\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}-ExportDoclingDocument-zZdRg{\u0153fieldName\u0153:\u0153data_inputs\u0153,\u0153id\u0153:\u0153ExportDoclingDocument-zZdRg\u0153,\u0153inputTypes\u0153:[\u0153Data\u0153,\u0153DataFrame\u0153],\u0153type\u0153:\u0153other\u0153}",
+        "id": "xy-edge__DoclingRemote-Dp3PX{œdataTypeœ:œDoclingRemoteœ,œidœ:œDoclingRemote-Dp3PXœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}-ExportDoclingDocument-zZdRg{œfieldNameœ:œdata_inputsœ,œidœ:œExportDoclingDocument-zZdRgœ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}",
         "selected": false,
         "source": "DoclingRemote-Dp3PX",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153DoclingRemote\u0153,\u0153id\u0153:\u0153DoclingRemote-Dp3PX\u0153,\u0153name\u0153:\u0153dataframe\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œDoclingRemoteœ,œidœ:œDoclingRemote-Dp3PXœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}",
         "target": "ExportDoclingDocument-zZdRg",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153data_inputs\u0153,\u0153id\u0153:\u0153ExportDoclingDocument-zZdRg\u0153,\u0153inputTypes\u0153:[\u0153Data\u0153,\u0153DataFrame\u0153],\u0153type\u0153:\u0153other\u0153}"
+        "targetHandle": "{œfieldNameœ:œdata_inputsœ,œidœ:œExportDoclingDocument-zZdRgœ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -167,12 +167,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__ExportDoclingDocument-zZdRg{\u0153dataType\u0153:\u0153ExportDoclingDocument\u0153,\u0153id\u0153:\u0153ExportDoclingDocument-zZdRg\u0153,\u0153name\u0153:\u0153dataframe\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}-DataFrameOperations-1BWXB{\u0153fieldName\u0153:\u0153df\u0153,\u0153id\u0153:\u0153DataFrameOperations-1BWXB\u0153,\u0153inputTypes\u0153:[\u0153DataFrame\u0153],\u0153type\u0153:\u0153other\u0153}",
+        "id": "xy-edge__ExportDoclingDocument-zZdRg{œdataTypeœ:œExportDoclingDocumentœ,œidœ:œExportDoclingDocument-zZdRgœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}-DataFrameOperations-1BWXB{œfieldNameœ:œdfœ,œidœ:œDataFrameOperations-1BWXBœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}",
         "selected": false,
         "source": "ExportDoclingDocument-zZdRg",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153ExportDoclingDocument\u0153,\u0153id\u0153:\u0153ExportDoclingDocument-zZdRg\u0153,\u0153name\u0153:\u0153dataframe\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œExportDoclingDocumentœ,œidœ:œExportDoclingDocument-zZdRgœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}",
         "target": "DataFrameOperations-1BWXB",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153df\u0153,\u0153id\u0153:\u0153DataFrameOperations-1BWXB\u0153,\u0153inputTypes\u0153:[\u0153DataFrame\u0153],\u0153type\u0153:\u0153other\u0153}"
+        "targetHandle": "{œfieldNameœ:œdfœ,œidœ:œDataFrameOperations-1BWXBœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -197,12 +197,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__DataFrameOperations-N80fC{\u0153dataType\u0153:\u0153DataFrameOperations\u0153,\u0153id\u0153:\u0153DataFrameOperations-N80fC\u0153,\u0153name\u0153:\u0153output\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}-SplitText-QIKhg{\u0153fieldName\u0153:\u0153data_inputs\u0153,\u0153id\u0153:\u0153SplitText-QIKhg\u0153,\u0153inputTypes\u0153:[\u0153Data\u0153,\u0153DataFrame\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153other\u0153}",
+        "id": "xy-edge__DataFrameOperations-N80fC{œdataTypeœ:œDataFrameOperationsœ,œidœ:œDataFrameOperations-N80fCœ,œnameœ:œoutputœ,œoutput_typesœ:[œDataFrameœ]}-SplitText-QIKhg{œfieldNameœ:œdata_inputsœ,œidœ:œSplitText-QIKhgœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}",
         "selected": false,
         "source": "DataFrameOperations-N80fC",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153DataFrameOperations\u0153,\u0153id\u0153:\u0153DataFrameOperations-N80fC\u0153,\u0153name\u0153:\u0153output\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œDataFrameOperationsœ,œidœ:œDataFrameOperations-N80fCœ,œnameœ:œoutputœ,œoutput_typesœ:[œDataFrameœ]}",
         "target": "SplitText-QIKhg",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153data_inputs\u0153,\u0153id\u0153:\u0153SplitText-QIKhg\u0153,\u0153inputTypes\u0153:[\u0153Data\u0153,\u0153DataFrame\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153other\u0153}"
+        "targetHandle": "{œfieldNameœ:œdata_inputsœ,œidœ:œSplitText-QIKhgœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -225,12 +225,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__DataFrameOperations-1BWXB{\u0153dataType\u0153:\u0153DataFrameOperations\u0153,\u0153id\u0153:\u0153DataFrameOperations-1BWXB\u0153,\u0153name\u0153:\u0153output\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}-DataFrameOperations-9vMrp{\u0153fieldName\u0153:\u0153df\u0153,\u0153id\u0153:\u0153DataFrameOperations-9vMrp\u0153,\u0153inputTypes\u0153:[\u0153DataFrame\u0153],\u0153type\u0153:\u0153other\u0153}",
+        "id": "xy-edge__DataFrameOperations-1BWXB{œdataTypeœ:œDataFrameOperationsœ,œidœ:œDataFrameOperations-1BWXBœ,œnameœ:œoutputœ,œoutput_typesœ:[œDataFrameœ]}-DataFrameOperations-9vMrp{œfieldNameœ:œdfœ,œidœ:œDataFrameOperations-9vMrpœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}",
         "selected": false,
         "source": "DataFrameOperations-1BWXB",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153DataFrameOperations\u0153,\u0153id\u0153:\u0153DataFrameOperations-1BWXB\u0153,\u0153name\u0153:\u0153output\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œDataFrameOperationsœ,œidœ:œDataFrameOperations-1BWXBœ,œnameœ:œoutputœ,œoutput_typesœ:[œDataFrameœ]}",
         "target": "DataFrameOperations-9vMrp",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153df\u0153,\u0153id\u0153:\u0153DataFrameOperations-9vMrp\u0153,\u0153inputTypes\u0153:[\u0153DataFrame\u0153],\u0153type\u0153:\u0153other\u0153}"
+        "targetHandle": "{œfieldNameœ:œdfœ,œidœ:œDataFrameOperations-9vMrpœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -253,12 +253,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__DataFrameOperations-9vMrp{\u0153dataType\u0153:\u0153DataFrameOperations\u0153,\u0153id\u0153:\u0153DataFrameOperations-9vMrp\u0153,\u0153name\u0153:\u0153output\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}-DataFrameOperations-N80fC{\u0153fieldName\u0153:\u0153df\u0153,\u0153id\u0153:\u0153DataFrameOperations-N80fC\u0153,\u0153inputTypes\u0153:[\u0153DataFrame\u0153],\u0153type\u0153:\u0153other\u0153}",
+        "id": "xy-edge__DataFrameOperations-9vMrp{œdataTypeœ:œDataFrameOperationsœ,œidœ:œDataFrameOperations-9vMrpœ,œnameœ:œoutputœ,œoutput_typesœ:[œDataFrameœ]}-DataFrameOperations-N80fC{œfieldNameœ:œdfœ,œidœ:œDataFrameOperations-N80fCœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}",
         "selected": false,
         "source": "DataFrameOperations-9vMrp",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153DataFrameOperations\u0153,\u0153id\u0153:\u0153DataFrameOperations-9vMrp\u0153,\u0153name\u0153:\u0153output\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œDataFrameOperationsœ,œidœ:œDataFrameOperations-9vMrpœ,œnameœ:œoutputœ,œoutput_typesœ:[œDataFrameœ]}",
         "target": "DataFrameOperations-N80fC",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153df\u0153,\u0153id\u0153:\u0153DataFrameOperations-N80fC\u0153,\u0153inputTypes\u0153:[\u0153DataFrame\u0153],\u0153type\u0153:\u0153other\u0153}"
+        "targetHandle": "{œfieldNameœ:œdfœ,œidœ:œDataFrameOperations-N80fCœ,œinputTypesœ:[œDataFrameœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -281,12 +281,12 @@
             "type": "table"
           }
         },
-        "id": "xy-edge__AdvancedDynamicFormBuilder-81Exw{\u0153dataType\u0153:\u0153AdvancedDynamicFormBuilder\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153name\u0153:\u0153form_data\u0153,\u0153output_types\u0153:[\u0153Data\u0153]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{\u0153fieldName\u0153:\u0153docs_metadata\u0153,\u0153id\u0153:\u0153OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4\u0153,\u0153inputTypes\u0153:[\u0153Data\u0153],\u0153type\u0153:\u0153table\u0153}",
+        "id": "xy-edge__AdvancedDynamicFormBuilder-81Exw{œdataTypeœ:œAdvancedDynamicFormBuilderœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œnameœ:œform_dataœ,œoutput_typesœ:[œDataœ]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{œfieldNameœ:œdocs_metadataœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œDataœ],œtypeœ:œtableœ}",
         "selected": false,
         "source": "AdvancedDynamicFormBuilder-81Exw",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153AdvancedDynamicFormBuilder\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153name\u0153:\u0153form_data\u0153,\u0153output_types\u0153:[\u0153Data\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œAdvancedDynamicFormBuilderœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œnameœ:œform_dataœ,œoutput_typesœ:[œDataœ]}",
         "target": "OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153docs_metadata\u0153,\u0153id\u0153:\u0153OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4\u0153,\u0153inputTypes\u0153:[\u0153Data\u0153],\u0153type\u0153:\u0153table\u0153}"
+        "targetHandle": "{œfieldNameœ:œdocs_metadataœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œDataœ],œtypeœ:œtableœ}"
       },
       {
         "animated": false,
@@ -310,12 +310,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__SplitText-QIKhg{\u0153dataType\u0153:\u0153SplitText\u0153,\u0153id\u0153:\u0153SplitText-QIKhg\u0153,\u0153name\u0153:\u0153dataframe\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{\u0153fieldName\u0153:\u0153ingest_data\u0153,\u0153id\u0153:\u0153OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4\u0153,\u0153inputTypes\u0153:[\u0153Data\u0153,\u0153DataFrame\u0153],\u0153type\u0153:\u0153other\u0153}",
+        "id": "xy-edge__SplitText-QIKhg{œdataTypeœ:œSplitTextœ,œidœ:œSplitText-QIKhgœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{œfieldNameœ:œingest_dataœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}",
         "selected": false,
         "source": "SplitText-QIKhg",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153SplitText\u0153,\u0153id\u0153:\u0153SplitText-QIKhg\u0153,\u0153name\u0153:\u0153dataframe\u0153,\u0153output_types\u0153:[\u0153DataFrame\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œSplitTextœ,œidœ:œSplitText-QIKhgœ,œnameœ:œdataframeœ,œoutput_typesœ:[œDataFrameœ]}",
         "target": "OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153ingest_data\u0153,\u0153id\u0153:\u0153OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4\u0153,\u0153inputTypes\u0153:[\u0153Data\u0153,\u0153DataFrame\u0153],\u0153type\u0153:\u0153other\u0153}"
+        "targetHandle": "{œfieldNameœ:œingest_dataœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œDataœ,œDataFrameœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -338,12 +338,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__EmbeddingModel-3LsIP{\u0153dataType\u0153:\u0153EmbeddingModel\u0153,\u0153id\u0153:\u0153EmbeddingModel-3LsIP\u0153,\u0153name\u0153:\u0153embeddings\u0153,\u0153output_types\u0153:[\u0153Embeddings\u0153]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{\u0153fieldName\u0153:\u0153embedding\u0153,\u0153id\u0153:\u0153OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4\u0153,\u0153inputTypes\u0153:[\u0153Embeddings\u0153],\u0153type\u0153:\u0153other\u0153}",
+        "id": "xy-edge__EmbeddingModel-3LsIP{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-3LsIPœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{œfieldNameœ:œembeddingœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}",
         "selected": false,
         "source": "EmbeddingModel-3LsIP",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153EmbeddingModel\u0153,\u0153id\u0153:\u0153EmbeddingModel-3LsIP\u0153,\u0153name\u0153:\u0153embeddings\u0153,\u0153output_types\u0153:[\u0153Embeddings\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-3LsIPœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}",
         "target": "OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153embedding\u0153,\u0153id\u0153:\u0153OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4\u0153,\u0153inputTypes\u0153:[\u0153Embeddings\u0153],\u0153type\u0153:\u0153other\u0153}"
+        "targetHandle": "{œfieldNameœ:œembeddingœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -366,12 +366,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__EmbeddingModel-E0hvR{\u0153dataType\u0153:\u0153EmbeddingModel\u0153,\u0153id\u0153:\u0153EmbeddingModel-E0hvR\u0153,\u0153name\u0153:\u0153embeddings\u0153,\u0153output_types\u0153:[\u0153Embeddings\u0153]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{\u0153fieldName\u0153:\u0153embedding\u0153,\u0153id\u0153:\u0153OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4\u0153,\u0153inputTypes\u0153:[\u0153Embeddings\u0153],\u0153type\u0153:\u0153other\u0153}",
+        "id": "xy-edge__EmbeddingModel-E0hvR{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-E0hvRœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{œfieldNameœ:œembeddingœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}",
         "selected": false,
         "source": "EmbeddingModel-E0hvR",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153EmbeddingModel\u0153,\u0153id\u0153:\u0153EmbeddingModel-E0hvR\u0153,\u0153name\u0153:\u0153embeddings\u0153,\u0153output_types\u0153:[\u0153Embeddings\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-E0hvRœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}",
         "target": "OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153embedding\u0153,\u0153id\u0153:\u0153OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4\u0153,\u0153inputTypes\u0153:[\u0153Embeddings\u0153],\u0153type\u0153:\u0153other\u0153}"
+        "targetHandle": "{œfieldNameœ:œembeddingœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -394,12 +394,12 @@
             "type": "other"
           }
         },
-        "id": "xy-edge__EmbeddingModel-EAo9i{\u0153dataType\u0153:\u0153EmbeddingModel\u0153,\u0153id\u0153:\u0153EmbeddingModel-EAo9i\u0153,\u0153name\u0153:\u0153embeddings\u0153,\u0153output_types\u0153:[\u0153Embeddings\u0153]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{\u0153fieldName\u0153:\u0153embedding\u0153,\u0153id\u0153:\u0153OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4\u0153,\u0153inputTypes\u0153:[\u0153Embeddings\u0153],\u0153type\u0153:\u0153other\u0153}",
+        "id": "xy-edge__EmbeddingModel-EAo9i{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-EAo9iœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}-OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4{œfieldNameœ:œembeddingœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}",
         "selected": false,
         "source": "EmbeddingModel-EAo9i",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153EmbeddingModel\u0153,\u0153id\u0153:\u0153EmbeddingModel-EAo9i\u0153,\u0153name\u0153:\u0153embeddings\u0153,\u0153output_types\u0153:[\u0153Embeddings\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œEmbeddingModelœ,œidœ:œEmbeddingModel-EAo9iœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}",
         "target": "OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153embedding\u0153,\u0153id\u0153:\u0153OpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4\u0153,\u0153inputTypes\u0153:[\u0153Embeddings\u0153],\u0153type\u0153:\u0153other\u0153}"
+        "targetHandle": "{œfieldNameœ:œembeddingœ,œidœ:œOpenSearchVectorStoreComponentMultimodalMultiEmbedding-By9U4œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -423,12 +423,12 @@
             "type": "str"
           }
         },
-        "id": "xy-edge__SecretInput-b1QE5{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-b1QE5\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}-AdvancedDynamicFormBuilder-81Exw{\u0153fieldName\u0153:\u0153dynamic_document_id\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}",
+        "id": "xy-edge__SecretInput-b1QE5{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-b1QE5œ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}-AdvancedDynamicFormBuilder-81Exw{œfieldNameœ:œdynamic_document_idœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
         "source": "SecretInput-b1QE5",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-b1QE5\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-b1QE5œ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}",
         "target": "AdvancedDynamicFormBuilder-81Exw",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153dynamic_document_id\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}"
+        "targetHandle": "{œfieldNameœ:œdynamic_document_idœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -452,12 +452,12 @@
             "type": "str"
           }
         },
-        "id": "xy-edge__SecretInput-KxF3a{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-KxF3a\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}-AdvancedDynamicFormBuilder-81Exw{\u0153fieldName\u0153:\u0153dynamic_source_url\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}",
+        "id": "xy-edge__SecretInput-KxF3a{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-KxF3aœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}-AdvancedDynamicFormBuilder-81Exw{œfieldNameœ:œdynamic_source_urlœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
         "source": "SecretInput-KxF3a",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-KxF3a\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-KxF3aœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}",
         "target": "AdvancedDynamicFormBuilder-81Exw",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153dynamic_source_url\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}"
+        "targetHandle": "{œfieldNameœ:œdynamic_source_urlœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -480,12 +480,12 @@
             "type": "str"
           }
         },
-        "id": "xy-edge__SecretInput-utc4X{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-utc4X\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}-AdvancedDynamicFormBuilder-81Exw{\u0153fieldName\u0153:\u0153dynamic_allowed_users\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}",
+        "id": "xy-edge__SecretInput-utc4X{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-utc4Xœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}-AdvancedDynamicFormBuilder-81Exw{œfieldNameœ:œdynamic_allowed_usersœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
         "source": "SecretInput-utc4X",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-utc4X\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-utc4Xœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}",
         "target": "AdvancedDynamicFormBuilder-81Exw",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153dynamic_allowed_users\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}"
+        "targetHandle": "{œfieldNameœ:œdynamic_allowed_usersœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -508,12 +508,12 @@
             "type": "str"
           }
         },
-        "id": "xy-edge__SecretInput-SS8Hy{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-SS8Hy\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}-AdvancedDynamicFormBuilder-81Exw{\u0153fieldName\u0153:\u0153dynamic_allowed_groups\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}",
+        "id": "xy-edge__SecretInput-SS8Hy{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-SS8Hyœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}-AdvancedDynamicFormBuilder-81Exw{œfieldNameœ:œdynamic_allowed_groupsœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
         "source": "SecretInput-SS8Hy",
-        "sourceHandle": "{\u0153dataType\u0153:\u0153SecretInput\u0153,\u0153id\u0153:\u0153SecretInput-SS8Hy\u0153,\u0153name\u0153:\u0153text\u0153,\u0153output_types\u0153:[\u0153Message\u0153]}",
+        "sourceHandle": "{œdataTypeœ:œSecretInputœ,œidœ:œSecretInput-SS8Hyœ,œnameœ:œtextœ,œoutput_typesœ:[œMessageœ]}",
         "target": "AdvancedDynamicFormBuilder-81Exw",
-        "targetHandle": "{\u0153fieldName\u0153:\u0153dynamic_allowed_groups\u0153,\u0153id\u0153:\u0153AdvancedDynamicFormBuilder-81Exw\u0153,\u0153inputTypes\u0153:[\u0153Text\u0153,\u0153Message\u0153],\u0153type\u0153:\u0153str\u0153}"
+        "targetHandle": "{œfieldNameœ:œdynamic_allowed_groupsœ,œidœ:œAdvancedDynamicFormBuilder-81Exwœ,œinputTypesœ:[œTextœ,œMessageœ],œtypeœ:œstrœ}"
       }
     ],
     "nodes": [
