@@ -254,14 +254,6 @@ class TaskProcessor:
                 "indexed_time": datetime.datetime.now().isoformat(),
             }
 
-            # Include timestamp metadata for transcribed media chunks
-            if "timestamp_start" in chunk:
-                chunk_doc["timestamp_start"] = chunk["timestamp_start"]
-            if "timestamp_end" in chunk:
-                chunk_doc["timestamp_end"] = chunk["timestamp_end"]
-            if chunk.get("type") == "transcript":
-                chunk_doc["content_type"] = "transcript"
-
             # Set owner and ACL fields
             if acl:
                 # Use ACL data if provided (from connector)

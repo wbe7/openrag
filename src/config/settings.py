@@ -140,9 +140,6 @@ INDEX_BODY = {
             },
             # Track which embedding model was used for this chunk
             "embedding_model": {"type": "keyword"},
-            "timestamp_start": {"type": "float"},
-            "timestamp_end": {"type": "float"},
-            "content_type": {"type": "keyword"},
             "source_url": {"type": "keyword"},
             "connector_type": {"type": "keyword"},
             "owner": {"type": "keyword"},
