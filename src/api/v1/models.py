@@ -6,24 +6,38 @@ Uses API key authentication. Uses stored credentials from config.
 """
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from config.settings import get_openrag_config
+from config.settings import get_openrag_config, VALID_LLM_PROVIDERS
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
 
-VALID_PROVIDERS = frozenset({"openai", "anthropic", "ollama", "watsonx"})
+VALID_PROVIDERS = frozenset(VALID_LLM_PROVIDERS)
 
 
 async def _fetch_models(provider, config, models_service):
     """Fetch models for the given provider using config credentials. Returns (models_dict, error_response)."""
     if provider == "openai":
         api_key = config.providers.openai.api_key
+        endpoint = config.providers.openai.endpoint
         if not api_key:
             return None, JSONResponse(
                 {"error": "OpenAI API key not configured. Set it in Settings."},
                 status_code=400,
             )
-        models = await models_service.get_openai_models(api_key=api_key)
+        models = await models_service.get_openai_models(api_key=api_key, endpoint=endpoint)
+        return models, None
+
+    if provider == "openai-compatible":
+        api_key = config.providers.openai_compatible.api_key
+        endpoint = config.providers.openai_compatible.endpoint
+        if not endpoint:
+            return None, JSONResponse(
+                {"error": "OpenAI-compatible endpoint not configured. Set it in Settings."},
+                status_code=400,
+            )
+        models = await models_service.get_openai_models(
+            api_key=api_key, endpoint=endpoint, provider=provider
+        )
         return models, None
 
     if provider == "anthropic":

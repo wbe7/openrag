@@ -1,6 +1,5 @@
 import json
 import platform
-import time
 from starlette.responses import JSONResponse
 from utils.container_utils import transform_localhost_url
 from utils.logging_config import get_logger
@@ -14,14 +13,17 @@ from config.settings import (
     LANGFLOW_PUBLIC_URL,
     LOCALHOST_URL,
     clients,
-    get_index_name,
     get_openrag_config,
     config_manager,
     is_no_auth_mode,
+    VALID_LLM_PROVIDERS,
+    VALID_EMBEDDING_PROVIDERS,
 )
-from api.provider_validation import validate_provider_setup
+from api.provider_validation import validate_provider_setup, is_valid_url
 
 logger = get_logger(__name__)
+
+
 
 
 # Docling preset configurations
@@ -81,8 +83,14 @@ async def get_settings(request, session_manager):
             "providers": {
                 "openai": {
                     "has_api_key": bool(openrag_config.providers.openai.api_key),
+                    "endpoint": openrag_config.providers.openai.endpoint or None,
                     "configured": openrag_config.providers.openai.configured,
                     # Note: API key is not exposed for security
+                },
+                "openai-compatible": {
+                    "has_api_key": bool(openrag_config.providers.openai_compatible.api_key),
+                    "endpoint": openrag_config.providers.openai_compatible.endpoint or None,
+                    "configured": openrag_config.providers.openai_compatible.configured,
                 },
                 "anthropic": {
                     "has_api_key": bool(openrag_config.providers.anthropic.api_key),
@@ -225,11 +233,14 @@ async def update_settings(request, session_manager):
             "index_name",
             # Provider-specific fields (structured as provider_name.field_name)
             "openai_api_key",
+            "openai_endpoint",
             "anthropic_api_key",
             "watsonx_api_key",
             "watsonx_endpoint",
             "watsonx_project_id",
             "ollama_endpoint",
+            "openai_compatible_api_key",
+            "openai_compatible_endpoint",
         }
 
         # Check for invalid fields
@@ -301,9 +312,9 @@ async def update_settings(request, session_manager):
                     {"error": "llm_provider must be a non-empty string"},
                     status_code=400,
                 )
-            if body["llm_provider"] not in ["openai", "anthropic", "watsonx", "ollama"]:
+            if body["llm_provider"] not in VALID_LLM_PROVIDERS:
                 return JSONResponse(
-                    {"error": "llm_provider must be one of: openai, anthropic, watsonx, ollama"},
+                    {"error": f"llm_provider must be one of: {', '.join(VALID_LLM_PROVIDERS)}"},
                     status_code=400,
                 )
 
@@ -317,20 +328,31 @@ async def update_settings(request, session_manager):
                     status_code=400,
                 )
             # Anthropic doesn't have embeddings
-            if body["embedding_provider"] not in ["openai", "watsonx", "ollama"]:
+            if body["embedding_provider"] not in VALID_EMBEDDING_PROVIDERS:
                 return JSONResponse(
-                    {"error": "embedding_provider must be one of: openai, watsonx, ollama"},
+                    {"error": f"embedding_provider must be one of: {', '.join(VALID_EMBEDDING_PROVIDERS)}"},
                     status_code=400,
                 )
 
         # Validate provider-specific fields
-        for key in ["openai_api_key", "anthropic_api_key", "watsonx_api_key"]:
-            if key in body and not isinstance(body[key], str):
-                return JSONResponse(
-                    {"error": f"{key} must be a string"}, status_code=400
-                )
+        # List of all provider-related keys that should be strings
+        config_keys = [
+            "openai_api_key", "anthropic_api_key", "watsonx_api_key", "openai_compatible_api_key",
+            "watsonx_endpoint", "ollama_endpoint", "openai_endpoint", "openai_compatible_endpoint",
+            "watsonx_project_id"
+        ]
 
-        for key in ["watsonx_endpoint", "ollama_endpoint"]:
+        for key in config_keys:
+            if key in body:
+                if not isinstance(body[key], str):
+                    return JSONResponse(
+                        {"error": f"{key} must be a string"}, status_code=400
+                    )
+                # Apply URL validation for endpoints
+                if key.endswith("_endpoint") and body[key] and not is_valid_url(body[key]):
+                    return JSONResponse(
+                        {"error": f"{key} must be a valid HTTP/HTTPS URL"}, status_code=400
+                    )
             if key in body:
                 if not isinstance(body[key], str) or not body[key].strip():
                     return JSONResponse(
@@ -359,6 +381,9 @@ async def update_settings(request, session_manager):
             "watsonx_endpoint",
             "watsonx_project_id",
             "ollama_endpoint",
+            "openai_endpoint",
+            "openai_compatible_api_key",
+            "openai_compatible_endpoint",
         ]
         should_validate = any(field in body for field in provider_fields)
 
@@ -637,6 +662,25 @@ async def update_settings(request, session_manager):
             current_config.providers.ollama.configured = True
             config_updated = True
             provider_updated = True
+
+        if "openai_endpoint" in body:
+            current_config.providers.openai.endpoint = body["openai_endpoint"].strip()
+            current_config.providers.openai.configured = True
+            config_updated = True
+            provider_updated = True
+
+        if "openai_compatible_api_key" in body:
+            if body["openai_compatible_api_key"].strip():
+                current_config.providers.openai_compatible.api_key = body["openai_compatible_api_key"].strip()
+                current_config.providers.openai_compatible.configured = True
+                config_updated = True
+                provider_updated = True
+
+        if "openai_compatible_endpoint" in body:
+            current_config.providers.openai_compatible.endpoint = body["openai_compatible_endpoint"].strip()
+            current_config.providers.openai_compatible.configured = True
+            config_updated = True
+            provider_updated = True
         
         if provider_updated:
             await TelemetryClient.send_event(
@@ -660,7 +704,8 @@ async def update_settings(request, session_manager):
             "llm_provider", "embedding_provider",
             "openai_api_key", "anthropic_api_key",
             "watsonx_api_key", "watsonx_endpoint", "watsonx_project_id",
-            "ollama_endpoint"
+            "ollama_endpoint", "openai_endpoint", "openai_compatible_api_key",
+            "openai_compatible_endpoint"
         ]
 
         await clients.refresh_patched_client()
@@ -738,6 +783,9 @@ async def onboarding(request, flows_service, session_manager=None):
             "watsonx_endpoint",
             "watsonx_project_id",
             "ollama_endpoint",
+            "openai_endpoint",
+            "openai_compatible_api_key",
+            "openai_compatible_endpoint",
         }
 
         # Check for invalid fields
@@ -781,9 +829,9 @@ async def onboarding(request, flows_service, session_manager=None):
                     {"error": "llm_provider must be a non-empty string"},
                     status_code=400,
                 )
-            if body["llm_provider"] not in ["openai", "anthropic", "watsonx", "ollama"]:
+            if body["llm_provider"] not in VALID_LLM_PROVIDERS:
                 return JSONResponse(
-                    {"error": "llm_provider must be one of: openai, anthropic, watsonx, ollama"},
+                    {"error": f"llm_provider must be one of: {', '.join(VALID_LLM_PROVIDERS)}"},
                     status_code=400,
                 )
             llm_provider_selected = body["llm_provider"].strip()
@@ -829,9 +877,9 @@ async def onboarding(request, flows_service, session_manager=None):
                     status_code=400,
                 )
             # Anthropic doesn't have embeddings
-            if body["embedding_provider"] not in ["openai", "watsonx", "ollama"]:
+            if body["embedding_provider"] not in VALID_EMBEDDING_PROVIDERS:
                 return JSONResponse(
-                    {"error": "embedding_provider must be one of: openai, watsonx, ollama"},
+                    {"error": f"embedding_provider must be one of: {', '.join(VALID_EMBEDDING_PROVIDERS)}"},
                     status_code=400,
                 )
             embedding_provider_selected = body["embedding_provider"].strip()
@@ -890,35 +938,58 @@ async def onboarding(request, flows_service, session_manager=None):
             current_config.providers.ollama.configured = True
             config_updated = True
 
-        # Mark providers as configured if they were chosen during onboarding
-        # Check LLM provider
-        if "llm_provider" in body:
-            llm_provider = body["llm_provider"].strip().lower()
-            if llm_provider == "openai" and current_config.providers.openai.api_key:
-                current_config.providers.openai.configured = True
-                logger.info("Marked OpenAI as configured (chosen as LLM provider)")
-            elif llm_provider == "anthropic" and current_config.providers.anthropic.api_key:
-                current_config.providers.anthropic.configured = True
-                logger.info("Marked Anthropic as configured (chosen as LLM provider)")
-            elif llm_provider == "watsonx" and current_config.providers.watsonx.api_key and current_config.providers.watsonx.endpoint and current_config.providers.watsonx.project_id:
-                current_config.providers.watsonx.configured = True
-                logger.info("Marked WatsonX as configured (chosen as LLM provider)")
-            elif llm_provider == "ollama" and current_config.providers.ollama.endpoint:
-                current_config.providers.ollama.configured = True
-                logger.info("Marked Ollama as configured (chosen as LLM provider)")
+        if "openai_endpoint" in body:
+            if not is_valid_url(body["openai_endpoint"]):
+                return JSONResponse(
+                    {"error": "openai_endpoint must be a valid HTTP/HTTPS URL"}, status_code=400
+                )
+            current_config.providers.openai.endpoint = body["openai_endpoint"].strip()
+            current_config.providers.openai.configured = True
+            config_updated = True
 
-        # Check embedding provider
-        if "embedding_provider" in body:
-            embedding_provider = body["embedding_provider"].strip().lower()
-            if embedding_provider == "openai" and current_config.providers.openai.api_key:
-                current_config.providers.openai.configured = True
-                logger.info("Marked OpenAI as configured (chosen as embedding provider)")
-            elif embedding_provider == "watsonx" and current_config.providers.watsonx.api_key and current_config.providers.watsonx.endpoint and current_config.providers.watsonx.project_id:
-                current_config.providers.watsonx.configured = True
-                logger.info("Marked WatsonX as configured (chosen as embedding provider)")
-            elif embedding_provider == "ollama" and current_config.providers.ollama.endpoint:
-                current_config.providers.ollama.configured = True
-                logger.info("Marked Ollama as configured (chosen as embedding provider)")
+        if "openai_compatible_api_key" in body:
+            if not isinstance(body["openai_compatible_api_key"], str):
+                return JSONResponse(
+                    {"error": "openai_compatible_api_key must be a string"}, status_code=400
+                )
+            if body["openai_compatible_api_key"].strip():
+                current_config.providers.openai_compatible.api_key = body["openai_compatible_api_key"].strip()
+                current_config.providers.openai_compatible.configured = True
+                config_updated = True
+
+        if "openai_compatible_endpoint" in body:
+            if not is_valid_url(body["openai_compatible_endpoint"]):
+                return JSONResponse(
+                    {"error": "openai_compatible_endpoint must be a valid HTTP/HTTPS URL"}, status_code=400
+                )
+            current_config.providers.openai_compatible.endpoint = body["openai_compatible_endpoint"].strip()
+            current_config.providers.openai_compatible.configured = True
+            config_updated = True
+
+        # Mark providers as configured if they were chosen during onboarding
+        providers_to_check = {
+            "llm": (body.get("llm_provider"), VALID_LLM_PROVIDERS, "LLM provider"),
+            "embedding": (body.get("embedding_provider"), VALID_EMBEDDING_PROVIDERS, "embedding provider")
+        }
+
+        for p_type, (selected, valid_list, log_label) in providers_to_check.items():
+            if selected:
+                prov_name = selected.strip().lower()
+                prov_attr = prov_name.replace("-", "_")
+                if hasattr(current_config.providers, prov_attr):
+                    prov_config = getattr(current_config.providers, prov_attr)
+                    # Check if credentials are set
+                    has_creds = False
+                    if prov_name == "ollama":
+                        has_creds = bool(prov_config.endpoint)
+                    elif prov_name == "watsonx":
+                        has_creds = all([prov_config.api_key, prov_config.endpoint, prov_config.project_id])
+                    else:
+                        has_creds = bool(prov_config.api_key)
+
+                    if has_creds:
+                        prov_config.configured = True
+                        logger.info(f"Marked {prov_name} as configured (chosen as {log_label})")
 
         should_ingest_sample_data = INGEST_SAMPLE_DATA
         if should_ingest_sample_data:
@@ -936,7 +1007,7 @@ async def onboarding(request, flows_service, session_manager=None):
         # Validate provider setup before initializing OpenSearch index
         # Use full validation with completion tests (test_completion=True) to ensure provider health during onboarding
         try:
-            from api.provider_validation import validate_provider_setup
+            from api.provider_validation import validate_provider_setup, is_valid_url
 
             # Validate LLM provider if set
             if "llm_provider" in body or "llm_model" in body:
@@ -982,7 +1053,8 @@ async def onboarding(request, flows_service, session_manager=None):
             provider_fields_provided = any(key in body for key in [
                 "openai_api_key", "anthropic_api_key",
                 "watsonx_api_key", "watsonx_endpoint", "watsonx_project_id",
-                "ollama_endpoint"
+                "ollama_endpoint", "openai_endpoint", "openai_compatible_api_key",
+                "openai_compatible_endpoint"
             ])
             
             # Update global variables if any provider fields were provided
@@ -1239,12 +1311,25 @@ async def _update_langflow_global_variables(config):
             )
             logger.info("Set WATSONX_PROJECT_ID global variable in Langflow")
 
-        # OpenAI global variables
-        if config.providers.openai.api_key:
-            await clients._create_langflow_global_variable(
-                "OPENAI_API_KEY", config.providers.openai.api_key, modify=True
-            )
-            logger.info("Set OPENAI_API_KEY global variable in Langflow")
+        # OpenAI and OpenAI-compatible global variables
+        openai_providers = [
+            ("openai", "OPENAI"),
+            ("openai_compatible", "OPENAI_COMPATIBLE")
+        ]
+        
+        for prov_attr, var_prefix in openai_providers:
+            prov_config = getattr(config.providers, prov_attr)
+            if prov_config.api_key:
+                await clients._create_langflow_global_variable(
+                    f"{var_prefix}_API_KEY", prov_config.api_key, modify=True
+                )
+                logger.info(f"Set {var_prefix}_API_KEY global variable in Langflow")
+            
+            if prov_config.endpoint:
+                await clients._create_langflow_global_variable(
+                    f"{var_prefix}_BASE_URL", prov_config.endpoint, modify=True
+                )
+                logger.info(f"Set {var_prefix}_BASE_URL global variable in Langflow")
 
         # Anthropic global variables
         if config.providers.anthropic.api_key:

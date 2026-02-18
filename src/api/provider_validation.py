@@ -1,11 +1,25 @@
 """Provider validation utilities for testing API keys and models during onboarding."""
 
 import json
+from urllib.parse import urlparse
 import httpx
 from utils.container_utils import transform_localhost_url
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
+
+
+# Helper for basic URL validation
+def is_valid_url(url: str) -> bool:
+    """Check if the string is a well-formed HTTP/HTTPS URL."""
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc]) and result.scheme in ["http", "https"]
+    except (ValueError, TypeError):
+        return False
+
+
+DEFAULT_OPENAI_API_URL = "https://api.openai.com/v1"
 
 
 def _parse_json_error_message(error_text: str) -> str:
@@ -183,8 +197,8 @@ async def test_lightweight_health(
 ) -> None:
     """Test provider health with lightweight check (no credits consumed)."""
 
-    if provider == "openai":
-        await _test_openai_lightweight_health(api_key)
+    if provider in ["openai", "openai-compatible"]:
+        await _test_openai_lightweight_health(api_key, endpoint)
     elif provider == "watsonx":
         await _test_watsonx_lightweight_health(api_key, endpoint, project_id)
     elif provider == "ollama":
@@ -204,8 +218,8 @@ async def test_completion_with_tools(
 ) -> None:
     """Test completion with tool calling for the provider."""
 
-    if provider == "openai":
-        await _test_openai_completion_with_tools(api_key, llm_model)
+    if provider in ["openai", "openai-compatible"]:
+        await _test_openai_completion_with_tools(api_key, llm_model, endpoint)
     elif provider == "watsonx":
         await _test_watsonx_completion_with_tools(api_key, llm_model, endpoint, project_id)
     elif provider == "ollama":
@@ -225,8 +239,8 @@ async def test_embedding(
 ) -> None:
     """Test embedding generation for the provider."""
 
-    if provider == "openai":
-        await _test_openai_embedding(api_key, embedding_model)
+    if provider in ["openai", "openai-compatible"]:
+        await _test_openai_embedding(api_key, embedding_model, endpoint)
     elif provider == "watsonx":
         await _test_watsonx_embedding(api_key, embedding_model, endpoint, project_id)
     elif provider == "ollama":
@@ -236,22 +250,28 @@ async def test_embedding(
 
 
 # OpenAI validation functions
-async def _test_openai_lightweight_health(api_key: str) -> None:
+async def _test_openai_lightweight_health(api_key: str, endpoint: str = None) -> None:
     """Test OpenAI API key validity with lightweight check.
     
     Only checks if the API key is valid without consuming credits.
     Uses the /v1/models endpoint which doesn't consume credits.
     """
+    if endpoint and not is_valid_url(endpoint):
+        raise ValueError(f"Invalid custom endpoint URL: {endpoint}")
+
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         }
 
+        effective_endpoint = endpoint or DEFAULT_OPENAI_API_URL
+        models_url = f"{effective_endpoint}/models"
+
         async with httpx.AsyncClient() as client:
             # Use /v1/models endpoint which validates the key without consuming credits
             response = await client.get(
-                "https://api.openai.com/v1/models",
+                models_url,
                 headers=headers,
                 timeout=10.0,  # Short timeout for lightweight check
             )
@@ -271,8 +291,11 @@ async def _test_openai_lightweight_health(api_key: str) -> None:
         raise
 
 
-async def _test_openai_completion_with_tools(api_key: str, llm_model: str) -> None:
+async def _test_openai_completion_with_tools(api_key: str, llm_model: str, endpoint: str = None) -> None:
     """Test OpenAI completion with tool calling."""
+    if endpoint and not is_valid_url(endpoint):
+        raise ValueError(f"Invalid custom endpoint URL: {endpoint}")
+
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -306,11 +329,14 @@ async def _test_openai_completion_with_tools(api_key: str, llm_model: str) -> No
             ],
         }
 
+        effective_endpoint = endpoint or DEFAULT_OPENAI_API_URL
+        chat_url = f"{effective_endpoint}/chat/completions"
+
         async with httpx.AsyncClient() as client:
             # Try with max_tokens first
             payload = {**base_payload, "max_tokens": 50}
             response = await client.post(
-                "https://api.openai.com/v1/chat/completions",
+                chat_url,
                 headers=headers,
                 json=payload,
                 timeout=30.0,
@@ -321,7 +347,7 @@ async def _test_openai_completion_with_tools(api_key: str, llm_model: str) -> No
                 logger.info("max_tokens parameter failed, trying max_completion_tokens instead")
                 payload = {**base_payload, "max_completion_tokens": 50}
                 response = await client.post(
-                    "https://api.openai.com/v1/chat/completions",
+                    chat_url,
                     headers=headers,
                     json=payload,
                     timeout=30.0,
@@ -342,8 +368,11 @@ async def _test_openai_completion_with_tools(api_key: str, llm_model: str) -> No
         raise
 
 
-async def _test_openai_embedding(api_key: str, embedding_model: str) -> None:
+async def _test_openai_embedding(api_key: str, embedding_model: str, endpoint: str = None) -> None:
     """Test OpenAI embedding generation."""
+    if endpoint and not is_valid_url(endpoint):
+        raise ValueError(f"Invalid custom endpoint URL: {endpoint}")
+
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -355,9 +384,12 @@ async def _test_openai_embedding(api_key: str, embedding_model: str) -> None:
             "input": "test embedding",
         }
 
+        effective_endpoint = endpoint or DEFAULT_OPENAI_API_URL
+        embeddings_url = f"{effective_endpoint}/embeddings"
+
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                "https://api.openai.com/v1/embeddings",
+                embeddings_url,
                 headers=headers,
                 json=payload,
                 timeout=30.0,

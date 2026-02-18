@@ -6,28 +6,15 @@ from config.settings import (
     LANGFLOW_URL,
     LANGFLOW_CHAT_FLOW_ID,
     LANGFLOW_INGEST_FLOW_ID,
-    OLLAMA_LLM_TEXT_COMPONENT_PATH,
     OPENAI_EMBEDDING_COMPONENT_DISPLAY_NAME,
     OPENAI_LLM_COMPONENT_DISPLAY_NAME,
-    WATSONX_LLM_TEXT_COMPONENT_PATH,
     clients,
-    WATSONX_LLM_COMPONENT_PATH,
-    WATSONX_EMBEDDING_COMPONENT_PATH,
-    OLLAMA_LLM_COMPONENT_PATH,
-    OLLAMA_EMBEDDING_COMPONENT_PATH,
-    WATSONX_EMBEDDING_COMPONENT_DISPLAY_NAME,
-    WATSONX_LLM_COMPONENT_DISPLAY_NAME,
-    OLLAMA_EMBEDDING_COMPONENT_DISPLAY_NAME,
-    OLLAMA_LLM_COMPONENT_DISPLAY_NAME,
     get_openrag_config,
 )
 import json
 import os
-import re
-import copy
 from datetime import datetime
 from utils.logging_config import get_logger
-from utils.container_utils import transform_localhost_url
 from utils.telemetry import TelemetryClient, Category, MessageId
 
 logger = get_logger(__name__)
@@ -397,7 +384,7 @@ class FlowsService:
             )
 
             if response.status_code == 200:
-                result = response.json()
+                # result = response.json()
                 logger.info(
                     f"Successfully reset {flow_type} flow",
                     flow_id=flow_id,
@@ -420,7 +407,7 @@ class FlowsService:
 
                         # Get provider-specific endpoint if needed
                         llm_provider_config = config.get_llm_provider_config()
-                        endpoint = getattr(llm_provider_config, "endpoint", None)
+                        # endpoint = getattr(llm_provider_config, "endpoint", None)
 
                         # Step 2: Update model values for the specific flow being reset
                         single_flow_config = [
@@ -1123,8 +1110,8 @@ class FlowsService:
         Returns:
             dict: Success/error response with details for each flow
         """
-        if provider not in ["watsonx", "ollama", "openai", "anthropic"]:
-            raise ValueError("provider must be 'watsonx', 'ollama', 'openai', or 'anthropic'")
+        if provider not in ["watsonx", "ollama", "openai", "anthropic", "openai-compatible"]:
+            raise ValueError("provider must be 'watsonx', 'ollama', 'openai', 'anthropic', or 'openai-compatible'")
 
         if provider == "watsonx" and not endpoint:
             raise ValueError("endpoint is required for watsonx provider")
@@ -1308,7 +1295,13 @@ class FlowsService:
 
         updated = False
 
-        provider_name = "IBM watsonx.ai" if provider == "watsonx" else "Ollama" if provider == "ollama" else "Anthropic" if provider == "anthropic" else "OpenAI"
+        provider_name = (
+            "IBM watsonx.ai" if provider == "watsonx" 
+            else "Ollama" if provider == "ollama" 
+            else "Anthropic" if provider == "anthropic" 
+            else "OpenAI" if provider == "openai"
+            else "OpenAI" # Use OpenAI as the base for openai-compatible
+        )
 
         field_name = "provider" if "provider" in template else "agent_llm"
         
@@ -1386,26 +1379,32 @@ class FlowsService:
                 template["base_url_ibm_watsonx"]["advanced"] = False
                 updated = True
 
-        if provider == "openai" and "api_key" in template:
-            template["api_key"]["value"] = "OPENAI_API_KEY"
-            template["api_key"]["load_from_db"] = True
-            template["api_key"]["show"] = True
-            template["api_key"]["advanced"] = False
-            updated = True
-        if provider == "openai" and "api_base" in template:
-            template["api_base"]["value"] = ""
-            template["api_base"]["load_from_db"] = False
-            template["api_base"]["show"] = True
-            template["api_base"]["advanced"] = False
-            updated = True
+        # Update credentials and endpoints based on provider
+        provider_vars = {
+            "openai": {
+                "api_key": "OPENAI_API_KEY",
+                "api_base": "OPENAI_BASE_URL",
+            },
+            "openai-compatible": {
+                "api_key": "OPENAI_COMPATIBLE_API_KEY",
+                "api_base": "OPENAI_COMPATIBLE_BASE_URL",
+                "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+            },
+            "anthropic": {
+                "api_key": "ANTHROPIC_API_KEY",
+            }
+        }
 
-        if provider == "anthropic" and "api_key" in template:
-            template["api_key"]["value"] = "ANTHROPIC_API_KEY"
-            template["api_key"]["load_from_db"] = True
-            template["api_key"]["show"] = True
-            template["api_key"]["advanced"] = False
-            updated = True
-        
+        if provider in provider_vars:
+            vars_map = provider_vars[provider]
+            for field, var_name in vars_map.items():
+                if field in template:
+                    template[field]["value"] = var_name
+                    template[field]["load_from_db"] = True
+                    template[field]["show"] = True
+                    template[field]["advanced"] = False
+                    updated = True
+
         if provider == "anthropic" and "base_url" in template:
             template["base_url"]["value"] = "https://api.anthropic.com"
             template["base_url"]["load_from_db"] = False
