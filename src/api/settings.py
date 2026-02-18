@@ -16,6 +16,8 @@ from config.settings import (
     get_openrag_config,
     config_manager,
     is_no_auth_mode,
+    VALID_LLM_PROVIDERS,
+    VALID_EMBEDDING_PROVIDERS,
 )
 from api.provider_validation import validate_provider_setup
 
@@ -308,9 +310,9 @@ async def update_settings(request, session_manager):
                     {"error": "llm_provider must be a non-empty string"},
                     status_code=400,
                 )
-            if body["llm_provider"] not in ["openai", "anthropic", "watsonx", "ollama", "openai-compatible"]:
+            if body["llm_provider"] not in VALID_LLM_PROVIDERS:
                 return JSONResponse(
-                    {"error": "llm_provider must be one of: openai, anthropic, watsonx, ollama, openai-compatible"},
+                    {"error": f"llm_provider must be one of: {', '.join(VALID_LLM_PROVIDERS)}"},
                     status_code=400,
                 )
 
@@ -324,9 +326,9 @@ async def update_settings(request, session_manager):
                     status_code=400,
                 )
             # Anthropic doesn't have embeddings
-            if body["embedding_provider"] not in ["openai", "watsonx", "ollama", "openai-compatible"]:
+            if body["embedding_provider"] not in VALID_EMBEDDING_PROVIDERS:
                 return JSONResponse(
-                    {"error": "embedding_provider must be one of: openai, watsonx, ollama, openai-compatible"},
+                    {"error": f"embedding_provider must be one of: {', '.join(VALID_EMBEDDING_PROVIDERS)}"},
                     status_code=400,
                 )
 

@@ -6,12 +6,12 @@ Uses API key authentication. Uses stored credentials from config.
 """
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from config.settings import get_openrag_config
+from config.settings import get_openrag_config, VALID_LLM_PROVIDERS
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
 
-VALID_PROVIDERS = frozenset({"openai", "anthropic", "ollama", "watsonx", "openai-compatible"})
+VALID_PROVIDERS = frozenset(VALID_LLM_PROVIDERS)
 
 
 async def _fetch_models(provider, config, models_service):

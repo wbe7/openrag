@@ -100,6 +100,10 @@ OPENAI_EMBEDDING_DIMENSIONS = {
         "text-embedding-ada-002": 1536,
     }
 
+# Valid providers configuration
+VALID_LLM_PROVIDERS = ["openai", "anthropic", "watsonx", "ollama", "openai-compatible"]
+VALID_EMBEDDING_PROVIDERS = ["openai", "watsonx", "ollama", "openai-compatible"]
+
 WATSONX_EMBEDDING_DIMENSIONS = {
 # IBM Models
 "ibm/granite-embedding-107m-multilingual": 384,
