@@ -939,9 +939,9 @@ async def onboarding(request, flows_service, session_manager=None):
             config_updated = True
 
         if "openai_endpoint" in body:
-            if not isinstance(body["openai_endpoint"], str) or not body["openai_endpoint"].strip():
+            if not is_valid_url(body["openai_endpoint"]):
                 return JSONResponse(
-                    {"error": "openai_endpoint must be a non-empty string"}, status_code=400
+                    {"error": "openai_endpoint must be a valid HTTP/HTTPS URL"}, status_code=400
                 )
             current_config.providers.openai.endpoint = body["openai_endpoint"].strip()
             current_config.providers.openai.configured = True
@@ -958,9 +958,9 @@ async def onboarding(request, flows_service, session_manager=None):
                 config_updated = True
 
         if "openai_compatible_endpoint" in body:
-            if not isinstance(body["openai_compatible_endpoint"], str) or not body["openai_compatible_endpoint"].strip():
+            if not is_valid_url(body["openai_compatible_endpoint"]):
                 return JSONResponse(
-                    {"error": "openai_compatible_endpoint must be a non-empty string"}, status_code=400
+                    {"error": "openai_compatible_endpoint must be a valid HTTP/HTTPS URL"}, status_code=400
                 )
             current_config.providers.openai_compatible.endpoint = body["openai_compatible_endpoint"].strip()
             current_config.providers.openai_compatible.configured = True
