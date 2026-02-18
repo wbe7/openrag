@@ -18,25 +18,25 @@ async def _fetch_models(provider, config, models_service):
     """Fetch models for the given provider using config credentials. Returns (models_dict, error_response)."""
     if provider == "openai":
         api_key = config.providers.openai.api_key
-        base_url = config.providers.openai.base_url
+        endpoint = config.providers.openai.endpoint
         if not api_key:
             return None, JSONResponse(
                 {"error": "OpenAI API key not configured. Set it in Settings."},
                 status_code=400,
             )
-        models = await models_service.get_openai_models(api_key=api_key, base_url=base_url)
+        models = await models_service.get_openai_models(api_key=api_key, endpoint=endpoint)
         return models, None
 
     if provider == "openai-compatible":
         api_key = config.providers.openai_compatible.api_key
-        base_url = config.providers.openai_compatible.base_url
-        if not base_url:
+        endpoint = config.providers.openai_compatible.endpoint
+        if not endpoint:
             return None, JSONResponse(
-                {"error": "OpenAI-compatible base URL not configured. Set it in Settings."},
+                {"error": "OpenAI-compatible endpoint not configured. Set it in Settings."},
                 status_code=400,
             )
         models = await models_service.get_openai_models(
-            api_key=api_key, base_url=base_url, provider=provider
+            api_key=api_key, endpoint=endpoint, provider=provider
         )
         return models, None
 

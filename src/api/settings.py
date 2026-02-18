@@ -1299,31 +1299,25 @@ async def _update_langflow_global_variables(config):
             )
             logger.info("Set WATSONX_PROJECT_ID global variable in Langflow")
 
-        # OpenAI global variables
-        if config.providers.openai.api_key:
-            await clients._create_langflow_global_variable(
-                "OPENAI_API_KEY", config.providers.openai.api_key, modify=True
-            )
-            logger.info("Set OPENAI_API_KEY global variable in Langflow")
+        # OpenAI and OpenAI-compatible global variables
+        openai_providers = [
+            ("openai", "OPENAI"),
+            ("openai_compatible", "OPENAI_COMPATIBLE")
+        ]
         
-        if config.providers.openai.endpoint:
-            await clients._create_langflow_global_variable(
-                "OPENAI_BASE_URL", config.providers.openai.endpoint, modify=True
-            )
-            logger.info("Set OPENAI_BASE_URL global variable in Langflow")
-
-        # OpenAI-compatible global variables
-        if config.providers.openai_compatible.api_key:
-            await clients._create_langflow_global_variable(
-                "OPENAI_COMPATIBLE_API_KEY", config.providers.openai_compatible.api_key, modify=True
-            )
-            logger.info("Set OPENAI_COMPATIBLE_API_KEY global variable in Langflow")
-        
-        if config.providers.openai_compatible.endpoint:
-            await clients._create_langflow_global_variable(
-                "OPENAI_COMPATIBLE_BASE_URL", config.providers.openai_compatible.endpoint, modify=True
-            )
-            logger.info("Set OPENAI_COMPATIBLE_BASE_URL global variable in Langflow")
+        for prov_attr, var_prefix in openai_providers:
+            prov_config = getattr(config.providers, prov_attr)
+            if prov_config.api_key:
+                await clients._create_langflow_global_variable(
+                    f"{var_prefix}_API_KEY", prov_config.api_key, modify=True
+                )
+                logger.info(f"Set {var_prefix}_API_KEY global variable in Langflow")
+            
+            if prov_config.endpoint:
+                await clients._create_langflow_global_variable(
+                    f"{var_prefix}_BASE_URL", prov_config.endpoint, modify=True
+                )
+                logger.info(f"Set {var_prefix}_BASE_URL global variable in Langflow")
 
         # Anthropic global variables
         if config.providers.anthropic.api_key:

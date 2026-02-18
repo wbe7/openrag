@@ -78,7 +78,9 @@ class ModelsService:
                 for model in models:
                     model_id = model.get("id", "")
 
-                    # Language models (GPT models or all models for custom provider except embeddings)
+                    # Heuristic for Custom Providers:
+                    # 1. Language models: Any model not containing 'embedding' in its ID,
+                    #    or models explicitly known to support tool calling.
                     is_embedding_candidate = "embedding" in model_id.lower()
                     if (is_custom_provider and not is_embedding_candidate) or model_id in self.OPENAI_TOOL_CALLING_MODELS:
                         language_models.append(
@@ -89,7 +91,9 @@ class ModelsService:
                             }
                         )
 
-                    # Embedding models
+                    # 2. Embedding models: Models with 'text-embedding' in ID,
+                    #    or for custom providers, any model that doesn't look like a chat model
+                    #    (i.e., doesn't contain common LLM keywords).
                     elif "text-embedding" in model_id or (is_custom_provider and not any(kw in model_id.lower() for kw in ["gpt", "claude", "mistral", "llama", "deepseek", "chat"])):
                         embedding_models.append(
                             {

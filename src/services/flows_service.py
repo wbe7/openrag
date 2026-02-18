@@ -1379,45 +1379,32 @@ class FlowsService:
                 template["base_url_ibm_watsonx"]["advanced"] = False
                 updated = True
 
-        if provider == "openai" and "api_key" in template:
-            template["api_key"]["value"] = "OPENAI_API_KEY"
-            template["api_key"]["load_from_db"] = True
-            template["api_key"]["show"] = True
-            template["api_key"]["advanced"] = False
-            updated = True
-        if provider == "openai" and "api_base" in template:
-            template["api_base"]["value"] = "OPENAI_BASE_URL"
-            template["api_base"]["load_from_db"] = True
-            template["api_base"]["show"] = True
-            template["api_base"]["advanced"] = False
-            updated = True
+        # Update credentials and endpoints based on provider
+        provider_vars = {
+            "openai": {
+                "api_key": "OPENAI_API_KEY",
+                "api_base": "OPENAI_BASE_URL",
+            },
+            "openai-compatible": {
+                "api_key": "OPENAI_COMPATIBLE_API_KEY",
+                "api_base": "OPENAI_COMPATIBLE_BASE_URL",
+                "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+            },
+            "anthropic": {
+                "api_key": "ANTHROPIC_API_KEY",
+            }
+        }
 
-        if provider == "openai-compatible" and "api_key" in template:
-            template["api_key"]["value"] = "OPENAI_COMPATIBLE_API_KEY"
-            template["api_key"]["load_from_db"] = True
-            template["api_key"]["show"] = True
-            template["api_key"]["advanced"] = False
-            updated = True
-        if provider == "openai-compatible" and "api_base" in template:
-            template["api_base"]["value"] = "OPENAI_COMPATIBLE_BASE_URL"
-            template["api_base"]["load_from_db"] = True
-            template["api_base"]["show"] = True
-            template["api_base"]["advanced"] = False
-            updated = True
-        if provider == "openai-compatible" and "base_url" in template:
-            template["base_url"]["value"] = "OPENAI_COMPATIBLE_BASE_URL"
-            template["base_url"]["load_from_db"] = True
-            template["base_url"]["show"] = True
-            template["base_url"]["advanced"] = False
-            updated = True
+        if provider in provider_vars:
+            vars_map = provider_vars[provider]
+            for field, var_name in vars_map.items():
+                if field in template:
+                    template[field]["value"] = var_name
+                    template[field]["load_from_db"] = True
+                    template[field]["show"] = True
+                    template[field]["advanced"] = False
+                    updated = True
 
-        if provider == "anthropic" and "api_key" in template:
-            template["api_key"]["value"] = "ANTHROPIC_API_KEY"
-            template["api_key"]["load_from_db"] = True
-            template["api_key"]["show"] = True
-            template["api_key"]["advanced"] = False
-            updated = True
-        
         if provider == "anthropic" and "base_url" in template:
             template["base_url"]["value"] = "https://api.anthropic.com"
             template["base_url"]["load_from_db"] = False

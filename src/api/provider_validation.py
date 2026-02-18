@@ -185,7 +185,7 @@ async def test_lightweight_health(
 ) -> None:
     """Test provider health with lightweight check (no credits consumed)."""
 
-    if provider == "openai":
+    if provider in ["openai", "openai-compatible"]:
         await _test_openai_lightweight_health(api_key, endpoint)
     elif provider == "watsonx":
         await _test_watsonx_lightweight_health(api_key, endpoint, project_id)
@@ -193,8 +193,6 @@ async def test_lightweight_health(
         await _test_ollama_lightweight_health(endpoint)
     elif provider == "anthropic":
         await _test_anthropic_lightweight_health(api_key)
-    elif provider == "openai-compatible":
-        await _test_openai_lightweight_health(api_key, endpoint)
     else:
         raise ValueError(f"Unknown provider: {provider}")
 
@@ -208,7 +206,7 @@ async def test_completion_with_tools(
 ) -> None:
     """Test completion with tool calling for the provider."""
 
-    if provider == "openai":
+    if provider in ["openai", "openai-compatible"]:
         await _test_openai_completion_with_tools(api_key, llm_model, endpoint)
     elif provider == "watsonx":
         await _test_watsonx_completion_with_tools(api_key, llm_model, endpoint, project_id)
@@ -216,8 +214,6 @@ async def test_completion_with_tools(
         await _test_ollama_completion_with_tools(llm_model, endpoint)
     elif provider == "anthropic":
         await _test_anthropic_completion_with_tools(api_key, llm_model)
-    elif provider == "openai-compatible":
-        await _test_openai_completion_with_tools(api_key, llm_model, endpoint)
     else:
         raise ValueError(f"Unknown provider: {provider}")
 
@@ -231,14 +227,12 @@ async def test_embedding(
 ) -> None:
     """Test embedding generation for the provider."""
 
-    if provider == "openai":
+    if provider in ["openai", "openai-compatible"]:
         await _test_openai_embedding(api_key, embedding_model, endpoint)
     elif provider == "watsonx":
         await _test_watsonx_embedding(api_key, embedding_model, endpoint, project_id)
     elif provider == "ollama":
         await _test_ollama_embedding(embedding_model, endpoint)
-    elif provider == "openai-compatible":
-        await _test_openai_embedding(api_key, embedding_model, endpoint)
     else:
         raise ValueError(f"Unknown provider: {provider}")
 
